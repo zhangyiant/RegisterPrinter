@@ -1,3 +1,4 @@
+import textwrap
 from .block import *
 
 
@@ -85,9 +86,11 @@ class TopSys:
         result += "    Version        : " + str(self.version) + "\n"
         result += "    Address width  : " + str(self.addr_width) + "\n"
         result += "    Data width     : " + str(self.data_width) + "\n"
-        result += "Blocks:\n"
+        result += "    Blocks:\n"
         for block in self.blocks:
-            result += str(block) + "\n"
+            block_text = str(block)
+            block_text = textwrap.indent(block_text, "        ")
+            result += block_text + "\n"
         result += "    Address map    :\n"
         for entry in self.addr_map:
             result += "      %s\5@0x%x\n" % (entry['block_inst'], entry['base_addr'])

@@ -1,3 +1,4 @@
+import textwrap
 from .field import *
 
 class Register:
@@ -33,11 +34,13 @@ class Register:
         return value
 
     def __str__(self):
-        result = "---------------------------------\n"
-        result += "Register " + str(self.name) + "\n"
+        result = "Register " + str(self.name) + "\n"
         result += "    offset: " + str(self.offset) + "\n"
-        result += "Fields:\n"
+        result += "    Fields:\n"
+        field_strings = []
         for field in self.fields:
-            result += str(field) + "\n"
-        result += "---------------------------------"
+            field_string = str(field)
+            field_string = textwrap.indent(field_string, "        ")
+            field_strings.append(field_string)
+        result += "\n".join(field_strings)
         return result

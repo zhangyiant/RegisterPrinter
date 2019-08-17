@@ -1,3 +1,4 @@
+import textwrap
 from .register import *
 
 class Block:
@@ -53,14 +54,16 @@ class Block:
         return
 
     def __str__(self):
-        result = "---------------------------\n"
-        result += "Block " + str(self._name) + "\n"
+        result = "Block " + str(self._name) + "\n"
         result += "    Size         : " + str(self._size) + "\n"
         result += "    Address width: " + str(self._addr_len) + "\n"
         result += "    Data width   : " + str(self._data_len) + "\n"
-        result += "Registers:\n"
+        result += "    Registers:\n"
+        register_strings = []
         for register in self.registers:
-            result += str(register) + "\n"
-        result += "---------------------------"
+            register_string = str(register)
+            register_string = textwrap.indent(register_string, "        ")
+            register_strings.append(register_string)
+        result += "\n".join(register_strings)
         return result
 
