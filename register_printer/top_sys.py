@@ -81,10 +81,12 @@ class TopSys:
 
     def __str__(self):
         result = "-------------------------------\n"
-        result += "System " + self.name + "\n"
-        result += "    address width  : " + str(self.addr_width) + "\n"
-        result += "    data width     : " + str(self.data_width) + "\n"
-        result += "    address map    :\n"
+        result += "System " + str(self.name) + "\n"
+        result += "    Author         : " + str(self.author) + "\n"
+        result += "    Version        : " + str(self.version) + "\n"
+        result += "    Address width  : " + str(self.addr_width) + "\n"
+        result += "    Data width     : " + str(self.data_width) + "\n"
+        result += "    Address map    :\n"
         for entry in self.addr_map:
             result += "      %s\5@0x%x\n" % (entry['block_inst'], entry['base_addr'])
         result += "--------------------------------"
