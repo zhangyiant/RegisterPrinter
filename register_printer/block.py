@@ -25,8 +25,7 @@ class Block:
     def data_len(self):
         return self._data_len
 
-    def add_register(self, name, offset, desc):
-        register = Register(name, offset, desc)
+    def add_register(self, register):
         self.registers.append(register)
         return
 
@@ -61,7 +60,7 @@ class Block:
         result += "    Data width   : " + str(self._data_len) + "\n"
         result += "    Registers:\n"
         for register in self.registers:
-            result += "         %s @ %h\n" % (register.name, register.offset)
+            result += "         %s @ %X\n" % (register.name, register.offset)
         result += "---------------------------"
         return result
 
