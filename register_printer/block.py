@@ -58,9 +58,9 @@ class Block:
         result += "    Size         : " + str(self._size) + "\n"
         result += "    Address width: " + str(self._addr_len) + "\n"
         result += "    Data width   : " + str(self._data_len) + "\n"
-        result += "    Registers:\n"
+        result += "Registers:\n"
         for register in self.registers:
-            result += "         %s @ %X\n" % (register.name, register.offset)
+            result += str(register) + "\n"
         result += "---------------------------"
         return result
 

@@ -36,8 +36,8 @@ class Register:
         result = "---------------------------------\n"
         result += "Register " + str(self.name) + "\n"
         result += "    offset: " + str(self.offset) + "\n"
-        result += "    fields:\n"
+        result += "Fields:\n"
         for field in self.fields:
-            result += "          " + str(field) + "\n"
+            result += str(field) + "\n"
         result += "---------------------------------"
         return result
