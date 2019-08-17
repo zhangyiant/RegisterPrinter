@@ -52,8 +52,7 @@ class TopSys:
         self._author = author
         return
 
-    def add_block(self, name, size, addr_len, data_len):
-        block = Block(name, size, addr_len, data_len)
+    def add_block(self, block):
         self.blocks.append(block)
         return
 
@@ -86,6 +85,9 @@ class TopSys:
         result += "    Version        : " + str(self.version) + "\n"
         result += "    Address width  : " + str(self.addr_width) + "\n"
         result += "    Data width     : " + str(self.data_width) + "\n"
+        result += "Blocks:\n"
+        for block in self.blocks:
+            result += str(block) + "\n"
         result += "    Address map    :\n"
         for entry in self.addr_map:
             result += "      %s\5@0x%x\n" % (entry['block_inst'], entry['base_addr'])
