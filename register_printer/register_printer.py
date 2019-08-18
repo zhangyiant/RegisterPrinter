@@ -4,12 +4,15 @@ from .register import Register
 from .field import Field
 
 from .parse_config import parse_config
+from .parse_excels import parse_excels
+
 
 class RegisterPrinter:
     def __init__(self, config_file, excel_path):
         self.config_file = config_file
         self.excel_path = excel_path
         self.top_sys = parse_config(config_file)
+        self.top_sys = parse_excels(self.top_sys, excel_path)
         # self._create_top_sys_for_test()
         return
 

@@ -44,7 +44,7 @@ class Block:
 
     def sort_register_by_offset(self):
         offsets = []
-        for register in self.register:
+        for register in self.registers:
             offsets.append(register.offset)
         offsets.sort()
         registers = []
