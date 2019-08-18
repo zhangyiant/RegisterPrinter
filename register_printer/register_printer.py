@@ -3,11 +3,14 @@ from .block import Block
 from .register import Register
 from .field import Field
 
+from .parse_config import parse_config
+
 class RegisterPrinter:
     def __init__(self, config_file, excel_path):
         self.config_file = config_file
         self.excel_path = excel_path
-        self._create_top_sys_for_test()
+        self.top_sys = parse_config(config_file)
+        # self._create_top_sys_for_test()
         return
 
     def _create_top_sys_for_test(self):

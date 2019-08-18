@@ -69,7 +69,7 @@ class TopSys:
 
     def find_block_by_name(self, name):
         for block in self.blocks:
-            if block.block_name.upper() == name.upper():
+            if block.name.upper() == name.upper():
                 return block
         return None
 
@@ -81,7 +81,7 @@ class TopSys:
 
     def __str__(self):
         result = "-------------------------------\n"
-        result += "System " + str(self.name) + "\n"
+        result += "System: " + str(self.name) + "\n"
         result += "    Author         : " + str(self.author) + "\n"
         result += "    Version        : " + str(self.version) + "\n"
         result += "    Address width  : " + str(self.addr_width) + "\n"
@@ -93,7 +93,7 @@ class TopSys:
             result += block_text + "\n"
         result += "    Address map    :\n"
         for entry in self.addr_map:
-            result += "      %s\5@0x%x\n" % (entry['block_inst'], entry['base_addr'])
+            result += "      %s\t@0x%x\n" % (entry['block_instance'], entry['base_address'])
         result += "--------------------------------"
         return result
 
