@@ -154,7 +154,9 @@ def process_sheet(sheet, block):
                 else:
                     break
 
-            if (re.match(r"0x", str(sheet.cell(row, 0).value))):
+            if is_empty_row(sheet, row):
+                row = row + 1
+            else:
                 LOGGER.debug(
                     "sheet %s row %d error: no blank row between registers",
                     sheet.name,
@@ -163,11 +165,11 @@ def process_sheet(sheet, block):
             row = row + 1
         else:
             LOGGER.error(
-                "sheet %s row %d error: None emtpy row.",
+                "sheet %s row %d error: unknown row.",
                 sheet.name,
                 row)
             LOGGER.error(" %s", sheet.cell(row, 0).value)
-            raise Exception("None empty row.")
+            raise Exception("Unknown row")
         row = row + 1
     block.sort_register_by_offset()
     LOGGER.debug(
