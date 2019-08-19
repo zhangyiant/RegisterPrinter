@@ -24,6 +24,38 @@ def validate_sheet(sheet):
         raise Exception("No \"Module description:\" in cell(0,0)")
     return
 
+def is_register_row(sheet, row):
+    if re.match(r'0x', str(sheet.cell(row, 0).value)):
+        return True
+    return False
+
+def validate_register_row_empty_field(sheet, row):
+    field_map = [
+        (2, "msb"),
+        (3, "lsb"),
+        (4, "field"),
+        (5, "access"),
+        (6, "default")
+    ]
+    for (col, field_name) in field_map:
+        if sheet.cell(row, col).value != "":
+            LOGGER.error(
+                "sheet %s row %d error: %s not empty in register define row",
+                sheet.name,
+                row + 1,
+                field_name)
+            raise Exception("%s must be emtpy." % field_name)
+    return
+
+def parse_register_row(sheet, row):
+    offset = int(sheet.cell(row, 0).value, 16)
+    validate_register_row_empty_field(sheet, row)
+
+    name = sheet.cell(row, 1).value
+    description = "%s" % (sheet.cell(row, 7).value)
+    register = Register(name, offset, description)
+    return register
+
 
 def process_sheet(sheet, block):
     LOGGER.debug(
@@ -36,9 +68,9 @@ def process_sheet(sheet, block):
 
     row = 3
     while row < sheet.nrows:
-        if re.match(r'0x', str(sheet.cell(row, 0).value)):
-            offset = int(sheet.cell(row, 0).value, 16)
-            if offset > block.size:
+        if is_register_row(sheet, row):
+            register = parse_register_row(sheet, row)
+            if register.offset > block.size:
                 LOGGER.error(
                     "sheet %s row %d error: offset %x > block size %x",
                     sheet.name,
@@ -46,41 +78,8 @@ def process_sheet(sheet, block):
                     offset,
                     block.size)
                 raise Exception("offset > block size")
-            name = sheet.cell(row, 1).value
-            description = "%s" % (sheet.cell(row, 7).value)
-            register = Register(name, offset, description)
             block.add_register(register)
-            if sheet.cell(row, 2).value != "":
-                LOGGER.error(
-                    "sheet %s row %d error: msb not empty in register define row",
-                    sheet.name,
-                    row + 1)
-                raise Exception("msb must be emtpy.")
-            if sheet.cell(row, 3).value != "":
-                LOGGER.error(
-                    "sheet %s row %d error: lsb not empty in register define row",
-                    sheet.name,
-                    row + 1)
-                raise Exception("lsb must be empty")
-            if sheet.cell(row, 4).value != "":
-                LOGGER.error(
-                    "sheet %s row %d error: field not empty in register define row",
-                    sheet.name,
-                    row + 1)
-                raise Exception("field must be empty")
-            if sheet.cell(row, 5).value != "":
-                LOGGER.error(
-                    "sheet %s row %d error: access not empty in register define row",
-                    sheet.name,
-                    row + 1)
-                raise Exception("access must be empty")
-            if sheet.cell(row, 6).value != "":
-                LOGGER.error(
-                    "sheet %s row %d error: Default value not empty in register define row",
-                    sheet.name,
-                    row + 1)
-                raise Exception("default must be empty")
-            register = block.find_register_by_name(name)
+
             row = row + 1
             lsb_pre = -1
             while sheet.cell(row, 2).value != "":
@@ -165,7 +164,7 @@ def process_sheet(sheet, block):
         else:
             if sheet.cell(row, 0).value != "":
                 LOGGER.error(
-                    "sheet %s row %d error: None emtpy row %d",
+                    "sheet %s row %d error: None emtpy row.",
                     sheet.name,
                     row)
                 LOGGER.error(" %s", sheet.cell(row, 0).value)
