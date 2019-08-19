@@ -107,6 +107,43 @@ def parse_field_row(sheet, row):
     field = Field(field_name, msb, lsb, default, access, description)
     return field
 
+def parse_register(sheet, block, start_row):
+    row = start_row
+    register = parse_register_row(sheet, row)
+
+    row = row + 1
+    lsb_pre = -1
+    while is_field_row(sheet, row):
+        field = parse_field_row(sheet, row)
+        try:
+            validate_field(field, block, lsb_pre)
+        except Exception as exc:
+            LOGGER.error(
+                "sheet %s row %d error: %s",
+                sheet.name,
+                row,
+                str(exc)
+            )
+            raise Exception(
+                "sheet %s row %d error: %s" % (sheet.name, row, str(exc)))
+        register.add_field(field)
+        lsb_pre = field.lsb
+        if row < sheet.nrows - 1:
+            row = row + 1
+        else:
+            break
+
+    if is_empty_row(sheet, row):
+        row = row + 1
+    else:
+        LOGGER.debug(
+            "sheet %s row %d error: no blank row between registers",
+            sheet.name,
+            row + 1)
+        raise Exception("No blank row between registers")
+    row = row + 1
+    return (register, row)
+
 def process_sheet(sheet, block):
     LOGGER.debug(
         "Processing sheet %s row=%d col=%d",
@@ -121,7 +158,7 @@ def process_sheet(sheet, block):
         if is_empty_row(sheet, row):
             pass
         elif is_register_row(sheet, row):
-            register = parse_register_row(sheet, row)
+            (register, row) = parse_register(sheet, block, row)
             if register.offset > block.size:
                 LOGGER.error(
                     "sheet %s row %d error: offset %x > block size %x",
@@ -131,38 +168,6 @@ def process_sheet(sheet, block):
                     block.size)
                 raise Exception("offset > block size")
             block.add_register(register)
-
-            row = row + 1
-            lsb_pre = -1
-            while is_field_row(sheet, row):
-                field = parse_field_row(sheet, row)
-                try:
-                    validate_field(field, block, lsb_pre)
-                except Exception as exc:
-                    LOGGER.error(
-                        "sheet %s row %d error: %s",
-                        sheet.name,
-                        row,
-                        str(exc)
-                    )
-                    raise Exception(
-                        "sheet %s row %d error: %s" % (sheet.name, row, str(exc)))
-                register.add_field(field)
-                lsb_pre = field.lsb
-                if row < sheet.nrows - 1:
-                    row = row + 1
-                else:
-                    break
-
-            if is_empty_row(sheet, row):
-                row = row + 1
-            else:
-                LOGGER.debug(
-                    "sheet %s row %d error: no blank row between registers",
-                    sheet.name,
-                    row + 1)
-                raise Exception("No blank row between registers")
-            row = row + 1
         else:
             LOGGER.error(
                 "sheet %s row %d error: unknown row.",
