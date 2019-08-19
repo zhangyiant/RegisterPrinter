@@ -134,14 +134,13 @@ def parse_register(sheet, block, start_row):
             break
 
     if is_empty_row(sheet, row):
-        row = row + 1
+        row += 1
     else:
         LOGGER.debug(
             "sheet %s row %d error: no blank row between registers",
             sheet.name,
             row + 1)
         raise Exception("No blank row between registers")
-    row = row + 1
     return (register, row)
 
 def process_sheet(sheet, block):
@@ -156,7 +155,7 @@ def process_sheet(sheet, block):
     row = 3
     while row < sheet.nrows:
         if is_empty_row(sheet, row):
-            pass
+            row += 1
         elif is_register_row(sheet, row):
             (register, row) = parse_register(sheet, block, row)
             if register.offset > block.size:
@@ -175,7 +174,6 @@ def process_sheet(sheet, block):
                 row)
             LOGGER.error(" %s", sheet.cell(row, 0).value)
             raise Exception("Unknown row")
-        row = row + 1
     block.sort_register_by_offset()
     LOGGER.debug(
         "Processing sheet %s done",
