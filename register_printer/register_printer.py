@@ -6,6 +6,7 @@ from .field import Field
 from .parse_config import parse_config
 from .parse_excels import parse_excels
 from .print_c_header import print_c_header
+from .print_doc import print_doc
 
 
 class RegisterPrinter:
@@ -67,4 +68,5 @@ class RegisterPrinter:
         return
 
     def generate_document(self):
+        print_doc(self.top_sys)
         return
