@@ -21,10 +21,13 @@ virtual function void build();
   default_map = create_map("default_map", 0, {{ (top_sys.data_width / 8) | int }}, UVM_BIG_ENDIAN, 0);
 
   {% for addr_map_entry in top_sys.addr_map %}
-  {{ addr_map_entry["block_instance"] | lower }} = {{ addr_map_entry["block_type"] | lower }}_reg_model::type_id::create("{{ addr_map_entry["block_instance"] | lower }}");
-  {{ addr_map_entry["block_instance"] | lower }}.configure(this, "");
-  {{ addr_map_entry["block_instance"] | lower }}.build();
-  default_map.add_submap({{ addr_map_entry["block_instance"] | lower }}.default_map, {{ top_sys.addr_width }}'h{{ "%x" | format(addr_map_entry["base_address"]) }});
+  {% set block_instance_name = addr_map_entry["block_instance"].lower() %}
+  {% set block_type_name = addr_map_entry["block_type"].lower() %}
+  {% set base_address = addr_map_entry["base_address"] %}
+  {{ block_instance_name }} = {{ block_type_name }}_reg_model::type_id::create("{{ block_instance_name }}");
+  {{ block_instance_name }}.configure(this, "");
+  {{ block_instance_name }}.build();
+  default_map.add_submap({{ block_instance_name }}.default_map, {{ top_sys.addr_width }}'h{{ "%x" | format(base_address) }});
 
   {% endfor %}
 endfunction: build
