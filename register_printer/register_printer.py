@@ -6,6 +6,7 @@ from .field import Field
 from .parse_config import parse_config
 from .parse_excels import parse_excels
 from .print_c_header import print_c_header
+from .print_uvm import print_uvm
 from .print_doc import print_doc
 
 
@@ -58,6 +59,7 @@ class RegisterPrinter:
         return
 
     def generate_uvm(self):
+        print_uvm(self.top_sys)
         return
 
     def generate_rtl(self):
