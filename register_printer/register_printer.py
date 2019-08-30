@@ -8,6 +8,7 @@ from .parse_excels import parse_excels
 from .print_c_header import print_c_header
 from .print_uvm import print_uvm
 from .print_doc import print_doc
+from .print_rtl import print_rtl
 
 
 class RegisterPrinter:
@@ -63,6 +64,7 @@ class RegisterPrinter:
         return
 
     def generate_rtl(self):
+        print_rtl(self.top_sys)
         return
 
     def generate_c_header(self):
