@@ -2,7 +2,7 @@ import re
 import os
 import os.path
 import logging
-from jinja2 import Environment, PackageLoader
+from .template_loader import get_template
 
 
 LOGGER = logging.getLogger(__name__)
@@ -17,12 +17,7 @@ def print_uvm_block(block, out_path):
     if os.path.exists(file_name):
         os.remove(file_name)
 
-    env = Environment(
-        loader=PackageLoader("register_printer", "templates"),
-        trim_blocks=True,
-        lstrip_blocks=True
-    )
-    template = env.get_template("reg_model.sv")
+    template = get_template("reg_model.sv")
 
     content = template.render(
         {
@@ -45,12 +40,7 @@ def print_uvm_sys(top_sys, out_path):
     if os.path.exists(file_name):
         os.remove(file_name)
 
-    env = Environment(
-        loader=PackageLoader("register_printer", "templates"),
-        trim_blocks=True,
-        lstrip_blocks=True
-    )
-    template = env.get_template("sys_model.sv")
+    template = get_template("sys_model.sv")
 
     content = template.render(
         {
@@ -73,12 +63,7 @@ def print_sv_defines(top_sys, out_path):
     if os.path.exists(file_name):
         os.remove(file_name)
 
-    env = Environment(
-        loader=PackageLoader("register_printer", "templates"),
-        trim_blocks=True,
-        lstrip_blocks=True
-    )
-    template = env.get_template("register_defines.svh")
+    template = get_template("register_defines.svh")
 
     content = template.render(
         {

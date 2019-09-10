@@ -2,7 +2,7 @@ import re
 import os
 import os.path
 import logging
-from jinja2 import Environment, PackageLoader
+from .template_loader import get_template
 
 
 LOGGER = logging.getLogger(__name__)
@@ -18,12 +18,7 @@ def print_rtl_block(block, out_path):
 
     LOGGER.debug("Generating RTL %s", block.name)
 
-    env = Environment(
-        loader=PackageLoader("register_printer", "templates"),
-        trim_blocks=True,
-        lstrip_blocks=True
-    )
-    template = env.get_template("reg_rtl.sv")
+    template = get_template("reg_rtl.sv")
 
     tmp_registers = []
     for reg in block.registers:

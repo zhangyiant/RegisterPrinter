@@ -6,7 +6,7 @@ import logging
 from .block import *
 from .register import *
 from .field import *
-from jinja2 import Environment, PackageLoader
+from .template_loader import get_template
 
 
 LOGGER = logging.getLogger(__name__)
@@ -58,11 +58,7 @@ def print_c_header_block(block, out_path):
                     "mask_value": mask_value
                 })
 
-    env = Environment(
-        loader=PackageLoader("register_printer", "templates"),
-        trim_blocks=True
-    )
-    template = env.get_template("c_header_block.h")
+    template = get_template("c_header_block.h")
 
     content = template.render(
         {
@@ -102,11 +98,7 @@ def print_c_header_sys(top_sys, out_path):
             }
         )
 
-    env = Environment(
-        loader=PackageLoader("register_printer", "templates"),
-        trim_blocks=True
-    )
-    template = env.get_template("c_header_sys.h")
+    template = get_template("c_header_sys.h")
 
     content = template.render(
         {
