@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['main.py'],
-             pathex=['C:\\Users\\ZhangZhihua\\git\\RegisterPrinter'],
+             pathex=[],
              binaries=[],
              datas=[("register_printer/templates/*", "register_printer/templates")],
              hiddenimports=[],
