@@ -9,7 +9,11 @@ LOGGER = logging.getLogger(__name__)
 def _get_template_pyinstaller(name):
     template_bin = pkgutil.get_data("register_printer", "templates/" + name)
     template_str = template_bin.decode('UTF-8')
-    template = Template(template_str)
+    template = Template(
+        template_str,
+        trim_blocks=True,
+        lstrip_blocks=True
+    )
     return template
 
 def _get_template_pkg_loader(name):
