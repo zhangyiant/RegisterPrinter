@@ -175,6 +175,7 @@ always @(posedge reg_clk or negedge reg_rstn) begin
       {% endfor %}
     {% endif %}
     end
+end
 {% endif %}
 {% for field in (register.rw_flds + register.w1c_flds + register.w0c_flds + register.wc_flds + register.wo_flds + register.wrc_flds + register.wrs_flds) %}
 assign {{ field.name }} = {{ register.name }}[{{ field.msb }}:{{ field.lsb }}];
