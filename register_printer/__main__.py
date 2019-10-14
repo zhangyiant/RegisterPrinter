@@ -9,7 +9,7 @@ logging.basicConfig(
 LOGGER = logging.getLogger(__name__)
 
 
-def main():
+def get_argument_parser():
     parser = argparse.ArgumentParser(
         prog="python -m register_printer",
         )
@@ -49,6 +49,12 @@ def main():
         action="store_true",
         help="Generate all files, same as -d -c -u -r"
     )
+    return parser
+
+
+def main():
+
+    parser = get_argument_parser()
 
     opts = parser.parse_args()
 
