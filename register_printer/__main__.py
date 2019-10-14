@@ -52,6 +52,31 @@ def get_argument_parser():
     return parser
 
 
+def generate(
+    register_printer,
+    gen_uvm=False,
+    gen_rtl=False,
+    gen_doc=False,
+    gen_c_header=False):
+
+    if gen_uvm:
+        LOGGER.debug("Generate UVM models...")
+        register_printer.generate_uvm()
+
+    if gen_rtl:
+        LOGGER.debug("Generating RTL modules...")
+        register_printer.generate_rtl()
+
+    if gen_doc:
+        LOGGER.debug("Generating documentations...")
+        register_printer.generate_document()
+
+    if gen_c_header:
+        LOGGER.debug("Generating C headers...")
+        register_printer.generate_c_header()
+    return
+
+
 def main():
 
     parser = get_argument_parser()
@@ -72,21 +97,13 @@ def main():
 
     register_printer.display()
 
-    if opts.gen_uvm:
-        LOGGER.debug("Generate UVM models...")
-        register_printer.generate_uvm()
-
-    if opts.gen_rtl:
-        LOGGER.debug("Generating RTL modules...")
-        register_printer.generate_rtl()
-
-    if opts.gen_doc:
-        LOGGER.debug("Generating documentations...")
-        register_printer.generate_document()
-
-    if opts.gen_c_header:
-        LOGGER.debug("Generating C headers...")
-        register_printer.generate_c_header()
+    generate(
+        register_printer=register_printer,
+        gen_uvm=opts.gen_uvm,
+        gen_rtl=opts.gen_rtl,
+        gen_doc=opts.gen_doc,
+        gen_c_header=opts.gen_c_header
+    )
 
     return
 
