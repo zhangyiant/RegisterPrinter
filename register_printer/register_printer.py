@@ -1,8 +1,3 @@
-from .top_sys import TopSys
-from .block import Block
-from .register import Register
-from .field import Field
-
 from .parse_config import parse_config
 from .parse_excels import parse_excels
 from .print_c_header import print_c_header
