@@ -4,7 +4,7 @@ from . import RegisterPrinter
 
 logging.basicConfig(
     level=logging.DEBUG,
-    format='%(asctime)s %(message)s')
+    format='%(asctime)s %(module)s %(message)s')
 
 LOGGER = logging.getLogger(__name__)
 
