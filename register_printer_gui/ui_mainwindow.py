@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file '..\register_printer_gui\mainwindow.ui',
 # licensing of '..\register_printer_gui\mainwindow.ui' applies.
 #
-# Created: Sun Nov 10 16:08:18 2019
+# Created: Sun Nov 10 16:41:21 2019
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(491, 313)
+        MainWindow.resize(820, 313)
         MainWindow.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
