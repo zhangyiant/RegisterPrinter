@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file '..\register_printer_gui\mainwindow.ui',
 # licensing of '..\register_printer_gui\mainwindow.ui' applies.
 #
-# Created: Sun Nov 10 18:43:31 2019
+# Created: Sun Nov 10 20:47:21 2019
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -62,15 +62,19 @@ class Ui_MainWindow(object):
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.groupBox)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.gen_doc_checkbox = QtWidgets.QCheckBox(self.groupBox)
+        self.gen_doc_checkbox.setChecked(True)
         self.gen_doc_checkbox.setObjectName("gen_doc_checkbox")
         self.verticalLayout_3.addWidget(self.gen_doc_checkbox)
         self.gen_c_header_checkbox = QtWidgets.QCheckBox(self.groupBox)
+        self.gen_c_header_checkbox.setChecked(True)
         self.gen_c_header_checkbox.setObjectName("gen_c_header_checkbox")
         self.verticalLayout_3.addWidget(self.gen_c_header_checkbox)
         self.gen_uvm_checkbox = QtWidgets.QCheckBox(self.groupBox)
+        self.gen_uvm_checkbox.setChecked(True)
         self.gen_uvm_checkbox.setObjectName("gen_uvm_checkbox")
         self.verticalLayout_3.addWidget(self.gen_uvm_checkbox)
         self.gen_rtl_checkbox = QtWidgets.QCheckBox(self.groupBox)
+        self.gen_rtl_checkbox.setChecked(True)
         self.gen_rtl_checkbox.setObjectName("gen_rtl_checkbox")
         self.verticalLayout_3.addWidget(self.gen_rtl_checkbox)
         self.gridLayout.addWidget(self.groupBox, 3, 0, 1, 3)

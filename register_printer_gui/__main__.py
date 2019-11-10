@@ -1,4 +1,5 @@
 import sys
+import traceback
 from PySide2.QtCore import (
     Slot,
     QDir,
@@ -17,15 +18,54 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.logging_editor.append("Hello")
         self.ui.pushButton.clicked.connect(self.generate)
         self.ui.config_file_button.clicked.connect(self.select_config_file)
         self.ui.excel_path_button.clicked.connect(self.select_excel_path)
         self.ui.output_path_button.clicked.connect(self.select_output_path)
         return
 
+    def _generate(
+        self,
+        register_printer,
+        gen_uvm=False,
+        gen_rtl=False,
+        gen_doc=False,
+        gen_c_header=False):
+
+        if gen_uvm:
+            self.ui.logging_editor.append("Generate UVM models...")
+            register_printer.generate_uvm()
+
+        if gen_rtl:
+            self.ui.logging_editor.append("Generating RTL modules...")
+            register_printer.generate_rtl()
+
+        if gen_doc:
+            self.ui.logging_editor.append("Generating documentations...")
+            register_printer.generate_document()
+
+        if gen_c_header:
+            self.ui.logging_editor.append("Generating C headers...")
+            register_printer.generate_c_header()
+
+        self.ui.logging_editor.append("Done")
+        return
+
     @Slot()
     def generate(self):
+
+        self.ui.logging_editor.clear()
+
+        config_file = self.ui.config_file_editor.text()
+        excel_path = self.ui.excel_path_editor.text()
+        output_path = self.ui.output_path_editor.text()
+        self.ui.logging_editor.append(
+            "Config file: {0}".format(config_file))
+        self.ui.logging_editor.append(
+            "Excel files path: {0}".format(excel_path))
+        self.ui.logging_editor.append(
+            "Output path: {0}".format(output_path))
+
         gen_doc_check_state = self.ui.gen_doc_checkbox.checkState()
         gen_doc_flag = None
         if gen_doc_check_state == Qt.Checked:
@@ -54,27 +94,35 @@ class MainWindow(QMainWindow):
         else:
             gen_rtl_flag = False
 
-        self.ui.logging_editor.clear()
-        self.ui.logging_editor.append(str(gen_doc_flag))
-        self.ui.logging_editor.append(str(gen_c_header_flag))
-        self.ui.logging_editor.append(str(gen_uvm_flag))
-        self.ui.logging_editor.append(str(gen_rtl_flag))
+        self.ui.logging_editor.append(
+            "Generate documents: {0}".format(gen_doc_flag))
+        self.ui.logging_editor.append(
+            "Generate C header files: {0}".format(gen_c_header_flag))
+        self.ui.logging_editor.append(
+            "Generate UVM models: {0}".format(gen_uvm_flag))
+        self.ui.logging_editor.append(
+            "Generate RTL modules: {0}".format(gen_rtl_flag))
 
-        config_file = self.ui.config_file_editor.text()
-        excel_path = self.ui.excel_path_editor.text()
-        output_path = self.ui.output_path_editor.text()
-        self.ui.logging_editor.append(config_file)
-        self.ui.logging_editor.append(excel_path)
-        self.ui.logging_editor.append(output_path)
+        try:
+            register_printer = RegisterPrinter(
+                config_file,
+                excel_path
+            )
 
-        register_printer = RegisterPrinter(
-            config_file,
-            excel_path
-        )
+            display_info = register_printer.display_string()
 
-        display_info = register_printer.display_string()
+            self.ui.logging_editor.append(display_info)
 
-        self.ui.logging_editor.append(display_info)
+            self._generate(
+                register_printer,
+                gen_uvm=gen_uvm_flag,
+                gen_rtl=gen_rtl_flag,
+                gen_doc=gen_doc_flag,
+                gen_c_header=gen_c_header_flag
+            )
+        except Exception as e:
+            error_info = traceback.format_exc()
+            self.ui.logging_editor.append(error_info)
 
         return
 
