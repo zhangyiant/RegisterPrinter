@@ -113,10 +113,12 @@ def print_c_header_sys(top_sys, out_path):
 
     return
 
-def print_c_header(top_sys):
+def print_c_header(top_sys, output_path="."):
     LOGGER.debug("Generating C header files...")
 
-    out_dir = "regheaders"
+    out_dir = os.path.join(
+        output_path,
+        "regheaders")
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
     for block in top_sys.blocks:

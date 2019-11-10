@@ -1,5 +1,6 @@
 import re
 import os
+import os.path
 import logging
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -139,10 +140,13 @@ def generate_doc(top_sys):
         block_idx = block_idx + 1
     return doc
 
-def print_doc(top_sys):
+def print_doc(top_sys, output_path="."):
     LOGGER.debug("Generating register description document...")
 
-    doc_file_name = top_sys.name.lower() + "_registers.docx"
+    doc_file_name = os.path.join(
+        output_path,
+        top_sys.name.lower() + "_registers.docx"
+    )
     if os.path.exists(doc_file_name):
         os.remove(doc_file_name)
 

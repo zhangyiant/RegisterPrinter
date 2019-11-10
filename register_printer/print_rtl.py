@@ -86,11 +86,13 @@ def print_rtl_block(block, out_path):
     return
 
 
-def print_rtl(top_sys):
+def print_rtl(top_sys, output_path="."):
 
     LOGGER.debug("Generating register RTL files...")
 
-    out_dir = 'regrtls'
+    out_dir = os.path.join(
+        output_path,
+        'regrtls')
 
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)

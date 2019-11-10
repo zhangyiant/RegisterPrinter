@@ -77,10 +77,12 @@ def print_sv_defines(top_sys, out_path):
     return
 
 
-def print_uvm(top_sys):
+def print_uvm(top_sys, output_path):
     LOGGER.debug("Generating UVM register model...")
 
-    out_dir = "regmodels"
+    out_dir = os.path.join(
+        output_path,
+        "regmodels")
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
 

@@ -7,9 +7,10 @@ from .print_rtl import print_rtl
 
 
 class RegisterPrinter:
-    def __init__(self, config_file, excel_path):
+    def __init__(self, config_file, excel_path, output_path="."):
         self.config_file = config_file
         self.excel_path = excel_path
+        self.output_path = output_path
         self.top_sys = parse_config(config_file)
         self.top_sys = parse_excels(self.top_sys, excel_path)
         return
@@ -25,17 +26,17 @@ class RegisterPrinter:
         return
 
     def generate_uvm(self):
-        print_uvm(self.top_sys)
+        print_uvm(self.top_sys, self.output_path)
         return
 
     def generate_rtl(self):
-        print_rtl(self.top_sys)
+        print_rtl(self.top_sys, self.output_path)
         return
 
     def generate_c_header(self):
-        print_c_header(self.top_sys)
+        print_c_header(self.top_sys, self.output_path)
         return
 
     def generate_document(self):
-        print_doc(self.top_sys)
+        print_doc(self.top_sys, self.output_path)
         return
