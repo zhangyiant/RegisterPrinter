@@ -106,7 +106,8 @@ class MainWindow(QMainWindow):
         try:
             register_printer = RegisterPrinter(
                 config_file,
-                excel_path
+                excel_path,
+                output_path
             )
 
             display_info = register_printer.display_string()
