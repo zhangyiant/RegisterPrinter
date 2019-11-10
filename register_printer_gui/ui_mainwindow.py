@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui',
-# licensing of 'mainwindow.ui' applies.
+# Form implementation generated from reading ui file '..\register_printer_gui\mainwindow.ui',
+# licensing of '..\register_printer_gui\mainwindow.ui' applies.
 #
-# Created: Sun Nov 10 15:30:59 2019
+# Created: Sun Nov 10 15:45:21 2019
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,15 +30,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
-        self.label = QtWidgets.QLabel(self.frame)
-        self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-        self.lineEdit = QtWidgets.QLineEdit(self.frame)
-        self.lineEdit.setObjectName("lineEdit")
-        self.gridLayout.addWidget(self.lineEdit, 0, 1, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.frame)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
         self.lineEdit_2 = QtWidgets.QLineEdit(self.frame)
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.gridLayout.addWidget(self.lineEdit_2, 1, 1, 1, 1)
@@ -58,7 +49,22 @@ class Ui_MainWindow(object):
         self.checkBox = QtWidgets.QCheckBox(self.groupBox)
         self.checkBox.setObjectName("checkBox")
         self.verticalLayout_3.addWidget(self.checkBox)
-        self.gridLayout.addWidget(self.groupBox, 2, 0, 1, 2)
+        self.gridLayout.addWidget(self.groupBox, 3, 0, 1, 2)
+        self.label = QtWidgets.QLabel(self.frame)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+        self.label_3 = QtWidgets.QLabel(self.frame)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.frame)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
+        self.lineEdit = QtWidgets.QLineEdit(self.frame)
+        self.lineEdit.setObjectName("lineEdit")
+        self.gridLayout.addWidget(self.lineEdit, 0, 1, 1, 1)
+        self.lineEdit_3 = QtWidgets.QLineEdit(self.frame)
+        self.lineEdit_3.setObjectName("lineEdit_3")
+        self.gridLayout.addWidget(self.lineEdit_3, 2, 1, 1, 1)
         self.verticalLayout_2.addLayout(self.gridLayout)
         self.widget = QtWidgets.QWidget(self.frame)
         self.widget.setLayoutDirection(QtCore.Qt.LeftToRight)
@@ -72,6 +78,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.pushButton)
         self.verticalLayout_2.addWidget(self.widget)
         self.textEdit = QtWidgets.QTextEdit(self.splitter)
+        self.textEdit.setReadOnly(True)
         self.textEdit.setObjectName("textEdit")
         self.verticalLayout.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -81,12 +88,13 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "RegisterPrinter GUI", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("MainWindow", "TextLabel", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "TextLabel", None, -1))
-        self.groupBox.setTitle(QtWidgets.QApplication.translate("MainWindow", "GroupBox", None, -1))
-        self.checkBox_4.setText(QtWidgets.QApplication.translate("MainWindow", "CheckBox", None, -1))
-        self.checkBox_3.setText(QtWidgets.QApplication.translate("MainWindow", "CheckBox", None, -1))
-        self.checkBox_2.setText(QtWidgets.QApplication.translate("MainWindow", "CheckBox", None, -1))
-        self.checkBox.setText(QtWidgets.QApplication.translate("MainWindow", "CheckBox", None, -1))
+        self.groupBox.setTitle(QtWidgets.QApplication.translate("MainWindow", "Generate options:", None, -1))
+        self.checkBox_4.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register documents.", None, -1))
+        self.checkBox_3.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register C header files.", None, -1))
+        self.checkBox_2.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register UVM models.", None, -1))
+        self.checkBox.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register RTL modudles.", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("MainWindow", "Config file:", None, -1))
+        self.label_3.setText(QtWidgets.QApplication.translate("MainWindow", "Output path:", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "Excel path:", None, -1))
         self.pushButton.setText(QtWidgets.QApplication.translate("MainWindow", "Generate", None, -1))
 

@@ -33,62 +33,72 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEdit"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="lineEdit_2"/>
           </item>
-          <item row="2" column="0" colspan="2">
+          <item row="3" column="0" colspan="2">
            <widget class="QGroupBox" name="groupBox">
             <property name="title">
-             <string>GroupBox</string>
+             <string>Generate options:</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
               <widget class="QCheckBox" name="checkBox_4">
                <property name="text">
-                <string>CheckBox</string>
+                <string>Generate register documents.</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QCheckBox" name="checkBox_3">
                <property name="text">
-                <string>CheckBox</string>
+                <string>Generate register C header files.</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QCheckBox" name="checkBox_2">
                <property name="text">
-                <string>CheckBox</string>
+                <string>Generate register UVM models.</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QCheckBox" name="checkBox">
                <property name="text">
-                <string>CheckBox</string>
+                <string>Generate register RTL modudles.</string>
                </property>
               </widget>
              </item>
             </layout>
            </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Config file:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Output path:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Excel path:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEdit"/>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineEdit_3"/>
           </item>
          </layout>
         </item>
@@ -119,7 +129,11 @@
         </item>
        </layout>
       </widget>
-      <widget class="QTextEdit" name="textEdit"/>
+      <widget class="QTextEdit" name="textEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
