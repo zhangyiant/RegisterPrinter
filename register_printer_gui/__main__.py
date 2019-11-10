@@ -10,6 +10,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.ui.logging_editor.append("Hello")
         return
 
 def main():
