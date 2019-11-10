@@ -104,6 +104,8 @@ class MainWindow(QMainWindow):
             "Generate RTL modules: {0}".format(gen_rtl_flag))
 
         try:
+            if not output_path:
+                output_path = "."
             register_printer = RegisterPrinter(
                 config_file,
                 excel_path,
