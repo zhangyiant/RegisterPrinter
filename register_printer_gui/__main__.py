@@ -1,4 +1,5 @@
 import sys
+from PySide2.QtCore import Slot
 from PySide2.QtWidgets import (
     QApplication,
     QMainWindow
@@ -11,6 +12,12 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.logging_editor.append("Hello")
+        self.ui.pushButton.clicked.connect(self.update_logging)
+        return
+
+    @Slot()
+    def update_logging(self):
+        self.ui.logging_editor.append(" World!")
         return
 
 def main():

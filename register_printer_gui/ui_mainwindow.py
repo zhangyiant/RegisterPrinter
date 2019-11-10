@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file '..\register_printer_gui\mainwindow.ui',
 # licensing of '..\register_printer_gui\mainwindow.ui' applies.
 #
-# Created: Sun Nov 10 15:57:22 2019
+# Created: Sun Nov 10 16:08:18 2019
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
