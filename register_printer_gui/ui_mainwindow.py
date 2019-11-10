@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file '..\register_printer_gui\mainwindow.ui',
 # licensing of '..\register_printer_gui\mainwindow.ui' applies.
 #
-# Created: Sun Nov 10 16:41:21 2019
+# Created: Sun Nov 10 18:43:31 2019
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -61,18 +61,18 @@ class Ui_MainWindow(object):
         self.groupBox.setObjectName("groupBox")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.groupBox)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.checkBox_4 = QtWidgets.QCheckBox(self.groupBox)
-        self.checkBox_4.setObjectName("checkBox_4")
-        self.verticalLayout_3.addWidget(self.checkBox_4)
-        self.checkBox_3 = QtWidgets.QCheckBox(self.groupBox)
-        self.checkBox_3.setObjectName("checkBox_3")
-        self.verticalLayout_3.addWidget(self.checkBox_3)
-        self.checkBox_2 = QtWidgets.QCheckBox(self.groupBox)
-        self.checkBox_2.setObjectName("checkBox_2")
-        self.verticalLayout_3.addWidget(self.checkBox_2)
-        self.checkBox = QtWidgets.QCheckBox(self.groupBox)
-        self.checkBox.setObjectName("checkBox")
-        self.verticalLayout_3.addWidget(self.checkBox)
+        self.gen_doc_checkbox = QtWidgets.QCheckBox(self.groupBox)
+        self.gen_doc_checkbox.setObjectName("gen_doc_checkbox")
+        self.verticalLayout_3.addWidget(self.gen_doc_checkbox)
+        self.gen_c_header_checkbox = QtWidgets.QCheckBox(self.groupBox)
+        self.gen_c_header_checkbox.setObjectName("gen_c_header_checkbox")
+        self.verticalLayout_3.addWidget(self.gen_c_header_checkbox)
+        self.gen_uvm_checkbox = QtWidgets.QCheckBox(self.groupBox)
+        self.gen_uvm_checkbox.setObjectName("gen_uvm_checkbox")
+        self.verticalLayout_3.addWidget(self.gen_uvm_checkbox)
+        self.gen_rtl_checkbox = QtWidgets.QCheckBox(self.groupBox)
+        self.gen_rtl_checkbox.setObjectName("gen_rtl_checkbox")
+        self.verticalLayout_3.addWidget(self.gen_rtl_checkbox)
         self.gridLayout.addWidget(self.groupBox, 3, 0, 1, 3)
         self.verticalLayout_2.addLayout(self.gridLayout)
         self.widget = QtWidgets.QWidget(self.frame)
@@ -104,9 +104,9 @@ class Ui_MainWindow(object):
         self.excel_path_button.setText(QtWidgets.QApplication.translate("MainWindow", "...", None, -1))
         self.output_path_button.setText(QtWidgets.QApplication.translate("MainWindow", "...", None, -1))
         self.groupBox.setTitle(QtWidgets.QApplication.translate("MainWindow", "Generate options:", None, -1))
-        self.checkBox_4.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register documents.", None, -1))
-        self.checkBox_3.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register C header files.", None, -1))
-        self.checkBox_2.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register UVM models.", None, -1))
-        self.checkBox.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register RTL modudles.", None, -1))
+        self.gen_doc_checkbox.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register documents.", None, -1))
+        self.gen_c_header_checkbox.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register C header files.", None, -1))
+        self.gen_uvm_checkbox.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register UVM models.", None, -1))
+        self.gen_rtl_checkbox.setText(QtWidgets.QApplication.translate("MainWindow", "Generate register RTL modudles.", None, -1))
         self.pushButton.setText(QtWidgets.QApplication.translate("MainWindow", "Generate", None, -1))
 
