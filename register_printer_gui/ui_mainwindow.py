@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file '..\register_printer_gui\mainwindow.ui',
 # licensing of '..\register_printer_gui\mainwindow.ui' applies.
 #
-# Created: Sun Nov 10 20:47:21 2019
+# Created: Sun Nov 10 22:40:51 2019
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -98,6 +98,17 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.config_file_editor, self.excel_path_editor)
+        MainWindow.setTabOrder(self.excel_path_editor, self.output_path_editor)
+        MainWindow.setTabOrder(self.output_path_editor, self.gen_doc_checkbox)
+        MainWindow.setTabOrder(self.gen_doc_checkbox, self.gen_c_header_checkbox)
+        MainWindow.setTabOrder(self.gen_c_header_checkbox, self.gen_uvm_checkbox)
+        MainWindow.setTabOrder(self.gen_uvm_checkbox, self.gen_rtl_checkbox)
+        MainWindow.setTabOrder(self.gen_rtl_checkbox, self.pushButton)
+        MainWindow.setTabOrder(self.pushButton, self.logging_editor)
+        MainWindow.setTabOrder(self.logging_editor, self.config_file_button)
+        MainWindow.setTabOrder(self.config_file_button, self.output_path_button)
+        MainWindow.setTabOrder(self.output_path_button, self.excel_path_button)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "RegisterPrinter GUI", None, -1))

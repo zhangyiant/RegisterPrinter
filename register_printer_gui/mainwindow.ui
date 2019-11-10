@@ -172,6 +172,20 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>config_file_editor</tabstop>
+  <tabstop>excel_path_editor</tabstop>
+  <tabstop>output_path_editor</tabstop>
+  <tabstop>gen_doc_checkbox</tabstop>
+  <tabstop>gen_c_header_checkbox</tabstop>
+  <tabstop>gen_uvm_checkbox</tabstop>
+  <tabstop>gen_rtl_checkbox</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>logging_editor</tabstop>
+  <tabstop>config_file_button</tabstop>
+  <tabstop>output_path_button</tabstop>
+  <tabstop>excel_path_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
