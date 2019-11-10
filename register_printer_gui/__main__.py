@@ -10,6 +10,7 @@ from PySide2.QtWidgets import (
     QFileDialog
 )
 from .ui_mainwindow import Ui_MainWindow
+from register_printer import RegisterPrinter
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -58,9 +59,23 @@ class MainWindow(QMainWindow):
         self.ui.logging_editor.append(str(gen_c_header_flag))
         self.ui.logging_editor.append(str(gen_uvm_flag))
         self.ui.logging_editor.append(str(gen_rtl_flag))
-        self.ui.logging_editor.append(self.ui.config_file_editor.text())
-        self.ui.logging_editor.append(self.ui.excel_path_editor.text())
-        self.ui.logging_editor.append(self.ui.output_path_editor.text())
+
+        config_file = self.ui.config_file_editor.text()
+        excel_path = self.ui.excel_path_editor.text()
+        output_path = self.ui.output_path_editor.text()
+        self.ui.logging_editor.append(config_file)
+        self.ui.logging_editor.append(excel_path)
+        self.ui.logging_editor.append(output_path)
+
+        register_printer = RegisterPrinter(
+            config_file,
+            excel_path
+        )
+
+        display_info = register_printer.display_string()
+
+        self.ui.logging_editor.append(display_info)
+
         return
 
     @Slot()

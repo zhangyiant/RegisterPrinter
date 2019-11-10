@@ -14,6 +14,9 @@ class RegisterPrinter:
         self.top_sys = parse_excels(self.top_sys, excel_path)
         return
 
+    def display_string(self):
+        return str(self.top_sys)
+
     def display(self):
         print(self.top_sys)
         return
