@@ -1,6 +1,7 @@
 import sys
 import traceback
 from PySide2.QtCore import (
+    Signal,
     Slot,
     QDir,
     Qt
@@ -14,6 +15,9 @@ from .ui_mainwindow import Ui_MainWindow
 from register_printer import RegisterPrinter
 
 class MainWindow(QMainWindow):
+
+    log = Signal(str)
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -22,6 +26,7 @@ class MainWindow(QMainWindow):
         self.ui.config_file_button.clicked.connect(self.select_config_file)
         self.ui.excel_path_button.clicked.connect(self.select_excel_path)
         self.ui.output_path_button.clicked.connect(self.select_output_path)
+        self.log.connect(self.log_message)
         return
 
     def _generate(
@@ -33,22 +38,27 @@ class MainWindow(QMainWindow):
         gen_c_header=False):
 
         if gen_uvm:
-            self.ui.logging_editor.append("Generate UVM models...")
+            self.log.emit("Generate UVM models...")
             register_printer.generate_uvm()
 
         if gen_rtl:
-            self.ui.logging_editor.append("Generating RTL modules...")
+            self.log.emit("Generating RTL modules...")
             register_printer.generate_rtl()
 
         if gen_doc:
-            self.ui.logging_editor.append("Generating documentations...")
+            self.log.emit("Generating documentations...")
             register_printer.generate_document()
 
         if gen_c_header:
-            self.ui.logging_editor.append("Generating C headers...")
+            self.log.emit("Generating C headers...")
             register_printer.generate_c_header()
 
-        self.ui.logging_editor.append("Done")
+        self.log.emit("Done")
+        return
+
+    @Slot(str)
+    def log_message(self, message):
+        self.ui.logging_editor.append(message)
         return
 
     @Slot()
@@ -59,11 +69,11 @@ class MainWindow(QMainWindow):
         config_file = self.ui.config_file_editor.text()
         excel_path = self.ui.excel_path_editor.text()
         output_path = self.ui.output_path_editor.text()
-        self.ui.logging_editor.append(
+        self.log.emit(
             "Config file: {0}".format(config_file))
-        self.ui.logging_editor.append(
+        self.log.emit(
             "Excel files path: {0}".format(excel_path))
-        self.ui.logging_editor.append(
+        self.log.emit(
             "Output path: {0}".format(output_path))
 
         gen_doc_check_state = self.ui.gen_doc_checkbox.checkState()
@@ -94,13 +104,13 @@ class MainWindow(QMainWindow):
         else:
             gen_rtl_flag = False
 
-        self.ui.logging_editor.append(
+        self.log.emit(
             "Generate documents: {0}".format(gen_doc_flag))
-        self.ui.logging_editor.append(
+        self.log.emit(
             "Generate C header files: {0}".format(gen_c_header_flag))
-        self.ui.logging_editor.append(
+        self.log.emit(
             "Generate UVM models: {0}".format(gen_uvm_flag))
-        self.ui.logging_editor.append(
+        self.log.emit(
             "Generate RTL modules: {0}".format(gen_rtl_flag))
 
         try:
@@ -125,7 +135,7 @@ class MainWindow(QMainWindow):
             )
         except Exception as e:
             error_info = traceback.format_exc()
-            self.ui.logging_editor.append(error_info)
+            self.log.emit(error_info)
 
         return
 
