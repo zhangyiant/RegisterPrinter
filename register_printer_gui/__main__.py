@@ -1,5 +1,6 @@
 import sys
 import traceback
+
 from PySide2.QtCore import (
     Signal,
     Slot,
@@ -18,6 +19,7 @@ from register_printer import RegisterPrinter
 class GenerateThread(QThread):
 
     log = Signal(str)
+    done = Signal()
 
     def __init__(self, config_file, excel_path, output_path,
             gen_doc_flag, gen_c_header_flag, gen_uvm_flag, gen_rtl_flag):
@@ -55,7 +57,6 @@ class GenerateThread(QThread):
             self.log.emit("Generating C headers...")
             register_printer.generate_c_header()
 
-        self.log.emit("Done")
         return
 
     def run(self):
@@ -105,6 +106,8 @@ class GenerateThread(QThread):
         except Exception as e:
             error_info = traceback.format_exc()
             self.log.emit(error_info)
+        self.done.emit()
+        return
 
 class MainWindow(QMainWindow):
 
@@ -121,7 +124,11 @@ class MainWindow(QMainWindow):
         self.log.connect(self.log_message)
         return
 
-
+    @Slot()
+    def generated(self):
+        self.ui.logging_editor.append("Done")
+        self.ui.pushButton.setEnabled(True)
+        return
 
     @Slot(str)
     def log_message(self, message):
@@ -132,6 +139,7 @@ class MainWindow(QMainWindow):
     def generate(self):
 
         self.ui.logging_editor.clear()
+        self.ui.pushButton.setDisabled(True)
 
         config_file = self.ui.config_file_editor.text()
         excel_path = self.ui.excel_path_editor.text()
@@ -175,6 +183,7 @@ class MainWindow(QMainWindow):
             gen_rtl_flag)
 
         self.generateThread.log.connect(self.log_message)
+        self.generateThread.done.connect(self.generated)
 
         self.generateThread.start()
 
