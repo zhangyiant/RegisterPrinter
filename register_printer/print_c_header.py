@@ -37,7 +37,7 @@ def print_c_header_block(block, out_path):
                 "type": "volatile const int",
                 "name": "RSVD%d[%d]" % (rsvd_idx, nrsvd)
             }
-            sruct_fields.append(struct_field)
+            struct_fields.append(struct_field)
             rsvd_idx = rsvd_idx + 1
         struct_field = {
             "type": "volatile int",
