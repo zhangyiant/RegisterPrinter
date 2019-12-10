@@ -119,7 +119,7 @@ def generate_doc(top_sys):
     i = 1
     for addr_map in top_sys.addr_map:
         table.cell(i, 0).text = str(addr_map['block_instance'])
-        table.cell(i, 1).text = str(addr_map['base_address'])
+        table.cell(i, 1).text = hex(addr_map['base_address'])
         table.cell(i, 2).text = hex(addr_map['block_size'])
         i += 1
     doc.add_page_break()
