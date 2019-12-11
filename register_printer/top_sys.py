@@ -97,10 +97,3 @@ class TopSys:
         result += "--------------------------------"
         return result
 
-    @staticmethod
-    def parse(config_file, excels_path):
-        top_sys = TopSys("abc", 50, 60)
-        # reg_sys = parse_config(opts.config_file)
-        # reg_sys.display()
-        # reg_sys = parse_excels(reg_sys, opts.work_path)
-        return top_sys
