@@ -60,7 +60,6 @@ def print_rtl_block(block, out_path):
                 wrs_flds.append(fld)
             elif fld.access == "-":
                 ro_flds.append(fld)
-                rw_flds = []
         tmp_register["rw_flds"] = rw_flds
         tmp_register["ro_flds"] = ro_flds
         tmp_register["rc_flds"] = rc_flds
