@@ -58,7 +58,7 @@ always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
     {% for field in register.fields %}
       {% if not field.access in ["RO", "-"] %}
-        {{ register.name }}[{{ '%2s' | format(field.msb) }}:{{ "%2s" | format(field.lsb)}}] <= 'h{{ "%x" | format(field.default)}},
+        {{ register.name }}[{{ '%2s' | format(field.msb) }}:{{ "%2s" | format(field.lsb)}}] <= 'h{{ "%x" | format(field.default)}};
       {% endif %}
     {% endfor %}
     end
