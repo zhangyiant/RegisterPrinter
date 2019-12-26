@@ -4,6 +4,7 @@ import sys
 import logging
 from xlrd import *
 from .top_sys import *
+from .parse_excels import parse_excels
 from .block import Block
 
 
@@ -64,4 +65,9 @@ def parse_config(cfg_name):
 
     if not found:
         LOGGER.error("Error: No Sheet named \"Top\" in config file!")
+    return top_sys
+
+def parse_top_sys(config_file, excel_path):
+    top_sys = parse_config(config_file)
+    top_sys = parse_excels(top_sys, excel_path)
     return top_sys

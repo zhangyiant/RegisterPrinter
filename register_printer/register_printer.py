@@ -1,5 +1,4 @@
-from .parse_config import parse_config
-from .parse_excels import parse_excels
+from .parse_config import parse_top_sys
 from .print_c_header import print_c_header
 from .print_uvm import print_uvm
 from .print_doc import print_doc
@@ -11,8 +10,7 @@ class RegisterPrinter:
         self.config_file = config_file
         self.excel_path = excel_path
         self.output_path = output_path
-        self.top_sys = parse_config(config_file)
-        self.top_sys = parse_excels(self.top_sys, excel_path)
+        self.top_sys = parse_top_sys(self.config_file, self.excel_path)
         return
 
     def display_string(self):
