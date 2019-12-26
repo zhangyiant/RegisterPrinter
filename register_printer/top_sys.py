@@ -1,5 +1,4 @@
 import textwrap
-from .block import *
 from .print_uvm import print_uvm
 from .print_c_header import print_c_header
 from .print_doc import print_doc
