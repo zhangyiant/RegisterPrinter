@@ -37,7 +37,7 @@ def parse_sheet(sheet):
             block_data_size = data_size
         else:
             block_data_size = int(val)
-        if top_sys.find_block_by_name(block_type) is None:
+        if top_sys.find_block_by_type(block_type) is None:
             block = Block(
                 block_type,
                 block_size,

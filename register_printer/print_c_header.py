@@ -13,11 +13,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 def print_c_header_block(block, out_path):
-    LOGGER.debug("Print block %s C header...", block.name)
+    LOGGER.debug("Print block %s C header...", block.block_type)
 
     file_name = os.path.join(
         out_path,
-        "regs_" + block.name.lower() + ".h")
+        "regs_" + block.block_type.lower() + ".h")
     if os.path.exists(file_name):
         os.remove(file_name)
 
@@ -62,7 +62,7 @@ def print_c_header_block(block, out_path):
 
     content = template.render(
         {
-            "block_name": block.name,
+            "block_type": block.block_type,
             "struct_fields": struct_fields,
             "pos_mask_macros": pos_mask_macros
         }
@@ -86,7 +86,7 @@ def print_c_header_sys(top_sys, out_path):
     include_macro_name = "REGS_" + top_sys.name.upper() + "_H"
     include_filenames = []
     for block in top_sys.blocks:
-        include_filename = "regs_" + block.name.lower() + ".h"
+        include_filename = "regs_" + block.block_type.lower() + ".h"
         include_filenames.append(include_filename)
     block_instances = []
     for addr_entry in top_sys.addr_map:

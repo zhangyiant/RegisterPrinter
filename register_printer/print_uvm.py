@@ -9,7 +9,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def print_uvm_block(block, out_path):
-    uvm_block_name = block.name.lower() + "_reg_model"
+    uvm_block_name = block.block_type.lower() + "_reg_model"
     file_name = os.path.join(
         out_path,
         uvm_block_name + ".sv")

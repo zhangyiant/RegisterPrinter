@@ -2,8 +2,8 @@ import textwrap
 from .register import *
 
 class Block:
-    def __init__(self, name, size, addr_len, data_len):
-        self._name = name
+    def __init__(self, block_type, size, addr_len, data_len):
+        self._block_type = block_type
         self._size = size
         self._addr_len = addr_len
         self._data_len = data_len
@@ -11,8 +11,8 @@ class Block:
         return
 
     @property
-    def name(self):
-        return self._name
+    def block_type(self):
+        return self._block_type
 
     @property
     def size(self):
@@ -54,7 +54,7 @@ class Block:
         return
 
     def __str__(self):
-        result = "Block " + str(self._name) + "\n"
+        result = "Block " + str(self._block_type) + "\n"
         result += "    Size         : " + str(self._size) + "\n"
         result += "    Address width: " + str(self._addr_len) + "\n"
         result += "    Data width   : " + str(self._data_len) + "\n"

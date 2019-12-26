@@ -70,9 +70,9 @@ class TopSys:
         self.addr_map.append(address_map_entry)
         return
 
-    def find_block_by_name(self, name):
+    def find_block_by_type(self, block_type):
         for block in self.blocks:
-            if block.name.upper() == name.upper():
+            if block.block_type.upper() == block_type.upper():
                 return block
         return None
 

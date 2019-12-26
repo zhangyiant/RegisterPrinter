@@ -11,12 +11,12 @@ LOGGER = logging.getLogger(__name__)
 def print_rtl_block(block, out_path):
     file_name = os.path.join(
         out_path,
-        block.name + "_reg.sv")
+        block.block_type + "_reg.sv")
 
     if os.path.exists(file_name):
         os.remove(file_name)
 
-    LOGGER.debug("Generating RTL %s", block.name)
+    LOGGER.debug("Generating RTL %s", block.block_type)
 
     template = get_template("reg_rtl.sv")
 

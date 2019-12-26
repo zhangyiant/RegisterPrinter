@@ -185,7 +185,7 @@ def parse_excel_file(filename, top_sys):
     for sheet in workbook.sheets():
         if sheet.name == "Top":
             continue
-        block = top_sys.find_block_by_name(sheet.name)
+        block = top_sys.find_block_by_type(sheet.name)
         if block is not None:
             process_sheet(sheet, block)
     return

@@ -1,4 +1,4 @@
-module {{ block.name }}_reg
+module {{ block.block_type }}_reg
 #(
 {% for register in block.registers %}
     parameter int {{ (register.name + "_addr") | upper }} = 'h{{ "%x" | format(register.offset) }},

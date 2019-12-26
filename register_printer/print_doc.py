@@ -58,7 +58,7 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
     return
 
 def print_doc_block(block, doc, idx, instances):
-    doc.add_heading("%d %s Registers" % (idx, block.name), level=1)
+    doc.add_heading("%d %s Registers" % (idx, block.block_type), level=1)
     tb = doc.add_table(
         len(block.registers) + 1,
         2 + len(instances),
@@ -129,7 +129,7 @@ def generate_doc(top_sys):
         # get block instances
         blk_insts = []
         for addr_entry in top_sys.addr_map:
-            if addr_entry['block_type'] == block.name:
+            if addr_entry['block_type'] == block.block_type:
                 inst = {
                     "inst_name": addr_entry["block_instance"],
                     "inst_base": int(addr_entry["base_address"])

@@ -1,12 +1,12 @@
-#ifndef __REGS_{{ block_name | upper }}_H__
-#define __REGS_{{ block_name | upper }}_H__
+#ifndef __REGS_{{ block_type | upper }}_H__
+#define __REGS_{{ block_type | upper }}_H__
 
 typedef struct
 {
 {% for struct_field in struct_fields %}
     {{ "%-24s\t%-24s\t;" | format(struct_field.type, struct_field.name) }}
 {% endfor %}
-} {{ block_name | upper }}_TypeDef;
+} {{ block_type | upper }}_TypeDef;
 
 
 {% for pos_mask_macro in pos_mask_macros %}

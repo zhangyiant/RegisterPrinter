@@ -1,4 +1,4 @@
-{% set uvm_block_name = block.name.lower() + "_reg_model" %}
+{% set uvm_block_name = block.block_type.lower() + "_reg_model" %}
 `ifndef {{ uvm_block_name | upper }}__SV
 `define {{ uvm_block_name | upper }}__SV
 
