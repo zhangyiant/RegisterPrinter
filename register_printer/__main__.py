@@ -25,6 +25,12 @@ def get_argument_parser():
         metavar="EXCEL_FILES_PATH"
     )
     parser.add_argument(
+        "-o", dest="output_path",
+        default=".",
+        help="Output path of generated files. Default \".\"",
+        metavar="OUTPUT_PATH"
+    )
+    parser.add_argument(
         "-d", dest="gen_doc",
         action="store_true",
         help="Generate register documents."
@@ -92,7 +98,8 @@ def main():
     LOGGER.debug("Initialize RegisterPrinter...")
     register_printer = RegisterPrinter(
         opts.config_file,
-        opts.work_path
+        opts.work_path,
+        opts.output_path
     )
 
     register_printer.display()
