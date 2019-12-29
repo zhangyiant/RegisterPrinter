@@ -71,23 +71,12 @@ def parse_register_row(sheet, row):
 def validate_field(field, block, previous_lsb):
     msb = field.msb
     lsb = field.lsb
-    name = field.name
-    access = field.access
-    default = field.default
     if msb not in range(block.data_len):
         raise Exception("Invalid msb %d" % msb)
     if lsb not in range(block.data_len):
         raise Exceptioin("Invalid lsb %d" % lsb)
-    if lsb > msb:
-        raise Exception("lsb %d > msb %d" % (lsb, msb))
     if previous_lsb >= msb:
         raise Exception("previous lsb %d > msb %d" % (previous_lsb, msb))
-    if name == "":
-        raise Exception("no Field Name")
-    if access not in RW_TYPES:
-        raise Exception("Invalid access type.")
-    if default >= (1 << (msb-lsb + 1)):
-        raise Exception("Default value is out of range.")
     return
 
 
@@ -99,8 +88,9 @@ def parse_register(sheet, block, start_row):
     lsb_pre = -1
     while is_field_row(sheet, row):
         sheet_row = sheet.row(row)
-        field = Field.parse_excel_row(sheet_row)
+        field = None
         try:
+            field = Field.parse_excel_row(sheet_row)
             validate_field(field, block, lsb_pre)
         except Exception as exc:
             LOGGER.error(

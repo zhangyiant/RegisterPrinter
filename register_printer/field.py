@@ -37,6 +37,22 @@ class Field:
     def description(self):
         return self._description
 
+    def validate(self):
+        msb = self.msb
+        lsb = self.lsb
+        name = self.name
+        access = self.access
+        default = self.default
+        if lsb > msb:
+            raise Exception("lsb %d > msb %d" % (lsb, msb))
+        if name == "":
+            raise Exception("no Field Name")
+        if access not in RW_TYPES:
+            raise Exception("Invalid access type.")
+        if default >= (1 << (msb-lsb + 1)):
+            raise Exception("Default value is out of range.")
+        return
+
     @staticmethod
     def parse_excel_row(row):
         '''
@@ -57,6 +73,7 @@ class Field:
             except:
                 raise Exception("Invalid default value")
         field = Field(field_name, msb, lsb, default, access, description)
+        field.validate()
         return field
 
     def __str__(self):
