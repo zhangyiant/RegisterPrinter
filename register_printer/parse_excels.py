@@ -61,13 +61,12 @@ def parse_register(sheet, block, start_row):
         raise
 
     rowx = rowx + 1
-    lsb_pre = -1
     row = sheet.row(rowx)
+    lsb_pre = -1
     while Field.is_field_row(row):
-        sheet_row = sheet.row(rowx)
         field = None
         try:
-            field = Field.parse_excel_row(sheet_row)
+            field = Field.parse_excel_row(row)
             validate_field(field, block, lsb_pre)
         except Exception as exc:
             LOGGER.error(
@@ -86,7 +85,6 @@ def parse_register(sheet, block, start_row):
         else:
             break
 
-    row = sheet.row(rowx)
     if is_empty_row(row):
         rowx += 1
     else:
