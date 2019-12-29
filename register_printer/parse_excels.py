@@ -90,13 +90,13 @@ def validate_field(field, block, previous_lsb):
         raise Exception("Default value is out of range.")
     return
 
-def parse_field_row(sheet, row):
-    msb = int(sheet.cell(row, 2).value)
-    lsb = int(sheet.cell(row, 3).value)
-    field_name = sheet.cell(row, 4).value
-    access = sheet.cell(row, 5).value.upper()
-    default = sheet.cell(row, 6).value
-    description = "%s" % (sheet.cell(row, 7).value)
+def parse_field_row(row):
+    msb = int(row[2].value)
+    lsb = int(row[3].value)
+    field_name = row[4].value
+    access = row[5].value.upper()
+    default = row[6].value
+    description = "%s" % (row[7].value)
     if re.match(r"0x", str(default)):
         default = int(default, 16)
     else:
@@ -114,7 +114,8 @@ def parse_register(sheet, block, start_row):
     row = row + 1
     lsb_pre = -1
     while is_field_row(sheet, row):
-        field = parse_field_row(sheet, row)
+        sheet_row = sheet.row(row)
+        field = parse_field_row(sheet_row)
         try:
             validate_field(field, block, lsb_pre)
         except Exception as exc:
