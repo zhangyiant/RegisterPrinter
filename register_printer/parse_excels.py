@@ -66,24 +66,24 @@ def validate_field(field, block, previous_lsb):
 
 
 def parse_register(sheet, block, start_row):
-    row = start_row
+    rowx = start_row
 
     register = None
     try:
-        register = parse_register_row(sheet, row)
+        register = parse_register_row(sheet, rowx)
     except Exception as exc:
         LOGGER.error(
             "sheet %s row %d error: %s",
             sheet.name,
-            row + 1,
+            rowx + 1,
             str(exc)
         )
         raise
 
-    row = row + 1
+    rowx = rowx + 1
     lsb_pre = -1
-    while is_field_row(sheet, row):
-        sheet_row = sheet.row(row)
+    while is_field_row(sheet, rowx):
+        sheet_row = sheet.row(rowx)
         field = None
         try:
             field = Field.parse_excel_row(sheet_row)
@@ -92,27 +92,27 @@ def parse_register(sheet, block, start_row):
             LOGGER.error(
                 "sheet %s row %d error: %s",
                 sheet.name,
-                row,
+                rowx,
                 str(exc)
             )
             raise Exception(
-                "sheet %s row %d error: %s" % (sheet.name, row, str(exc)))
+                "sheet %s row %d error: %s" % (sheet.name, rowx, str(exc)))
         register.add_field(field)
         lsb_pre = field.lsb
-        if row < sheet.nrows - 1:
-            row = row + 1
+        if rowx < sheet.nrows - 1:
+            rowx = rowx + 1
         else:
             break
 
-    if is_empty_row(sheet, row):
-        row += 1
+    if is_empty_row(sheet, rowx):
+        rowx += 1
     else:
         LOGGER.debug(
             "sheet %s row %d error: no blank row between registers",
             sheet.name,
-            row + 1)
+            rowx + 1)
         raise Exception("No blank row between registers")
-    return (register, row)
+    return (register, rowx)
 
 def process_sheet(sheet, block):
     LOGGER.debug(
