@@ -43,16 +43,8 @@ def is_empty_row(sheet, row):
 def parse_register_row(sheet, rowx):
 
     row = sheet.row(rowx)
-    try:
-        Register.validate_register_row_empty_field(row)
-    except Exception as exc:
-        LOGGER.error(
-            "sheet %s row %d error: %s",
-            sheet.name,
-            rowx + 1,
-            str(exc)
-        )
-        raise
+
+    Register.validate_register_row_empty_field(row)
 
     offset = int(row[0].value, 16)
     name = row[1].value
@@ -75,7 +67,18 @@ def validate_field(field, block, previous_lsb):
 
 def parse_register(sheet, block, start_row):
     row = start_row
-    register = parse_register_row(sheet, row)
+
+    register = None
+    try:
+        register = parse_register_row(sheet, row)
+    except Exception as exc:
+        LOGGER.error(
+            "sheet %s row %d error: %s",
+            sheet.name,
+            row + 1,
+            str(exc)
+        )
+        raise
 
     row = row + 1
     lsb_pre = -1
