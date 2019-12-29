@@ -39,7 +39,7 @@ def is_empty_row(sheet, row):
         return True
     return False
 
-def validate_register_row_empty_field(sheet, row):
+def validate_register_row_empty_field(sheet, rowx):
     field_map = [
         (2, "msb"),
         (3, "lsb"),
@@ -48,11 +48,11 @@ def validate_register_row_empty_field(sheet, row):
         (6, "default")
     ]
     for (col, field_name) in field_map:
-        if sheet.cell(row, col).value != "":
+        if sheet.cell(rowx, col).value != "":
             LOGGER.error(
                 "sheet %s row %d error: %s not empty in register define row",
                 sheet.name,
-                row + 1,
+                rowx + 1,
                 field_name)
             raise Exception("%s must be emtpy." % field_name)
     return
