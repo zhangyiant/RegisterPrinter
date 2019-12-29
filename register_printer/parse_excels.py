@@ -127,17 +127,17 @@ def process_sheet(sheet, block):
 
     validate_sheet(sheet)
 
-    row = 3
-    while row < sheet.nrows:
-        if is_empty_row(sheet, row):
-            row += 1
-        elif is_register_row(sheet, row):
-            (register, row) = parse_register(sheet, block, row)
+    rowx = 3
+    while rowx < sheet.nrows:
+        if is_empty_row(sheet, rowx):
+            rowx += 1
+        elif is_register_row(sheet, rowx):
+            (register, rowx) = parse_register(sheet, block, rowx)
             if register.offset > block.size:
                 LOGGER.error(
                     "sheet %s row %d error: offset %x > block size %x",
                     sheet.name,
-                    row,
+                    rowx,
                     offset,
                     block.size)
                 raise Exception("offset > block size")
@@ -146,8 +146,8 @@ def process_sheet(sheet, block):
             LOGGER.error(
                 "sheet %s row %d error: unknown row.",
                 sheet.name,
-                row)
-            LOGGER.error(" %s", sheet.cell(row, 0).value)
+                rowx)
+            LOGGER.error(" %s", sheet.cell(rowx, 0).value)
             raise Exception("Unknown row")
     block.sort_register_by_offset()
     LOGGER.debug(
