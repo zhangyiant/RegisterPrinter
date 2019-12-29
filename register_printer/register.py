@@ -1,3 +1,4 @@
+import re
 import textwrap
 from .field import *
 
@@ -67,6 +68,15 @@ class Register:
         register = Register(name, offset, description)
 
         return register
+
+    @staticmethod
+    def is_register_row(row):
+        '''
+            row: xlrd row object.
+        '''
+        if re.match(r'0x', str(row[0].value)):
+            return True
+        return False
 
     def __str__(self):
         result = "Register " + str(self.name) + "\n"
