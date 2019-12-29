@@ -5,7 +5,7 @@ import logging
 from .block import *
 from .register import Register
 from .field import Field, RW_TYPES
-from xlrd import *
+from xlrd import open_workbook
 
 
 LOGGER = logging.getLogger(__name__)
