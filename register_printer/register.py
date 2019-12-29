@@ -33,6 +33,24 @@ class Register:
             value = value | (val << pos)
         return value
 
+    @staticmethod
+    def validate_register_row_empty_field(row):
+        '''
+            row can be obtained by xlrd sheet.row() method.
+            It's a sequence of cell objects.
+        '''
+        field_map = [
+            (2, "msb"),
+            (3, "lsb"),
+            (4, "field"),
+            (5, "access"),
+            (6, "default")
+        ]
+        for (col, field_name) in field_map:
+            if row[col].value != "":
+                raise Exception("%s must be emtpy." % field_name)
+        return
+
     def __str__(self):
         result = "Register " + str(self.name) + "\n"
         result += "    offset: " + str(self.offset) + "\n"
