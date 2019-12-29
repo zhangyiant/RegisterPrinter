@@ -39,8 +39,7 @@ def is_empty_row(sheet, row):
         return True
     return False
 
-def validate_register_row_empty_field(sheet, rowx):
-    row = sheet.row(rowx)
+def validate_register_row_empty_field(row):
     field_map = [
         (2, "msb"),
         (3, "lsb"),
@@ -55,8 +54,9 @@ def validate_register_row_empty_field(sheet, rowx):
 
 def parse_register_row(sheet, rowx):
 
+    row = sheet.row(rowx)
     try:
-        validate_register_row_empty_field(sheet, rowx)
+        validate_register_row_empty_field(row)
     except Exception as exc:
         LOGGER.error(
             "sheet %s row %d error: %s",
