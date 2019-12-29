@@ -3,7 +3,7 @@ import os.path
 import re
 import logging
 from .register import Register
-from .field import Field, RW_TYPES
+from .field import Field
 from xlrd import open_workbook
 
 
