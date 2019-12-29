@@ -57,13 +57,13 @@ def validate_register_row_empty_field(sheet, row):
             raise Exception("%s must be emtpy." % field_name)
     return
 
-def parse_register_row(sheet, row):
+def parse_register_row(sheet, rowx):
 
-    validate_register_row_empty_field(sheet, row)
+    validate_register_row_empty_field(sheet, rowx)
 
-    offset = int(sheet.cell(row, 0).value, 16)
-    name = sheet.cell(row, 1).value
-    description = "%s" % (sheet.cell(row, 7).value)
+    offset = int(sheet.cell(rowx, 0).value, 16)
+    name = sheet.cell(rowx, 1).value
+    description = "%s" % (sheet.cell(rowx, 7).value)
     register = Register(name, offset, description)
 
     return register
