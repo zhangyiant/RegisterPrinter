@@ -2,7 +2,6 @@ import os
 import os.path
 import re
 import logging
-from .block import *
 from .register import Register
 from .field import Field, RW_TYPES
 from xlrd import open_workbook
