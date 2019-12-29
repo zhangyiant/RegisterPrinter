@@ -24,18 +24,18 @@ def validate_sheet(sheet):
         raise Exception("No \"Module description:\" in cell(0,0)")
     return
 
-def is_register_row(sheet, row):
-    if re.match(r'0x', str(sheet.cell(row, 0).value)):
+def is_register_row(row):
+    if re.match(r'0x', str(row[0].value)):
         return True
     return False
 
-def is_field_row(sheet, row):
-    if sheet.cell(row, 2).value != "":
+def is_field_row(row):
+    if row[2].value != "":
         return True
     return False
 
-def is_empty_row(sheet, row):
-    if sheet.cell(row, 0).value == "":
+def is_empty_row(row):
+    if row[0].value == "":
         return True
     return False
 
@@ -70,7 +70,8 @@ def parse_register(sheet, block, start_row):
 
     rowx = rowx + 1
     lsb_pre = -1
-    while is_field_row(sheet, rowx):
+    row = sheet.row(rowx)
+    while is_field_row(row):
         sheet_row = sheet.row(rowx)
         field = None
         try:
@@ -89,10 +90,12 @@ def parse_register(sheet, block, start_row):
         lsb_pre = field.lsb
         if rowx < sheet.nrows - 1:
             rowx = rowx + 1
+            row = sheet.row(rowx)
         else:
             break
 
-    if is_empty_row(sheet, rowx):
+    row = sheet.row(rowx)
+    if is_empty_row(row):
         rowx += 1
     else:
         LOGGER.debug(
@@ -113,9 +116,10 @@ def process_sheet(sheet, block):
 
     rowx = 3
     while rowx < sheet.nrows:
-        if is_empty_row(sheet, rowx):
+        row = sheet.row(rowx)
+        if is_empty_row(row):
             rowx += 1
-        elif is_register_row(sheet, rowx):
+        elif is_register_row(row):
             (register, rowx) = parse_register(sheet, block, rowx)
             if register.offset > block.size:
                 LOGGER.error(
