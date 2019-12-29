@@ -54,9 +54,9 @@ def parse_register_row(sheet, rowx):
         )
         raise
 
-    offset = int(sheet.cell(rowx, 0).value, 16)
-    name = sheet.cell(rowx, 1).value
-    description = "%s" % (sheet.cell(rowx, 7).value)
+    offset = int(row[0].value, 16)
+    name = row[1].value
+    description = "%s" % (row[7].value)
     register = Register(name, offset, description)
 
     return register
