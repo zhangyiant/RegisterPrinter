@@ -28,6 +28,7 @@ class Block:
 
     def add_register(self, register):
         self.registers.append(register)
+        self.sort_register_by_offset()
         return
 
     def find_register_by_name(self, name):

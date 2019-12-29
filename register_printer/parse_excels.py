@@ -126,7 +126,6 @@ def process_sheet(sheet, block):
                 rowx)
             LOGGER.error(" %s", sheet.cell(rowx, 0).value)
             raise Exception("Unknown row")
-    block.sort_register_by_offset()
     LOGGER.debug(
         "Processing sheet %s done",
         sheet.name)
