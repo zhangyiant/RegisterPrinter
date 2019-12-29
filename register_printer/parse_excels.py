@@ -40,6 +40,7 @@ def is_empty_row(sheet, row):
     return False
 
 def validate_register_row_empty_field(sheet, rowx):
+    row = sheet.row(rowx)
     field_map = [
         (2, "msb"),
         (3, "lsb"),
@@ -48,18 +49,22 @@ def validate_register_row_empty_field(sheet, rowx):
         (6, "default")
     ]
     for (col, field_name) in field_map:
-        if sheet.cell(rowx, col).value != "":
-            LOGGER.error(
-                "sheet %s row %d error: %s not empty in register define row",
-                sheet.name,
-                rowx + 1,
-                field_name)
+        if row[col].value != "":
             raise Exception("%s must be emtpy." % field_name)
     return
 
 def parse_register_row(sheet, rowx):
 
-    validate_register_row_empty_field(sheet, rowx)
+    try:
+        validate_register_row_empty_field(sheet, rowx)
+    except Exception as exc:
+        LOGGER.error(
+            "sheet %s row %d error: %s",
+            sheet.name,
+            rowx + 1,
+            str(exc)
+        )
+        raise
 
     offset = int(sheet.cell(rowx, 0).value, 16)
     name = sheet.cell(rowx, 1).value
