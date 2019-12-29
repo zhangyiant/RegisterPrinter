@@ -40,17 +40,6 @@ def is_empty_row(sheet, row):
     return False
 
 
-def parse_register_row(row):
-
-    Register.validate_register_row_empty_field(row)
-
-    offset = int(row[0].value, 16)
-    name = row[1].value
-    description = "%s" % (row[7].value)
-    register = Register(name, offset, description)
-
-    return register
-
 def validate_field(field, block, previous_lsb):
     msb = field.msb
     lsb = field.lsb
@@ -69,7 +58,7 @@ def parse_register(sheet, block, start_row):
     register = None
     row = sheet.row(rowx)
     try:
-        register = parse_register_row(row)
+        register = Register.parse_register_row(row)
     except Exception as exc:
         LOGGER.error(
             "sheet %s row %d error: %s",

@@ -51,6 +51,23 @@ class Register:
                 raise Exception("%s must be emtpy." % field_name)
         return
 
+
+    @staticmethod
+    def parse_register_row(row):
+        '''
+            row: xlrd row object. You can obtain it by sheet.row()
+                 a sequence of cells.
+        '''
+
+        Register.validate_register_row_empty_field(row)
+
+        offset = int(row[0].value, 16)
+        name = row[1].value
+        description = "%s" % (row[7].value)
+        register = Register(name, offset, description)
+
+        return register
+
     def __str__(self):
         result = "Register " + str(self.name) + "\n"
         result += "    offset: " + str(self.offset) + "\n"
