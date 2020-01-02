@@ -137,11 +137,17 @@ def process_sheet(sheet, block):
 def parse_excel_file(filename, top_sys):
     workbook = open_workbook(filename)
     for sheet in workbook.sheets():
+        LOGGER.debug("Process sheet: \"%s\"", sheet.name)
         if sheet.name == "Top":
+            LOGGER.debug("Skip Top sheet")
             continue
         block = top_sys.find_block_by_type(sheet.name)
         if block is not None:
             process_sheet(sheet, block)
+        else:
+            LOGGER.debug(
+                "Skip sheet \"%s\", not defined in Top config.",
+                sheet.name)
     return
 
 
@@ -155,6 +161,7 @@ def parse_excels(top_sys, work_path):
             continue
         elif re.search(".xlsx", filename) is not None:
             full_filename = os.path.join(work_path, filename)
+            LOGGER.info("Parsing excels file: %s", full_filename)
             parse_excel_file(full_filename, top_sys)
 
     for blk in top_sys.blocks:
