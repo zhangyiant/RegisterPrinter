@@ -1,8 +1,5 @@
 module {{ block.block_type }}_reg
 #(
-{% for register in block.registers %}
-    parameter int {{ (register.name + "_addr") | upper }} = 'h{{ "%x" | format(register.offset) }},
-{% endfor %}
     parameter int ADDR_WIDTH = {{ block.addr_len }}
 )
 (
@@ -50,6 +47,10 @@ module {{ block.block_type }}_reg
 
 {% for register in block.registers %}
 logic[31:0]     {{ register.name }};
+{% endfor %}
+
+{% for register in block.registers %}
+localparam int {{ (register.name + "_addr") | upper }} = 'h{{ "%x" | format(register.offset) }};
 {% endfor %}
 
 {% for register in registers %}
@@ -195,14 +196,17 @@ always @(negedge reg_rstn or posedge reg_clk) begin
     if (~reg_rstn) begin
         reg_rdat <= 32'h0;
     end
-    else begin
+    else if (reg_rd) begin
         case(reg_addr)
         {% for register in block.registers %}
         {{ "%-48s" | format((register.name + "_addr") | upper) }} : reg_rdat <= {{ register.name }};
         {% endfor %}
         default: reg_rdat <= 32'h0;
         endcase
-   end
+    end
+    else begin
+       reg_rdat <= 32'h0;
+    end
 end
 
 endmodule
