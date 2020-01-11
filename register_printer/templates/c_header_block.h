@@ -11,7 +11,7 @@ typedef struct
 
 {% for pos_mask_macro in pos_mask_macros %}
 #define    {{ "%-64s" | format(pos_mask_macro.prefix + "_Pos") }} {{ pos_mask_macro.pos_value }}
-#define    {{ "%-64s" | format(pos_mask_macro.prefix + "_Msk") }} {{ "0x%x" | format(pos_mask_macro.mask_value) }} << {{ pos_mask_macro.prefix }}_Pos
+#define    {{ "%-64s" | format(pos_mask_macro.prefix + "_Msk") }} ({{ "0x%x" | format(pos_mask_macro.mask_value) }} << {{ pos_mask_macro.prefix }}_Pos)
 
 {% endfor %}
 
