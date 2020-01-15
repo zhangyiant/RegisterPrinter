@@ -3,7 +3,7 @@
 `define {{ uvm_sys_name | upper }}__SV
 
 {% for block in top_sys.blocks %}
-`include "{{ block.name | lower }}_reg_model.sv"
+`include "{{ block.block_type | lower }}_reg_model.sv"
 {% endfor %}
 
 class {{ uvm_sys_name }} extends uvm_reg_block;
