@@ -38,13 +38,6 @@ def validate_field_block(field, block):
     return
 
 
-def validate_field_lsb(field, previous_lsb):
-    msb = field.msb
-    if previous_lsb >= msb:
-        raise Exception("previous lsb %d > msb %d" % (previous_lsb, msb))
-    return
-
-
 def parse_register(sheet, block, start_row):
     rowx = start_row
 
@@ -63,24 +56,22 @@ def parse_register(sheet, block, start_row):
 
     rowx = rowx + 1
     row = sheet.row(rowx)
-    lsb_pre = -1
     while Field.is_field_row(row):
         field = None
         try:
             field = Field.parse_excel_row(row)
             validate_field_block(field, block)
-            validate_field_lsb(field, lsb_pre)
+            register.add_field(field)
         except Exception as exc:
             LOGGER.error(
-                "sheet %s row %d error: %s",
+                "sheet %s row %d error, Register %s: %s",
                 sheet.name,
-                rowx,
+                rowx + 1,
+                register.name,
                 str(exc)
             )
-            raise Exception(
-                "sheet %s row %d error: %s" % (sheet.name, rowx, str(exc)))
-        register.add_field(field)
-        lsb_pre = field.lsb
+            raise
+
         if rowx < sheet.nrows - 1:
             rowx = rowx + 1
             row = sheet.row(rowx)
@@ -96,6 +87,7 @@ def parse_register(sheet, block, start_row):
             rowx + 1)
         raise Exception("No blank row between registers")
     return (register, rowx)
+
 
 def process_sheet(sheet, block):
     LOGGER.debug(

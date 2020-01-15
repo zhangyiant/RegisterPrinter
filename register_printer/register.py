@@ -22,8 +22,35 @@ class Register:
     def description(self):
         return self._desciption
 
-    def add_field(self, field):
-        self.fields.append(field)
+    # all fields msb/lsb are in ascending order
+    def add_field(self, new_field):
+        fields = []
+        inserted = False
+        for field in self.fields:
+            overlapped = False
+            if new_field.lsb > field.lsb:
+                if new_field.lsb > field.msb:
+                    fields.append(field)
+                else:
+                    overlapped = True
+            elif new_field.lsb == field.lsb:
+                overlapped = True
+            else:
+                # new_field.lsb < field.lsb
+                if new_field.msb < field.msb:
+                    fields.append(new_field)
+                    fields.append(field)
+                    inserted = True
+                else:
+                    overlapped = True
+
+            if overlapped:
+                error_msg = "Fields overlap: \n{0}\n{1}".format(
+                    field, new_field)
+                raise Exception(error_msg)
+        if not inserted:
+            fields.append(new_field)
+        self.fields = fields
         return
 
     def calculate_register_default(self):
