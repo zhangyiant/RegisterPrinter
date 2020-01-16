@@ -1,6 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
+import os.path
 
 block_cipher = None
+
+with open(os.path.join(SPECPATH, "VERSION"), "r") as f:
+    version_str = f.readline()
+version_str = version_str.strip()
 
 
 a = Analysis(['main.py'],
@@ -23,7 +28,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='RegisterPrinter',
+          name='RegisterPrinter-' + version_str,
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
