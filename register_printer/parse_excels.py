@@ -81,11 +81,12 @@ def parse_register(sheet, block, start_row):
     if is_empty_row(row):
         rowx += 1
     else:
-        LOGGER.debug(
-            "sheet %s row %d error: no blank row between registers",
-            sheet.name,
-            rowx + 1)
-        raise Exception("No blank row between registers")
+        err_msg = \
+            "sheet {0} row {1} error: no blank row between registers".format(
+                sheet.name,
+                rowx + 1)
+        LOGGER.debug(err_msg)
+        raise Exception(err_msg)
     return (register, rowx)
 
 
