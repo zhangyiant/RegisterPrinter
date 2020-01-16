@@ -1,3 +1,4 @@
+import logging
 from PySide2.QtCore import (
     Slot,
     QDir,
@@ -11,6 +12,7 @@ from PySide2.QtWidgets import (
 
 from .ui_mainwindow import Ui_MainWindow
 from .generate_thread import GenerateThread
+from .log_handler import LogHandler
 
 class MainWindow(QMainWindow):
 
@@ -22,6 +24,14 @@ class MainWindow(QMainWindow):
         self.ui.config_file_button.clicked.connect(self.select_config_file)
         self.ui.excel_path_button.clicked.connect(self.select_excel_path)
         self.ui.output_path_button.clicked.connect(self.select_output_path)
+
+        # setup logger
+        self.log_handler = LogHandler(self.log_message)
+        fs = '%(asctime)s - %(module)s - %(levelname)s - %(message)s'
+        formatter = logging.Formatter(fs)
+        self.log_handler.setFormatter(formatter)
+        logging.getLogger().addHandler(self.log_handler)
+        logging.getLogger().setLevel(logging.DEBUG)
         return
 
     @Slot()
