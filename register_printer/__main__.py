@@ -46,6 +46,11 @@ def get_argument_parser():
         help="Generate register UVM models."
     )
     parser.add_argument(
+        "-j", dest="gen_json",
+        action="store_true",
+        help="Generate JSON documents."
+    )
+    parser.add_argument(
         "-r", dest="gen_rtl",
         action="store_true",
         help="Generate register RTL module."
@@ -59,11 +64,12 @@ def get_argument_parser():
 
 
 def generate(
-    register_printer,
-    gen_uvm=False,
-    gen_rtl=False,
-    gen_doc=False,
-    gen_c_header=False):
+        register_printer,
+        gen_uvm=False,
+        gen_rtl=False,
+        gen_doc=False,
+        gen_c_header=False,
+        gen_json=False):
 
     if gen_uvm:
         LOGGER.debug("Generate UVM models...")
@@ -80,6 +86,10 @@ def generate(
     if gen_c_header:
         LOGGER.debug("Generating C headers...")
         register_printer.generate_c_header()
+
+    if gen_json:
+        LOGGER.debug("Genarating JSON documents...")
+        register_printer.generate_json()
     return
 
 
@@ -109,7 +119,8 @@ def main():
         gen_uvm=opts.gen_uvm,
         gen_rtl=opts.gen_rtl,
         gen_doc=opts.gen_doc,
-        gen_c_header=opts.gen_c_header
+        gen_c_header=opts.gen_c_header,
+        gen_json=opts.gen_json
     )
 
     return

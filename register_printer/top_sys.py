@@ -116,3 +116,28 @@ class TopSys:
         result += "--------------------------------"
         return result
 
+    @staticmethod
+    def address_map_to_dict(address_map):
+        result = {}
+        result["blockType"] = address_map["block_type"]
+        result["blockInstance"] = address_map["block_instance"]
+        result["baseAddress"] = address_map["base_address"]
+        result["blockSize"] = address_map["block_size"]
+        return result
+
+    def to_dict(self):
+        result = {}
+        result["name"] = self.name
+        result["addressWidth"] = self.addr_width
+        result["dataWidth"] = self.data_width
+        result["version"] = self.version
+        result["author"] = self.version
+        result["blockTypes"] = []
+        for block in self.blocks:
+            result["blockTypes"].append(block.to_dict())
+        result["addressMap"] = []
+        for addr_map in self.addr_map:
+            addr_map_dict = TopSys.address_map_to_dict(
+                addr_map)
+            result["addressMap"].append(addr_map_dict)
+        return result

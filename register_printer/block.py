@@ -68,3 +68,13 @@ class Block:
         result += "\n".join(register_strings)
         return result
 
+    def to_dict(self):
+        result = {}
+        result["name"] = self.block_type
+        result["size"] = self.size
+        result["addressWidth"] = self.addr_len
+        result["dataWidth"] = self.data_len
+        result["registers"] = []
+        for register in self.registers:
+            result["registers"].append(register.to_dict())
+        return result

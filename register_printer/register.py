@@ -116,3 +116,13 @@ class Register:
             field_strings.append(field_string)
         result += "\n".join(field_strings)
         return result
+
+    def to_dict(self):
+        result = {}
+        result["name"] = self.name
+        result["offset"] = self.offset
+        result["description"] = self.description
+        result["fields"] = []
+        for field in self.fields:
+            result["fields"].append(field.to_dict())
+        return result

@@ -1,4 +1,6 @@
 from .parse_config import parse_top_sys
+import os.path
+import json
 
 
 class RegisterPrinter:
@@ -33,4 +35,14 @@ class RegisterPrinter:
 
     def generate_document(self):
         self.top_sys.print_doc(self.output_path)
+        return
+
+    def generate_json(self):
+        rp_dict = self.top_sys.to_dict()
+        json_doc = json.dumps(rp_dict, indent=4)
+        filename = os.path.join(
+            self.output_path,
+            "register_printer.json")
+        with open(filename, "w") as f:
+            f.write(json_doc)
         return

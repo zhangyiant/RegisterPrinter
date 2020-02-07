@@ -92,3 +92,13 @@ class Field:
         result += "    default  : " + str(self.default) + "\n"
         result += "    access   : " + str(self.access)
         return result
+
+    def to_dict(self):
+        result = {}
+        result["name"] = self.name
+        result["msb"] = self.msb
+        result["lsb"] = self.lsb
+        result["defaultValue"] = self.default
+        result["access"] = self.access
+        result["description"] = self.description
+        return result
