@@ -1,4 +1,6 @@
-from .parse_config import parse_top_sys
+from .parse_config import (
+    parse_top_sys,
+    parse_top_sys_from_json)
 import os.path
 import json
 
@@ -14,7 +16,13 @@ class RegisterPrinter:
         self.excel_path = excel_path
         self.output_path = output_path
         self.json_file = json_file
-        self.top_sys = parse_top_sys(self.config_file, self.excel_path)
+        if self.config_file is not None:
+            self.top_sys = parse_top_sys(self.config_file, self.excel_path)
+        elif self.json_file is not None:
+            self.top_sys = parse_top_sys_from_json(
+                self.json_file)
+        else:
+            raise Exception("Config file or JSON file must be provided")
         return
 
     def display_string(self):

@@ -71,3 +71,7 @@ def parse_top_sys(config_file, excel_path):
     top_sys = parse_config(config_file)
     top_sys = parse_excels(top_sys, excel_path)
     return top_sys
+
+def parse_top_sys_from_json(json_file):
+    print("Todo: not implemented yet.")
+    return None
