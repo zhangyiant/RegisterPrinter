@@ -4,10 +4,16 @@ import json
 
 
 class RegisterPrinter:
-    def __init__(self, config_file, excel_path, output_path="."):
+    def __init__(
+            self,
+            config_file=None,
+            excel_path=None,
+            output_path=".",
+            json_file=None):
         self.config_file = config_file
         self.excel_path = excel_path
         self.output_path = output_path
+        self.json_file = json_file
         self.top_sys = parse_top_sys(self.config_file, self.excel_path)
         return
 
