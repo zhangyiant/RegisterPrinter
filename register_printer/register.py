@@ -1,6 +1,6 @@
 import re
 import textwrap
-from .field import *
+from .field import Field
 
 class Register:
     def __init__(self, name, offset, description):
@@ -108,6 +108,9 @@ class Register:
     def __str__(self):
         result = "Register " + str(self.name) + "\n"
         result += "    offset: " + str(self.offset) + "\n"
+        result += "    description: " \
+            + str(self.description) \
+            + "\n"
         result += "    Fields:\n"
         field_strings = []
         for field in self.fields:
@@ -126,3 +129,20 @@ class Register:
         for field in self.fields:
             result["fields"].append(field.to_dict())
         return result
+
+    @staticmethod
+    def from_dict(register_dict):
+        name = register_dict["name"]
+        offset = register_dict["offset"]
+        description = register_dict["description"]
+        register = Register(
+            name=name,
+            offset=offset,
+            description=description)
+        fields_dict = register_dict["fields"]
+        for field_dict in fields_dict:
+            field = Field.from_dict(
+                field_dict)
+            register.fields.append(
+                field)
+        return register

@@ -4,6 +4,8 @@ from .print_c_header import print_c_header
 from .print_doc import print_doc
 from .print_rtl import print_rtl
 
+from .block import Block
+
 
 class TopSys:
     def __init__(self, name, addr_width=12, data_width=32):
@@ -125,6 +127,18 @@ class TopSys:
         result["blockSize"] = address_map["block_size"]
         return result
 
+    @staticmethod
+    def address_map_from_dict(address_map_dict):
+        address_map = {}
+        address_map["block_type"] = address_map_dict["blockType"]
+        address_map["block_instance"] = \
+            address_map_dict["blockInstance"]
+        address_map["base_address"] = \
+            address_map_dict["baseAddress"]
+        address_map["block_size"] = \
+            address_map_dict["blockSize"]
+        return address_map
+
     def to_dict(self):
         result = {}
         result["name"] = self.name
@@ -135,9 +149,35 @@ class TopSys:
         result["blockTypes"] = []
         for block in self.blocks:
             result["blockTypes"].append(block.to_dict())
-        result["addressMap"] = []
+        result["addressMaps"] = []
         for addr_map in self.addr_map:
             addr_map_dict = TopSys.address_map_to_dict(
                 addr_map)
-            result["addressMap"].append(addr_map_dict)
+            result["addressMaps"].append(addr_map_dict)
         return result
+
+    @staticmethod
+    def from_dict(top_sys_dict):
+        name = top_sys_dict["name"]
+        addr_width = top_sys_dict["addressWidth"]
+        data_width = top_sys_dict["dataWidth"]
+        version = top_sys_dict["version"]
+        author = top_sys_dict["author"]
+        top_sys = TopSys(
+            name=name,
+            addr_width=addr_width,
+            data_width=data_width)
+        top_sys.version = version
+        top_sys.author = author
+        block_types_dict = top_sys_dict["blockTypes"]
+        for block_type_dict in block_types_dict:
+            block_type = Block.from_dict(
+                block_type_dict)
+            top_sys.blocks.append(block_type)
+        addr_maps_dict = top_sys_dict["addressMaps"]
+        for addr_map_dict in addr_maps_dict:
+            addr_map = TopSys.address_map_from_dict(
+                addr_map_dict)
+            top_sys.addr_map.append(
+                addr_map)
+        return top_sys
