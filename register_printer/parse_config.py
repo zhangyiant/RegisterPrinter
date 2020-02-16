@@ -1,6 +1,7 @@
 import re
 import os
 import sys
+import json
 import logging
 from xlrd import *
 from .top_sys import *
@@ -73,5 +74,8 @@ def parse_top_sys(config_file, excel_path):
     return top_sys
 
 def parse_top_sys_from_json(json_file):
-    print("Todo: not implemented yet.")
-    return None
+    rp_doc_dict = None
+    with open(json_file,"r") as json_file_handler:
+        rp_doc_dict = json.load(json_file_handler)
+    top_sys = TopSys.from_dict(rp_doc_dict)
+    return top_sys
