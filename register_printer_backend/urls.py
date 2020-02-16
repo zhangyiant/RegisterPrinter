@@ -17,6 +17,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('api/', include('register_printer_doc.urls')),
-    path('admin/', admin.site.urls),
+    path('register-printer/api/', include('register_printer_doc.urls')),
+    path('register-printer/admin/', admin.site.urls),
 ]
