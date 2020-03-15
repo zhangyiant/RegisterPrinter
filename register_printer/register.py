@@ -27,6 +27,9 @@ class Register:
         fields = []
         inserted = False
         for field in self.fields:
+            if inserted:
+                fields.append(field)
+                continue
             overlapped = False
             if new_field.lsb > field.lsb:
                 if new_field.lsb > field.msb:
