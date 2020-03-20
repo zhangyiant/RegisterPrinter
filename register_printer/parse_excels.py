@@ -111,7 +111,7 @@ def process_sheet(sheet, block):
                     "sheet %s row %d error: offset %x > block size %x",
                     sheet.name,
                     rowx,
-                    offset,
+                    register.offset,
                     block.size)
                 raise Exception("offset > block size")
             block.add_register(register)
