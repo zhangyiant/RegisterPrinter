@@ -7,7 +7,6 @@ with open(os.path.join(SPECPATH, "VERSION"), "r") as f:
     version_str = f.readline()
 version_str = version_str.strip()
 
-
 a = Analysis(['main.py'],
              pathex=[],
              binaries=[],
@@ -35,4 +34,4 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=True )
+          console=True , icon='registerPrinter.ico')
