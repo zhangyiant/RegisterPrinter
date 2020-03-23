@@ -3,6 +3,7 @@ from .parse_config import (
     parse_top_sys_from_json)
 import os.path
 import json
+from .license import check_license
 
 
 class RegisterPrinter:
@@ -12,6 +13,7 @@ class RegisterPrinter:
             excel_path=None,
             output_path=".",
             json_file=None):
+        check_license()
         self.config_file = config_file
         self.excel_path = excel_path
         self.output_path = output_path
