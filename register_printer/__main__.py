@@ -1,3 +1,4 @@
+import sys
 import logging
 import argparse
 from . import RegisterPrinter
@@ -128,6 +129,7 @@ def main():
     )
 
     register_printer.display()
+    sys.stdout.flush()
 
     generate(
         register_printer=register_printer,
