@@ -1,3 +1,4 @@
+import platform
 import psutil
 import hashlib
 from pathlib import Path
@@ -22,7 +23,7 @@ def find_addr():
 
 def get_unique_id():
     t = find_addr()
-
+    t = platform.node() + platform.processor()
     b = t.encode()
     m = hashlib.sha256()
     m.update(b)
