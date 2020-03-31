@@ -102,6 +102,8 @@ def generate(
 
 def main():
 
+    sys.stdout.reconfigure(encoding="utf-8")
+
     parser = get_argument_parser()
 
     opts = parser.parse_args()
