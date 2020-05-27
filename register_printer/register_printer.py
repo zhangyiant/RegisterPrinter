@@ -31,7 +31,10 @@ class RegisterPrinter:
         return str(self.top_sys)
 
     def display(self):
-        print(self.top_sys)
+        output_string = self.display_string()
+        lines = output_string.split("\n")
+        for line in lines:
+            print(line)
         return
 
     def parse(self, config_file, excel_path):
