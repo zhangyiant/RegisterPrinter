@@ -1,10 +1,14 @@
 import logging
+import os.path
+import json
+
 from .parse_config import (
     parse_top_sys,
     parse_top_sys_from_json)
-import os.path
-import json
+
 from .license import check_license
+
+from .generators import ExcelGenerator
 
 
 LOGGER = logging.getLogger(__name__)
@@ -72,5 +76,7 @@ class RegisterPrinter:
 
 
     def generate_excel(self):
-        LOGGER.debug("Todo: generate excel files.")
+        LOGGER.debug("Generate excel files to %s", self.output_path)
+        excel_generator = ExcelGenerator(self.top_sys, self.output_path)
+        excel_generator.generate()
         return
