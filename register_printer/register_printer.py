@@ -1,9 +1,13 @@
+import logging
 from .parse_config import (
     parse_top_sys,
     parse_top_sys_from_json)
 import os.path
 import json
 from .license import check_license
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class RegisterPrinter:
@@ -64,4 +68,9 @@ class RegisterPrinter:
             "register_printer.json")
         with open(filename, "w") as f:
             f.write(json_doc)
+        return
+
+
+    def generate_excel(self):
+        LOGGER.debug("Todo: generate excel files.")
         return

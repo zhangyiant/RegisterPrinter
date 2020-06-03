@@ -63,6 +63,11 @@ def get_argument_parser():
         help="Generate register RTL module."
     )
     parser.add_argument(
+        "-x", "--gen-excel", dest="gen_excel",
+        action="store_true",
+        help="Generate excel files."
+    )
+    parser.add_argument(
         "-a", "--gen-all", dest="gen_all",
         action="store_true",
         help="Generate all files, same as -d -c -u -r"
@@ -76,7 +81,8 @@ def generate(
         gen_rtl=False,
         gen_doc=False,
         gen_c_header=False,
-        gen_json=False):
+        gen_json=False,
+        gen_excel=False):
 
     if gen_uvm:
         LOGGER.debug("Generate UVM models...")
@@ -97,6 +103,11 @@ def generate(
     if gen_json:
         LOGGER.debug("Genarating JSON documents...")
         register_printer.generate_json()
+
+    if gen_excel:
+        LOGGER.debug("Generating Excel files...")
+        register_printer.generate_excel()
+
     return
 
 
@@ -139,7 +150,8 @@ def main():
         gen_rtl=opts.gen_rtl,
         gen_doc=opts.gen_doc,
         gen_c_header=opts.gen_c_header,
-        gen_json=opts.gen_json
+        gen_json=opts.gen_json,
+        gen_excel=opts.gen_excel
     )
 
     return
