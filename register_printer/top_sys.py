@@ -145,7 +145,7 @@ class TopSys:
         result["addressWidth"] = self.addr_width
         result["dataWidth"] = self.data_width
         result["version"] = self.version
-        result["author"] = self.version
+        result["author"] = self.author
         result["blockTypes"] = []
         for block in self.blocks:
             result["blockTypes"].append(block.to_dict())
