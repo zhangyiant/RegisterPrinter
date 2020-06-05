@@ -3,10 +3,7 @@ import os.path
 import re
 import sys
 import logging
-from .block import *
-from .register import *
-from .field import *
-from .template_loader import get_template
+from register_printer.template_loader import get_template
 
 
 LOGGER = logging.getLogger(__name__)

@@ -8,7 +8,10 @@ from .parse_config import (
 
 from .license import check_license
 
-from .generators import ExcelGenerator
+from .generators import (
+    ExcelGenerator,
+    CHeaderGenerator
+)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -57,7 +60,11 @@ class RegisterPrinter:
         return
 
     def generate_c_header(self):
-        self.top_sys.print_c_header(self.output_path)
+        c_header_generator = CHeaderGenerator(
+            self.top_sys,
+            self.output_path
+        )
+        c_header_generator.generate()
         return
 
     def generate_document(self):
