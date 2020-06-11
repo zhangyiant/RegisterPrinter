@@ -10,7 +10,8 @@ from .license import check_license
 
 from .generators import (
     ExcelGenerator,
-    CHeaderGenerator
+    CHeaderGenerator,
+    DocGenerator
 )
 
 
@@ -68,7 +69,11 @@ class RegisterPrinter:
         return
 
     def generate_document(self):
-        self.top_sys.print_doc(self.output_path)
+        doc_generator = DocGenerator(
+            self.top_sys,
+            self.output_path
+        )
+        doc_generator.generate()
         return
 
     def generate_json(self):

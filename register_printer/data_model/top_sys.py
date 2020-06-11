@@ -1,6 +1,5 @@
 import textwrap
 from ..print_uvm import print_uvm
-from ..print_doc import print_doc
 from ..print_rtl import print_rtl
 
 
@@ -87,10 +86,6 @@ class TopSys:
 
     def print_rtl(self, output_path):
         print_rtl(self, output_path)
-        return
-
-    def print_doc(self, output_path):
-        print_doc(self, output_path)
         return
 
     def __str__(self):
