@@ -11,7 +11,8 @@ from .license import check_license
 from .generators import (
     ExcelGenerator,
     CHeaderGenerator,
-    DocGenerator
+    DocGenerator,
+    RtlGenerator
 )
 
 
@@ -57,7 +58,11 @@ class RegisterPrinter:
         return
 
     def generate_rtl(self):
-        self.top_sys.print_rtl(self.output_path)
+        rtl_generator = RtlGenerator(
+            self.top_sys,
+            self.output_path
+        )
+        rtl_generator.generate()
         return
 
     def generate_c_header(self):
