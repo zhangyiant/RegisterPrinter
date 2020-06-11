@@ -2,7 +2,7 @@ import re
 import os
 import os.path
 import logging
-from .template_loader import get_template
+from register_printer.template_loader import get_template
 
 
 LOGGER = logging.getLogger(__name__)

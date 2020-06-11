@@ -1,5 +1,4 @@
 import textwrap
-from ..print_uvm import print_uvm
 
 
 class TopSys:
@@ -78,10 +77,6 @@ class TopSys:
         for block in self.blocks:
             block_names.append(block.block_name)
         return block_names
-
-    def print_uvm(self, output_path):
-        print_uvm(self, output_path)
-        return
 
     def __str__(self):
         result = "-------------------------------\n"

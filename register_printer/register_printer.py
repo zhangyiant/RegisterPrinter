@@ -12,7 +12,8 @@ from .generators import (
     ExcelGenerator,
     CHeaderGenerator,
     DocGenerator,
-    RtlGenerator
+    RtlGenerator,
+    UvmGenerator
 )
 
 
@@ -54,7 +55,11 @@ class RegisterPrinter:
         return
 
     def generate_uvm(self):
-        self.top_sys.print_uvm(self.output_path)
+        uvm_generator = UvmGenerator(
+            self.top_sys,
+            self.output_path
+        )
+        uvm_generator.generate()
         return
 
     def generate_rtl(self):
