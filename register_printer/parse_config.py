@@ -4,9 +4,11 @@ import sys
 import json
 import logging
 from xlrd import *
-from .top_sys import *
+from .data_model import (
+    TopSys,
+    Block
+)
 from .parse_excels import parse_excels
-from .block import Block
 
 
 LOGGER = logging.getLogger(__name__)

@@ -1,9 +1,7 @@
 import textwrap
-from .print_uvm import print_uvm
-from .print_doc import print_doc
-from .print_rtl import print_rtl
-
-from .block import Block
+from ..print_uvm import print_uvm
+from ..print_doc import print_doc
+from ..print_rtl import print_rtl
 
 
 class TopSys:
