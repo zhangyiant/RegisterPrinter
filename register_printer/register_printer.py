@@ -10,7 +10,10 @@ from .license import check_license
 
 from .generators import (
     ExcelGenerator,
-    CHeaderGenerator
+    CHeaderGenerator,
+    DocGenerator,
+    RtlGenerator,
+    UvmGenerator
 )
 
 
@@ -52,11 +55,19 @@ class RegisterPrinter:
         return
 
     def generate_uvm(self):
-        self.top_sys.print_uvm(self.output_path)
+        uvm_generator = UvmGenerator(
+            self.top_sys,
+            self.output_path
+        )
+        uvm_generator.generate()
         return
 
     def generate_rtl(self):
-        self.top_sys.print_rtl(self.output_path)
+        rtl_generator = RtlGenerator(
+            self.top_sys,
+            self.output_path
+        )
+        rtl_generator.generate()
         return
 
     def generate_c_header(self):
@@ -68,7 +79,11 @@ class RegisterPrinter:
         return
 
     def generate_document(self):
-        self.top_sys.print_doc(self.output_path)
+        doc_generator = DocGenerator(
+            self.top_sys,
+            self.output_path
+        )
+        doc_generator.generate()
         return
 
     def generate_json(self):

@@ -1,9 +1,4 @@
 import textwrap
-from .print_uvm import print_uvm
-from .print_doc import print_doc
-from .print_rtl import print_rtl
-
-from .block import Block
 
 
 class TopSys:
@@ -82,18 +77,6 @@ class TopSys:
         for block in self.blocks:
             block_names.append(block.block_name)
         return block_names
-
-    def print_uvm(self, output_path):
-        print_uvm(self, output_path)
-        return
-
-    def print_rtl(self, output_path):
-        print_rtl(self, output_path)
-        return
-
-    def print_doc(self, output_path):
-        print_doc(self, output_path)
-        return
 
     def __str__(self):
         result = "-------------------------------\n"

@@ -2,8 +2,10 @@ import os
 import os.path
 import re
 import logging
-from .register import Register
-from .field import Field
+from .data_model import (
+    Register,
+    Field
+)
 from xlrd import open_workbook
 
 
