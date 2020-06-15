@@ -10,6 +10,7 @@ class TopSys:
         self._author = None
         self.blocks = []
         self.addr_map = []
+        self.block_instances = []
         return
 
     @property
@@ -64,6 +65,10 @@ class TopSys:
             "block_size": block_size
         }
         self.addr_map.append(address_map_entry)
+        return
+
+    def add_block_instance(self, block_instance):
+        self.block_instances.append(block_instance)
         return
 
     def find_block_by_type(self, block_type):

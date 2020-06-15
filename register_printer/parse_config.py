@@ -6,12 +6,14 @@ import logging
 from xlrd import *
 from .data_model import (
     TopSys,
-    Block
+    Block,
+    BlockInstance
 )
 from .parse_excels import parse_excels
 
 
 LOGGER = logging.getLogger(__name__)
+
 
 def parse_sheet(sheet):
     top_sys = None
@@ -26,30 +28,46 @@ def parse_sheet(sheet):
     top_sys.version = version
 
     for row in range(7, sheet.nrows):
-        block_instance = sheet.cell(row, 0).value.strip()
+        block_instance_name = sheet.cell(row, 0).value.strip()
         block_type = sheet.cell(row, 1).value.strip()
         block_address = int(sheet.cell(row, 2).value.strip(), 16)
         block_size = int(sheet.cell(row, 3).value.strip(), 16)
+        addr_width = None
         val = sheet.cell(row, 4).value
-        if val == "":
-            block_address_size = addr_size
-        else:
-            block_address_size = int(val)
+        if val != "":
+            addr_width = int(val)
+        data_width = None
         val = sheet.cell(row, 5).value
-        if val == "":
-            block_data_size = data_size
-        else:
-            block_data_size = int(val)
-        if top_sys.find_block_by_type(block_type) is None:
+        if val != "":
+            data_width = int(val)
+
+        block = top_sys.find_block_by_type(block_type)
+        if block is None:
+            new_addr_width = addr_width
+            if new_addr_width is None:
+                new_addr_width = top_sys.addr_width
+            new_data_width = data_width
+            if new_data_width is None:
+                new_data_width = top_sys.data_width
             block = Block(
                 block_type,
                 block_size,
-                block_address_size,
-                block_data_size)
+                new_data_width,
+                new_data_width)
             top_sys.add_block(block)
+
+        new_block_instance = BlockInstance(
+            top_sys,
+            block_instance_name,
+            block,
+            block_address,
+            block_size,
+            addr_width=addr_width,
+            data_width=data_width
+        )
         top_sys.add_block_to_address_map(
             block_type,
-            block_instance,
+            block_instance_name,
             block_address,
             block_size)
     return top_sys

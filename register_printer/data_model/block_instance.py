@@ -15,4 +15,8 @@ class BlockInstance:
         self.block_size = block_size
         self.addr_width = addr_width
         self.data_width = data_width
+
+        if self.parent is not None:
+            self.parent.block_instances.append(self)
+
         return
