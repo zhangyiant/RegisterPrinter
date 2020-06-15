@@ -52,7 +52,7 @@ def parse_sheet(sheet):
             block = Block(
                 block_type,
                 block_size,
-                new_data_width,
+                new_addr_width,
                 new_data_width)
             top_sys.add_block(block)
 
