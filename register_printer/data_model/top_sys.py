@@ -1,4 +1,5 @@
 import textwrap
+from .block import Block
 
 
 class TopSys:
