@@ -98,6 +98,9 @@ class TopSys:
         result += "    Address map    :\n"
         for entry in self.addr_map:
             result += "      %s\t@0x%x\n" % (entry['block_instance'], entry['base_address'])
+        result += "    Block instances:\n"
+        for block_instance in self.block_instances:
+            result += "      %s\t@0x%x\n" % (block_instance.name, block_instance.base_address)
         result += "--------------------------------"
         return result
 
