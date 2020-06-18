@@ -10,10 +10,10 @@ void single_test(char* inst, uint32_t addr, uint32_t size, uint32_t def_val) {
 
 
 int main() {
-    {% for addr_map_entry in top_sys.addr_map %}
-    {% set block = top_sys.find_block_by_type(addr_map_entry["block_type"]) %}
+    {% for block_instance in top_sys.block_instances %}
+    {% set block = block_instance.block %}
     {% set default_value = block.registers[0].calculate_register_default() %}
-    single_test("{{ addr_map_entry["block_instance"] }}", 0x{{ "%x" | format(addr_map_entry["base_address"]) }}, 0x{{ "%x" | format(addr_map_entry["block_size"]) }}, 0x{{ "%x" | format(default_value) }});
+    single_test("{{ block_instance.name }}", 0x{{ "%x" | format(block_instance.base_address) }}, 0x{{ "%x" | format(block_instance.block_size) }}, 0x{{ "%x" | format(default_value) }});
     {% endfor %}
     return 0;
 }

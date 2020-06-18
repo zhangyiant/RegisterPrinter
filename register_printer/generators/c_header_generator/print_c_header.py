@@ -109,16 +109,16 @@ def print_c_header_sys(top_sys, out_path):
 
     include_macro_name = "REGS_" + top_sys.name.upper() + "_H"
     include_filenames = []
-    for block in top_sys.blocks:
-        include_filename = "regs_" + block.block_type.lower() + ".h"
+    for block_instance in top_sys.block_instances:
+        include_filename = "regs_" + block_instance.block.block_type.lower() + ".h"
         include_filenames.append(include_filename)
-    block_instances = []
-    for addr_entry in top_sys.addr_map:
-        block_instances.append(
+    block_instances_data = []
+    for block_instance in top_sys.block_instances:
+        block_instances_data.append(
             {
-                "name": addr_entry['block_instance'].upper(),
-                "base_address": addr_entry["base_address"],
-                "type": addr_entry["block_type"]
+                "name": block_instance.name.upper(),
+                "base_address": block_instance.base_address,
+                "type": block_instance.block.block_type
             }
         )
 
@@ -128,7 +128,7 @@ def print_c_header_sys(top_sys, out_path):
         {
             "include_macro_name": include_macro_name,
             "include_filenames": include_filenames,
-            "block_instances": block_instances
+            "block_instances": block_instances_data
         }
     )
 
