@@ -33,7 +33,10 @@ def print_c_test(top_sys, out_path):
     return
 
 
-def print_c_header_block(block, out_path):
+def print_c_header_block(block_instance, out_path):
+
+    block = block_instance.block
+
     LOGGER.debug("Print block %s C header...", block.block_type)
 
     file_name = os.path.join(
@@ -42,11 +45,10 @@ def print_c_header_block(block, out_path):
     if os.path.exists(file_name):
         os.remove(file_name)
 
-
     struct_fields = []
     prev_offset = -4
     curr_offset = -4
-    byte_len = int(block.data_len / 8)
+    byte_len = int(block_instance.data_width / 8)
     rsvd_idx = 0
     for reg in block.registers:
         prev_offset = curr_offset
@@ -94,6 +96,7 @@ def print_c_header_block(block, out_path):
 
     return
 
+
 def print_c_header_sys(top_sys, out_path):
     LOGGER.debug("Print top sys C header...")
 
@@ -134,6 +137,7 @@ def print_c_header_sys(top_sys, out_path):
 
     return
 
+
 def print_c_header(top_sys, output_path="."):
     LOGGER.debug("Generating C header files...")
 
@@ -142,8 +146,10 @@ def print_c_header(top_sys, output_path="."):
         "regheaders")
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
-    for block in top_sys.blocks:
-        print_c_header_block(block, out_dir)
+
+    for block_instance in top_sys.block_instances:
+        print_c_header_block(block_instance, out_dir)
+
     print_c_header_sys(top_sys, out_dir)
     print_c_test(top_sys, out_dir)
     LOGGER.debug("C header files generated in directory %s", out_dir)
