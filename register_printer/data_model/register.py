@@ -66,10 +66,10 @@ class Register:
 
     @staticmethod
     def validate_register_row_empty_field(row):
-        '''
+        """
             row can be obtained by xlrd sheet.row() method.
             It's a sequence of cell objects.
-        '''
+        """
         field_map = [
             (2, "msb"),
             (3, "lsb"),
@@ -82,13 +82,12 @@ class Register:
                 raise Exception("%s must be emtpy." % field_name)
         return
 
-
     @staticmethod
     def parse_register_row(row):
-        '''
+        """
             row: xlrd row object. You can obtain it by sheet.row()
                  a sequence of cells.
-        '''
+        """
 
         Register.validate_register_row_empty_field(row)
 
