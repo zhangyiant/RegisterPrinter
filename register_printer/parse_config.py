@@ -6,8 +6,9 @@ import logging
 from xlrd import *
 from .data_model import (
     TopSys,
+    BlockTemplate,
     Block,
-    BlockInstance
+    BlockInstance,
 )
 from .parse_excels import parse_excels
 
@@ -30,7 +31,7 @@ def parse_sheet(sheet):
     for row in range(7, sheet.nrows):
         block_instance_name = sheet.cell(row, 0).value.strip()
         block_type = sheet.cell(row, 1).value.strip()
-        block_address = int(sheet.cell(row, 2).value.strip(), 16)
+        block_base_address = int(sheet.cell(row, 2).value.strip(), 16)
         block_size = int(sheet.cell(row, 3).value.strip(), 16)
         addr_width = None
         val = sheet.cell(row, 4).value
@@ -43,32 +44,29 @@ def parse_sheet(sheet):
 
         block = top_sys.find_block_by_type(block_type)
         if block is None:
-            new_addr_width = addr_width
-            if new_addr_width is None:
-                new_addr_width = top_sys.addr_width
-            new_data_width = data_width
-            if new_data_width is None:
-                new_data_width = top_sys.data_width
-            block = Block(
+            block_template = BlockTemplate(
                 block_type,
-                block_size,
-                new_addr_width,
-                new_data_width)
+                block_size
+            )
+            block = Block(
+                top_sys,
+                block_template,
+                addr_width=addr_width,
+                data_width=data_width
+            )
             top_sys.add_block(block)
 
         new_block_instance = BlockInstance(
             top_sys,
             block_instance_name,
             block,
-            block_address,
-            block_size,
-            addr_width=addr_width,
-            data_width=data_width
+            block_base_address,
+            block_size
         )
         top_sys.add_block_to_address_map(
             block_type,
             block_instance_name,
-            block_address,
+            block_base_address,
             block_size)
     return top_sys
 
@@ -88,10 +86,12 @@ def parse_config(cfg_name):
         LOGGER.error("Error: No Sheet named \"Top\" in config file!")
     return top_sys
 
+
 def parse_top_sys(config_file, excel_path):
     top_sys = parse_config(config_file)
     top_sys = parse_excels(top_sys, excel_path)
     return top_sys
+
 
 def parse_top_sys_from_json(json_file):
     rp_doc_dict = None

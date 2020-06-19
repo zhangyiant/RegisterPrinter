@@ -35,7 +35,7 @@ def is_empty_row(row):
 
 def validate_field_block(field, block):
     msb = field.msb
-    if msb not in range(block.data_len):
+    if msb not in range(block.data_width):
         raise Exception("Invalid msb %d" % msb)
     return
 
