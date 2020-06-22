@@ -33,9 +33,7 @@ def print_c_test(top_sys, out_path):
     return
 
 
-def print_c_header_block(block_instance, out_path):
-
-    block = block_instance.block
+def print_c_header_block(block, out_path):
 
     LOGGER.debug("Print block %s C header...", block.block_type)
 
@@ -48,7 +46,7 @@ def print_c_header_block(block_instance, out_path):
     struct_fields = []
     prev_offset = -4
     curr_offset = -4
-    byte_len = int(block_instance.data_width / 8)
+    byte_len = int(block.data_width / 8)
     rsvd_idx = 0
     for reg in block.registers:
         prev_offset = curr_offset
@@ -147,8 +145,8 @@ def print_c_header(top_sys, output_path="."):
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
 
-    for block_instance in top_sys.block_instances:
-        print_c_header_block(block_instance, out_dir)
+    for block in top_sys.blocks:
+        print_c_header_block(block, out_dir)
 
     print_c_header_sys(top_sys, out_dir)
     print_c_test(top_sys, out_dir)
