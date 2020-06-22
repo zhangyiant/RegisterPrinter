@@ -4,12 +4,14 @@ import re
 import logging
 from .data_model import (
     Register,
-    Field
+    Field,
+    BlockTemplate
 )
 from xlrd import open_workbook
 
 
 LOGGER = logging.getLogger(__name__)
+
 
 def validate_sheet(sheet):
     if sheet.ncols < 8:
@@ -26,13 +28,13 @@ def validate_sheet(sheet):
     return
 
 
-
 def is_empty_row(row):
     if row[0].value == "":
         return True
     return False
 
 
+# Todo： validate field in Block.
 def validate_field_block(field, block):
     msb = field.msb
     if msb not in range(block.data_width):
@@ -40,7 +42,7 @@ def validate_field_block(field, block):
     return
 
 
-def parse_register(sheet, block, start_row):
+def parse_register(sheet, start_row):
     rowx = start_row
 
     register = None
@@ -62,7 +64,6 @@ def parse_register(sheet, block, start_row):
         field = None
         try:
             field = Field.parse_excel_row(row)
-            validate_field_block(field, block)
             register.add_field(field)
         except Exception as exc:
             LOGGER.error(
@@ -92,7 +93,8 @@ def parse_register(sheet, block, start_row):
     return (register, rowx)
 
 
-def process_sheet(sheet, block):
+def generate_block_template_from_sheet(sheet):
+
     LOGGER.debug(
         "Processing sheet %s row=%d col=%d",
         sheet.name,
@@ -101,6 +103,10 @@ def process_sheet(sheet, block):
 
     validate_sheet(sheet)
 
+    block_template = BlockTemplate(
+        sheet.name,
+        None
+    )
     rowx = 3
     while rowx < sheet.nrows:
         row = sheet.row(rowx)
@@ -129,6 +135,46 @@ def process_sheet(sheet, block):
         sheet.name)
     return
 
+
+def process_sheet(sheet, block):
+    LOGGER.debug(
+        "Processing sheet %s row=%d col=%d",
+        sheet.name,
+        sheet.nrows,
+        sheet.ncols)
+
+    validate_sheet(sheet)
+
+    rowx = 3
+    while rowx < sheet.nrows:
+        row = sheet.row(rowx)
+        if is_empty_row(row):
+            rowx += 1
+        elif Register.is_register_row(row):
+            (register, rowx) = parse_register(sheet, rowx)
+            # Todo: Add offset, size validation
+            # if register.offset > block.size:
+            #     LOGGER.error(
+            #         "sheet %s row %d error: offset %x > block size %x",
+            #         sheet.name,
+            #         rowx,
+            #         register.offset,
+            #         block.size)
+            #     raise Exception("offset > block size")
+            block.add_register(register)
+        else:
+            LOGGER.error(
+                "sheet %s row %d error: unknown row.",
+                sheet.name,
+                rowx)
+            LOGGER.error(" %s", sheet.cell(rowx, 0).value)
+            raise Exception("Unknown row")
+    LOGGER.debug(
+        "Processing sheet %s done",
+        sheet.name)
+    return
+
+
 def parse_excel_file(filename, top_sys):
     workbook = open_workbook(filename)
     for sheet in workbook.sheets():
@@ -152,7 +198,7 @@ def parse_excels(top_sys, work_path):
 
     filenames = os.listdir(work_path)
     for filename in filenames:
-        if  re.match(r'~', filename):
+        if re.match(r'~', filename):
             continue
         elif re.search(".xlsx", filename) is not None:
             full_filename = os.path.join(work_path, filename)

@@ -8,7 +8,7 @@ from .data_model import (
     TopSys,
     BlockTemplate,
     Block,
-    BlockInstance,
+    BlockInstance
 )
 from .parse_excels import parse_excels
 
