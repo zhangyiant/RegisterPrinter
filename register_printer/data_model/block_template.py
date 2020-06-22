@@ -3,19 +3,14 @@ import textwrap
 
 class BlockTemplate:
 
-    def __init__(self, block_type, size):
+    def __init__(self, block_type):
         self._block_type = block_type
-        self._size = size
         self.registers = []
         return
 
     @property
     def block_type(self):
         return self._block_type
-
-    @property
-    def size(self):
-        return self._size
 
     def add_register(self, register):
         self.registers.append(register)
@@ -47,7 +42,6 @@ class BlockTemplate:
 
     def __str__(self):
         result = "Block Template" + str(self._block_type) + "\n"
-        result += "    Size         : " + str(self._size) + "\n"
         result += "    Registers:\n"
         register_strings = []
         for register in self.registers:

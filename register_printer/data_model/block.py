@@ -8,11 +8,13 @@ class Block:
             parent,
             block_template,
             addr_width=None,
-            data_width=None):
+            data_width=None,
+            size=None):
         self.parent = parent
         self._block_template = block_template
         self._addr_width = addr_width
         self._data_width = data_width
+        self._size = size
         return
 
     @property
@@ -21,7 +23,13 @@ class Block:
 
     @property
     def size(self):
-        return self._block_template.size
+        if self._size is not None:
+            return self._size
+
+        if self.parent is not None:
+            return self.parent.size
+
+        return None
 
     @property
     def addr_width(self):
@@ -42,6 +50,15 @@ class Block:
             return self.parent.data_width
 
         return None
+
+    @property
+    def block_template(self):
+        return self._block_template
+
+    @block_template.setter
+    def block_template(self, value):
+        self._block_template = value
+        return
 
     @property
     def registers(self):

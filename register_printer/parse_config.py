@@ -45,14 +45,14 @@ def parse_sheet(sheet):
         block = top_sys.find_block_by_type(block_type)
         if block is None:
             block_template = BlockTemplate(
-                block_type,
-                block_size
+                block_type
             )
             block = Block(
                 top_sys,
                 block_template,
                 addr_width=addr_width,
-                data_width=data_width
+                data_width=data_width,
+                size=block_size
             )
             top_sys.add_block(block)
 

@@ -104,8 +104,7 @@ def generate_block_template_from_sheet(sheet):
     validate_sheet(sheet)
 
     block_template = BlockTemplate(
-        sheet.name,
-        None
+        sheet.name
     )
     rowx = 3
     while rowx < sheet.nrows:
@@ -113,45 +112,8 @@ def generate_block_template_from_sheet(sheet):
         if is_empty_row(row):
             rowx += 1
         elif Register.is_register_row(row):
-            (register, rowx) = parse_register(sheet, block, rowx)
-            if register.offset > block.size:
-                LOGGER.error(
-                    "sheet %s row %d error: offset %x > block size %x",
-                    sheet.name,
-                    rowx,
-                    register.offset,
-                    block.size)
-                raise Exception("offset > block size")
-            block.add_register(register)
-        else:
-            LOGGER.error(
-                "sheet %s row %d error: unknown row.",
-                sheet.name,
-                rowx)
-            LOGGER.error(" %s", sheet.cell(rowx, 0).value)
-            raise Exception("Unknown row")
-    LOGGER.debug(
-        "Processing sheet %s done",
-        sheet.name)
-    return
-
-
-def process_sheet(sheet, block):
-    LOGGER.debug(
-        "Processing sheet %s row=%d col=%d",
-        sheet.name,
-        sheet.nrows,
-        sheet.ncols)
-
-    validate_sheet(sheet)
-
-    rowx = 3
-    while rowx < sheet.nrows:
-        row = sheet.row(rowx)
-        if is_empty_row(row):
-            rowx += 1
-        elif Register.is_register_row(row):
             (register, rowx) = parse_register(sheet, rowx)
+            block_template.add_register(register)
             # Todo: Add offset, size validation
             # if register.offset > block.size:
             #     LOGGER.error(
@@ -161,7 +123,6 @@ def process_sheet(sheet, block):
             #         register.offset,
             #         block.size)
             #     raise Exception("offset > block size")
-            block.add_register(register)
         else:
             LOGGER.error(
                 "sheet %s row %d error: unknown row.",
@@ -172,7 +133,7 @@ def process_sheet(sheet, block):
     LOGGER.debug(
         "Processing sheet %s done",
         sheet.name)
-    return
+    return block_template
 
 
 def parse_excel_file(filename, top_sys):
@@ -184,7 +145,10 @@ def parse_excel_file(filename, top_sys):
             continue
         block = top_sys.find_block_by_type(sheet.name)
         if block is not None:
-            process_sheet(sheet, block)
+            block_template = generate_block_template_from_sheet(
+                sheet
+            )
+            block.block_template = block_template
         else:
             LOGGER.debug(
                 "Skip sheet \"%s\", not defined in Top config.",
