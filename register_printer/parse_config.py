@@ -16,6 +16,22 @@ from .parse_excels import parse_excels
 LOGGER = logging.getLogger(__name__)
 
 
+def parse_top_sys_meta_data(sheet):
+    name = sheet.cell(0, 1).value.strip()
+    addr_size = int(sheet.cell(1, 1).value)
+    data_size = int(sheet.cell(2, 1).value)
+    author = sheet.cell(3, 1).value.strip()
+    version = sheet.cell(4, 1).value
+    result = {
+        "name": name,
+        "author": author,
+        "version": version,
+        "default_addr_width": addr_size,
+        "default_data_width": data_size
+    }
+    return result
+
+
 def parse_block_instance_row(row):
     block_instance_name = row[0].value.strip()
     block_type = row[1].value.strip()
@@ -40,26 +56,26 @@ def parse_block_instance_row(row):
     return result
 
 
-def parse_top_meta_data(sheet):
-    name = sheet.cell(0, 1).value.strip()
-    addr_size = int(sheet.cell(1, 1).value)
-    data_size = int(sheet.cell(2, 1).value)
-    author = sheet.cell(3, 1).value.strip()
-    version = sheet.cell(4, 1).value
-    result = {
-        "name": name,
-        "author": author,
-        "version": version,
-        "default_addr_width": addr_size,
-        "default_data_width": data_size
-    }
-    return result
+def parse_top_sys_sheet(sheet):
+
+    top_dict = parse_top_sys_meta_data(sheet)
+
+    top_dict["block_instances"] = []
+    for rowx in range(7, sheet.nrows):
+        row = sheet.row(rowx)
+        block_inst_dict = parse_block_instance_row(row)
+        top_dict["block_instances"].append(block_inst_dict)
+    return top_dict
 
 
 def parse_sheet(sheet):
+
+
+
     top_sys = None
 
-    top_dict = parse_top_meta_data(sheet)
+    top_dict = parse_top_sys_sheet(sheet)
+
     top_sys = TopSys(
         top_dict["name"],
         top_dict["default_addr_width"],
@@ -68,9 +84,7 @@ def parse_sheet(sheet):
     top_sys.author = top_dict["author"]
     top_sys.version = top_dict["version"]
 
-    for row in range(7, sheet.nrows):
-        sheet_row = sheet.row(row)
-        block_inst_dict = parse_block_instance_row(sheet_row)
+    for block_inst_dict in top_dict["block_instances"]:
 
         block = top_sys.find_block_by_type(
             block_inst_dict["type"])
