@@ -16,6 +16,30 @@ from .parse_excels import parse_excels
 LOGGER = logging.getLogger(__name__)
 
 
+def parse_block_instance_row(row):
+    block_instance_name = row[0].value.strip()
+    block_type = row[1].value.strip()
+    block_base_address = int(row[2].value.strip(), 16)
+    block_size = int(row[3].value.strip(), 16)
+    addr_width = None
+    value = row[4].value
+    if value != "":
+        addr_width = int(value)
+    data_width = None
+    value = row[5].value
+    if value != "":
+        data_width = int(value)
+    result = {
+        "name": block_instance_name,
+        "type": block_type,
+        "base_address": block_base_address,
+        "size": block_size,
+        "addr_width": addr_width,
+        "data_width": data_width
+    }
+    return result
+
+
 def parse_sheet(sheet):
     top_sys = None
     name = sheet.cell(0, 1).value.strip()
@@ -29,45 +53,36 @@ def parse_sheet(sheet):
     top_sys.version = version
 
     for row in range(7, sheet.nrows):
-        block_instance_name = sheet.cell(row, 0).value.strip()
-        block_type = sheet.cell(row, 1).value.strip()
-        block_base_address = int(sheet.cell(row, 2).value.strip(), 16)
-        block_size = int(sheet.cell(row, 3).value.strip(), 16)
-        addr_width = None
-        val = sheet.cell(row, 4).value
-        if val != "":
-            addr_width = int(val)
-        data_width = None
-        val = sheet.cell(row, 5).value
-        if val != "":
-            data_width = int(val)
+        sheet_row = sheet.row(row)
+        block_inst_dict = parse_block_instance_row(sheet_row)
 
-        block = top_sys.find_block_by_type(block_type)
+        block = top_sys.find_block_by_type(
+            block_inst_dict["type"])
         if block is None:
             block_template = BlockTemplate(
-                block_type
+                block_inst_dict["type"]
             )
             block = Block(
                 top_sys,
                 block_template,
-                addr_width=addr_width,
-                data_width=data_width,
-                size=block_size
+                addr_width=block_inst_dict["addr_width"],
+                data_width=block_inst_dict["data_width"],
+                size=block_inst_dict["size"]
             )
             top_sys.add_block(block)
 
         new_block_instance = BlockInstance(
             top_sys,
-            block_instance_name,
+            block_inst_dict["name"],
             block,
-            block_base_address,
-            block_size
+            block_inst_dict["base_address"],
+            block_inst_dict["size"]
         )
         top_sys.add_block_to_address_map(
-            block_type,
-            block_instance_name,
-            block_base_address,
-            block_size)
+            block_inst_dict["type"],
+            block_inst_dict["name"],
+            block_inst_dict["base_address"],
+            block_inst_dict["size"])
     return top_sys
 
 
