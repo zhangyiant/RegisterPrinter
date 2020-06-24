@@ -40,17 +40,33 @@ def parse_block_instance_row(row):
     return result
 
 
-def parse_sheet(sheet):
-    top_sys = None
+def parse_top_meta_data(sheet):
     name = sheet.cell(0, 1).value.strip()
     addr_size = int(sheet.cell(1, 1).value)
     data_size = int(sheet.cell(2, 1).value)
     author = sheet.cell(3, 1).value.strip()
     version = sheet.cell(4, 1).value
+    result = {
+        "name": name,
+        "author": author,
+        "version": version,
+        "default_addr_width": addr_size,
+        "default_data_width": data_size
+    }
+    return result
 
-    top_sys = TopSys(name, addr_size, data_size)
-    top_sys.author = author
-    top_sys.version = version
+
+def parse_sheet(sheet):
+    top_sys = None
+
+    top_dict = parse_top_meta_data(sheet)
+    top_sys = TopSys(
+        top_dict["name"],
+        top_dict["default_addr_width"],
+        top_dict["default_data_width"]
+    )
+    top_sys.author = top_dict["author"]
+    top_sys.version = top_dict["version"]
 
     for row in range(7, sheet.nrows):
         sheet_row = sheet.row(row)
