@@ -98,15 +98,6 @@ class Register:
 
         return register
 
-    @staticmethod
-    def is_register_row(row):
-        '''
-            :type row: a sequence of the xlrd.sheet.cell objects
-        '''
-        if re.match(r'0x', str(row[0].value)):
-            return True
-        return False
-
     def __str__(self):
         result = "Register " + str(self.name) + "\n"
         result += "    offset: " + str(self.offset) + "\n"

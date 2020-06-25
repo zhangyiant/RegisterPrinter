@@ -93,6 +93,24 @@ def parse_register(sheet, start_row):
     return (register, rowx)
 
 
+def parse_block_template_sheet(sheet):
+
+    result = {}
+
+    result["name"] = sheet.name
+
+    return result
+
+
+def is_register_row(row):
+    '''
+    :type row: a sequence of the xlrd.sheet.cell objects
+    '''
+    if re.match(r'0x', str(row[0].value)):
+        return True
+    return False
+
+
 def generate_block_template_from_sheet(sheet):
 
     LOGGER.debug(
@@ -111,7 +129,7 @@ def generate_block_template_from_sheet(sheet):
         row = sheet.row(rowx)
         if is_empty_row(row):
             rowx += 1
-        elif Register.is_register_row(row):
+        elif is_register_row(row):
             (register, rowx) = parse_register(sheet, rowx)
             block_template.add_register(register)
             # Todo: Add offset, size validation
