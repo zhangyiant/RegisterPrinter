@@ -101,7 +101,7 @@ class Register:
     @staticmethod
     def is_register_row(row):
         '''
-            row: xlrd row object.
+            :type row: a sequence of the xlrd.sheet.cell objects
         '''
         if re.match(r'0x', str(row[0].value)):
             return True
