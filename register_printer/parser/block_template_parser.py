@@ -1,6 +1,15 @@
 from register_printer.data_model import Register
 
 
+def is_field_row(row):
+    '''
+        row: xlrd row object.
+    '''
+    if row[2].value != "":
+        return True
+    return False
+
+
 def validate_register_row_empty_field(row):
     """
         row can be obtained by xlrd sheet.row() method.

@@ -9,7 +9,8 @@ from .data_model import (
 )
 from xlrd import open_workbook
 from .parser import (
-    parse_register_row
+    parse_register_row,
+    is_field_row
 )
 
 
@@ -68,7 +69,7 @@ def parse_register(sheet, start_row):
 
     rowx = rowx + 1
     row = sheet.row(rowx)
-    while Field.is_field_row(row):
+    while is_field_row(row):
         field = None
         try:
             field = Field.parse_excel_row(row)

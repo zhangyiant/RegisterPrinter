@@ -76,15 +76,6 @@ class Field:
         field.validate()
         return field
 
-    @staticmethod
-    def is_field_row(row):
-        '''
-            row: xlrd row object.
-        '''
-        if row[2].value != "":
-            return True
-        return False
-
     def __str__(self):
         result = "Field " + str(self.name) + "\n"
         result += "    msb        : " + str(self.msb) + "\n"
