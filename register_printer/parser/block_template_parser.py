@@ -30,6 +30,11 @@ def parse_register_row(row):
     offset = int(row[0].value, 16)
     name = row[1].value
     description = "%s" % (row[7].value)
-    register = Register(name, offset, description)
 
-    return register
+    result = {
+        "offset": offset,
+        "name": name,
+        "description": description
+    }
+
+    return result

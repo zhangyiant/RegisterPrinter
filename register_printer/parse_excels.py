@@ -51,7 +51,12 @@ def parse_register(sheet, start_row):
     register = None
     row = sheet.row(rowx)
     try:
-        register = parse_register_row(row)
+        register_dict = parse_register_row(row)
+        register = Register(
+            register_dict["name"],
+            register_dict["offset"],
+            register_dict["description"]
+        )
     except Exception as exc:
         LOGGER.error(
             "sheet %s row %d error: %s",
