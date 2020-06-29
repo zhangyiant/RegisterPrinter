@@ -8,6 +8,9 @@ from .data_model import (
     BlockTemplate
 )
 from xlrd import open_workbook
+from .parser import (
+    parse_register_row
+)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -48,7 +51,7 @@ def parse_register(sheet, start_row):
     register = None
     row = sheet.row(rowx)
     try:
-        register = Register.parse_register_row(row)
+        register = parse_register_row(row)
     except Exception as exc:
         LOGGER.error(
             "sheet %s row %d error: %s",
