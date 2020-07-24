@@ -41,11 +41,4 @@ def parse_excels(top_sys, work_path, top_sys_dict):
             block_template_list = parse_block_template_file(full_filename, block_types)
             update_top_sys_block_template(block_template_list, top_sys)
 
-    for blk in top_sys.blocks:
-        if len(blk.registers) == 0:
-            LOGGER.error(
-                "No register definition for block %s",
-                blk.name)
-            raise Exception("No register definition for block.")
-
     return top_sys
