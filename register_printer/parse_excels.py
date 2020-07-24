@@ -165,6 +165,7 @@ def generate_block_template_from_sheet(sheet):
 
 def parse_excel_file(filename, top_sys):
     workbook = open_workbook(filename)
+    sheet_list = []
     for sheet in workbook.sheets():
         LOGGER.debug("Process sheet: \"%s\"", sheet.name)
         if sheet.name == "Top":
@@ -172,14 +173,20 @@ def parse_excel_file(filename, top_sys):
             continue
         block = top_sys.find_block_by_type(sheet.name)
         if block is not None:
-            block_template = generate_block_template_from_sheet(
-                sheet
-            )
-            block.block_template = block_template
+            sheet_list.append(sheet)
         else:
             LOGGER.debug(
                 "Skip sheet \"%s\", not defined in Top config.",
                 sheet.name)
+
+    for sheet in sheet_list:
+        block_template = generate_block_template_from_sheet(
+            sheet
+        )
+        block = top_sys.find_block_by_type(sheet.name)
+        if block is not None:
+            block.block_template = block_template
+
     return
 
 
