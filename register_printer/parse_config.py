@@ -22,7 +22,7 @@ def parse_top_sys(config_file, excel_path):
     top_sys_dict = parse_top_sys_file(config_file)
     top_sys = TopSys.from_top_sys_dict(top_sys_dict)
 
-    block_template_list = parse_excels(top_sys, excel_path, top_sys_dict)
+    block_template_list = parse_excels(excel_path, top_sys_dict)
     update_top_sys_block_template(block_template_list, top_sys)
 
     for blk in top_sys.blocks:
