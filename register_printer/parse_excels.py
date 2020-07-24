@@ -3,7 +3,7 @@ import os.path
 import re
 import logging
 
-from register_printer.parser import parse_excel_file
+from register_printer.parser import parse_block_template_file
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ def parse_excels(top_sys, work_path, top_sys_dict):
             LOGGER.info("Parsing excels file: %s", full_filename)
             block_types = get_block_types(top_sys_dict)
             LOGGER.debug("Block types need to be checked: %s.", block_types)
-            block_template_list = parse_excel_file(full_filename, block_types)
+            block_template_list = parse_block_template_file(full_filename, block_types)
             update_top_sys_block_template(block_template_list, top_sys)
 
     for blk in top_sys.blocks:

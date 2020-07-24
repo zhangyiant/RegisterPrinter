@@ -225,7 +225,7 @@ def get_sheet_list(workbook, block_types=None):
     return sheet_list
 
 
-def parse_excel_file(filename, block_types=None):
+def parse_block_template_file(filename, block_types=None):
 
     workbook = open_workbook(filename)
 
