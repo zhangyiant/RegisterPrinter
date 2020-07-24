@@ -171,10 +171,13 @@ def get_block_types(top_sys_dict):
     return block_types
 
 
-def is_sheet_parse_needed(sheet_name, block_types):
+def is_sheet_parse_needed(sheet_name, block_types=None):
     if sheet_name == "Top":
         LOGGER.debug("Skip Top sheet")
         return False
+    if block_types is None:
+        # All sheet needs to be parsed.
+        return True
     result = False
     for block_type in block_types:
         if sheet_name.upper() == block_type.upper():
@@ -183,7 +186,7 @@ def is_sheet_parse_needed(sheet_name, block_types):
     return result
 
 
-def get_sheet_list(workbook, block_types):
+def get_sheet_list(workbook, block_types=None):
     sheet_list = []
     for sheet in workbook.sheets():
         LOGGER.debug("Process sheet: \"%s\"", sheet.name)
@@ -197,7 +200,7 @@ def get_sheet_list(workbook, block_types):
     return sheet_list
 
 
-def parse_excel_file(filename, block_types):
+def parse_excel_file(filename, block_types=None):
 
     workbook = open_workbook(filename)
 
