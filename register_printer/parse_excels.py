@@ -102,15 +102,6 @@ def parse_register(sheet, start_row):
     return (register, rowx)
 
 
-def parse_block_template_sheet(sheet):
-
-    result = {}
-
-    result["name"] = sheet.name
-
-    return result
-
-
 def is_register_row(row):
     '''
         :type row: a sequence of the xlrd.sheet.cell objects
