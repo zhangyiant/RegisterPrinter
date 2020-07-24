@@ -1,7 +1,20 @@
 import textwrap
+import logging
 from .block import Block
 from .block_template import BlockTemplate
 from .block_instance import BlockInstance
+
+
+LOGGER = logging.getLogger(__name__)
+
+
+def update_top_sys_block_template(block_template_list, top_sys):
+    for block_template in block_template_list:
+        block_type = block_template.block_type
+        block = top_sys.find_block_by_type(block_type)
+        if block is not None:
+            block.block_template = block_template
+    return
 
 
 class TopSys:
@@ -209,4 +222,17 @@ class TopSys:
                 block_inst_dict["name"],
                 block_inst_dict["base_address"],
                 block_inst_dict["size"])
+        return top_sys
+
+    @staticmethod
+    def generate_top_sys(top_sys_dict, block_template_list):
+        top_sys = TopSys.from_top_sys_dict(top_sys_dict)
+        update_top_sys_block_template(block_template_list, top_sys)
+
+        for blk in top_sys.blocks:
+            if len(blk.registers) == 0:
+                LOGGER.error(
+                    "No register definition for block %s",
+                    blk.name)
+                raise Exception("No register definition for block.")
         return top_sys
