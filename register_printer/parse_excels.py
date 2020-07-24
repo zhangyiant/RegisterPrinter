@@ -163,8 +163,7 @@ def generate_block_template_from_sheet(sheet):
     return block_template
 
 
-def parse_excel_file(filename, top_sys):
-    workbook = open_workbook(filename)
+def get_sheet_list(workbook, top_sys):
     sheet_list = []
     for sheet in workbook.sheets():
         LOGGER.debug("Process sheet: \"%s\"", sheet.name)
@@ -178,6 +177,13 @@ def parse_excel_file(filename, top_sys):
             LOGGER.debug(
                 "Skip sheet \"%s\", not defined in Top config.",
                 sheet.name)
+    return sheet_list
+
+
+def parse_excel_file(filename, top_sys):
+    workbook = open_workbook(filename)
+
+    sheet_list = get_sheet_list(workbook, top_sys)
 
     for sheet in sheet_list:
         block_template = generate_block_template_from_sheet(
