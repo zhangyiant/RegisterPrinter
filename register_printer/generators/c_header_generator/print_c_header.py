@@ -116,7 +116,7 @@ def print_c_header_sys(top_sys, out_path):
             {
                 "name": block_instance.name.upper(),
                 "base_address": block_instance.base_address,
-                "type": block_instance.block.block_type
+                "type": block_instance.block_type
             }
         )
 
