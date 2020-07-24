@@ -12,7 +12,7 @@ LOGGER = logging.getLogger(__name__)
 def parse_top_sys(config_file, excel_path):
     top_sys_dict = parse_top_sys_file(config_file)
     top_sys = TopSys.from_top_sys_dict(top_sys_dict)
-    top_sys = parse_excels(top_sys, excel_path)
+    top_sys = parse_excels(top_sys, excel_path, top_sys_dict)
     return top_sys
 
 

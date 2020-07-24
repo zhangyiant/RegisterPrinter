@@ -163,7 +163,15 @@ def generate_block_template_from_sheet(sheet):
     return block_template
 
 
-def is_sheet_parse_needed(sheet_name, top_sys):
+def get_block_types(top_sys_dict):
+    block_types = []
+    block_instances = top_sys_dict["block_instances"]
+    for block_instance in block_instances:
+        block_types.append(block_instance['type'])
+    return block_types
+
+
+def is_sheet_parse_needed(sheet_name, top_sys, block_types):
     if sheet_name == "Top":
         LOGGER.debug("Skip Top sheet")
         return False
@@ -173,11 +181,11 @@ def is_sheet_parse_needed(sheet_name, top_sys):
     return True
 
 
-def get_sheet_list(workbook, top_sys):
+def get_sheet_list(workbook, top_sys, block_types):
     sheet_list = []
     for sheet in workbook.sheets():
         LOGGER.debug("Process sheet: \"%s\"", sheet.name)
-        if is_sheet_parse_needed(sheet.name, top_sys):
+        if is_sheet_parse_needed(sheet.name, top_sys, block_types):
             sheet_list.append(sheet)
         else:
             LOGGER.debug(
@@ -187,10 +195,12 @@ def get_sheet_list(workbook, top_sys):
     return sheet_list
 
 
-def parse_excel_file(filename, top_sys):
+def parse_excel_file(filename, top_sys, top_sys_dict):
     workbook = open_workbook(filename)
 
-    sheet_list = get_sheet_list(workbook, top_sys)
+    block_types = get_block_types(top_sys_dict)
+    LOGGER.debug("Block types need to be checked: %s.", block_types)
+    sheet_list = get_sheet_list(workbook, top_sys, block_types)
 
     for sheet in sheet_list:
         block_template = generate_block_template_from_sheet(
@@ -203,7 +213,7 @@ def parse_excel_file(filename, top_sys):
     return
 
 
-def parse_excels(top_sys, work_path):
+def parse_excels(top_sys, work_path, top_sys_dict):
 
     LOGGER.debug("Parsing with excel files in %s.", work_path)
 
@@ -214,7 +224,7 @@ def parse_excels(top_sys, work_path):
         elif re.search(".xlsx", filename) is not None:
             full_filename = os.path.join(work_path, filename)
             LOGGER.info("Parsing excels file: %s", full_filename)
-            parse_excel_file(full_filename, top_sys)
+            parse_excel_file(full_filename, top_sys, top_sys_dict)
 
     for blk in top_sys.blocks:
         if len(blk.registers) == 0:
