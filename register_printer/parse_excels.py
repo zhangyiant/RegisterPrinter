@@ -163,19 +163,26 @@ def generate_block_template_from_sheet(sheet):
     return block_template
 
 
+def is_sheet_parse_needed(sheet_name, top_sys):
+    if sheet_name == "Top":
+        LOGGER.debug("Skip Top sheet")
+        return False
+    block = top_sys.find_block_by_type(sheet_name)
+    if block is None:
+        return False
+    return True
+
+
 def get_sheet_list(workbook, top_sys):
     sheet_list = []
     for sheet in workbook.sheets():
         LOGGER.debug("Process sheet: \"%s\"", sheet.name)
-        if sheet.name == "Top":
-            LOGGER.debug("Skip Top sheet")
-            continue
-        block = top_sys.find_block_by_type(sheet.name)
-        if block is not None:
+        if is_sheet_parse_needed(sheet.name, top_sys):
             sheet_list.append(sheet)
         else:
             LOGGER.debug(
-                "Skip sheet \"%s\", not defined in Top config.",
+                'Skip sheet "%s", not defined in Top config or '
+                'sheet name is "Top"',
                 sheet.name)
     return sheet_list
 
