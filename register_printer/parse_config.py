@@ -19,10 +19,16 @@ LOGGER = logging.getLogger(__name__)
 
 def parse_sheet(sheet):
 
-    top_sys = None
-
     top_dict = parse_top_sys_sheet(sheet)
 
+    LOGGER.debug("Parse top dict %s", top_dict)
+
+    top_sys = top_sys_dict_to_top_sys(top_dict)
+
+    return top_sys
+
+
+def top_sys_dict_to_top_sys(top_dict):
     top_sys = TopSys(
         top_dict["name"],
         top_dict["default_addr_width"],
@@ -30,7 +36,6 @@ def parse_sheet(sheet):
     )
     top_sys.author = top_dict["author"]
     top_sys.version = top_dict["version"]
-
     for block_inst_dict in top_dict["block_instances"]:
 
         block = top_sys.find_block_by_type(
