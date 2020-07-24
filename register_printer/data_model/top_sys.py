@@ -1,5 +1,7 @@
 import textwrap
 from .block import Block
+from .block_template import BlockTemplate
+from .block_instance import BlockInstance
 
 
 class TopSys:
@@ -167,4 +169,44 @@ class TopSys:
                 addr_map_dict)
             top_sys.addr_map.append(
                 addr_map)
+        return top_sys
+
+    @staticmethod
+    def from_top_sys_dict(top_sys_dict):
+        top_sys = TopSys(
+            top_sys_dict["name"],
+            top_sys_dict["default_addr_width"],
+            top_sys_dict["default_data_width"]
+        )
+        top_sys.author = top_sys_dict["author"]
+        top_sys.version = top_sys_dict["version"]
+        for block_inst_dict in top_sys_dict["block_instances"]:
+
+            block = top_sys.find_block_by_type(
+                block_inst_dict["type"])
+            if block is None:
+                block_template = BlockTemplate(
+                    block_inst_dict["type"]
+                )
+                block = Block(
+                    top_sys,
+                    block_template,
+                    addr_width=block_inst_dict["addr_width"],
+                    data_width=block_inst_dict["data_width"],
+                    size=block_inst_dict["size"]
+                )
+                top_sys.add_block(block)
+
+            new_block_instance = BlockInstance(
+                top_sys,
+                block_inst_dict["name"],
+                block,
+                block_inst_dict["base_address"],
+                block_inst_dict["size"]
+            )
+            top_sys.add_block_to_address_map(
+                block_inst_dict["type"],
+                block_inst_dict["name"],
+                block_inst_dict["base_address"],
+                block_inst_dict["size"])
         return top_sys
