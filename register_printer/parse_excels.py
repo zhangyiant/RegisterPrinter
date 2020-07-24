@@ -211,6 +211,11 @@ def parse_excel_file(filename, top_sys, top_sys_dict):
         )
         block_template_list.append(block_template)
 
+    update_top_sys_block_template(block_template_list, top_sys)
+    return
+
+
+def update_top_sys_block_template(block_template_list, top_sys):
     for block_template in block_template_list:
         block_type = block_template.block_type
         block = top_sys.find_block_by_type(block_type)
