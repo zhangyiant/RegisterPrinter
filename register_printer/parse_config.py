@@ -26,13 +26,8 @@ def update_top_sys_block_template(block_template_list, top_sys):
     return
 
 
-def parse_top_sys(config_file, excel_path):
-    top_sys_dict = parse_top_sys_file(config_file)
+def generate_top_sys(top_sys_dict, block_template_list):
     top_sys = TopSys.from_top_sys_dict(top_sys_dict)
-
-    block_types = get_block_types(top_sys_dict)
-    LOGGER.debug("Block types need to be checked: %s.", block_types)
-    block_template_list = parse_excels(excel_path, block_types)
     update_top_sys_block_template(block_template_list, top_sys)
 
     for blk in top_sys.blocks:
@@ -41,6 +36,19 @@ def parse_top_sys(config_file, excel_path):
                 "No register definition for block %s",
                 blk.name)
             raise Exception("No register definition for block.")
+    return top_sys
+
+
+def parse_top_sys(config_file, excel_path):
+
+    top_sys_dict = parse_top_sys_file(config_file)
+
+    block_types = get_block_types(top_sys_dict)
+    LOGGER.debug("Block types need to be checked: %s.", block_types)
+    block_template_list = parse_excels(excel_path, block_types)
+
+    top_sys = generate_top_sys(top_sys_dict, block_template_list)
+
     return top_sys
 
 

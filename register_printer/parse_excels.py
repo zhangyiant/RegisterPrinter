@@ -5,6 +5,7 @@ import logging
 
 from register_printer.parser import parse_block_template_file
 
+
 LOGGER = logging.getLogger(__name__)
 
 
