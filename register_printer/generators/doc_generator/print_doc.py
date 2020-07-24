@@ -58,12 +58,7 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
     return
 
 
-def print_doc_block(doc, idx, instances):
-
-    if len(instances) == 0:
-        return
-
-    block = instances[0].block
+def print_doc_block(doc, idx, block, instances):
 
     doc.add_heading("%d %s Registers" % (idx, block.block_type), level=1)
     tb = doc.add_table(
@@ -71,10 +66,9 @@ def print_doc_block(doc, idx, instances):
         2 + len(instances),
         style="Light Grid")
     hcells = tb.rows[0].cells
-    hdr = []
-    hdr.append("Offset")
+    hdr = ["Offset"]
     for instance in instances:
-        hdr.append("%s Addr" % (instance.name))
+        hdr.append("%s Addr" % instance.name)
     hdr.append("Register")
     for i in range(len(hdr)):
         p = hcells[i].paragraphs[0]
@@ -140,7 +134,7 @@ def generate_doc(top_sys):
             if block_instance.block.block_type == block.block_type:
                 blk_insts.append(block_instance)
 
-        print_doc_block(doc, block_idx, blk_insts)
+        print_doc_block(doc, block_idx, block, blk_insts)
         block_idx = block_idx + 1
     return doc
 
