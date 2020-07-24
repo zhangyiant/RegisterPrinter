@@ -9,6 +9,14 @@ from .parser import parse_top_sys_file
 LOGGER = logging.getLogger(__name__)
 
 
+def get_block_types(top_sys_dict):
+    block_types = []
+    block_instances = top_sys_dict["block_instances"]
+    for block_instance in block_instances:
+        block_types.append(block_instance['type'])
+    return block_types
+
+
 def update_top_sys_block_template(block_template_list, top_sys):
     for block_template in block_template_list:
         block_type = block_template.block_type
@@ -22,7 +30,9 @@ def parse_top_sys(config_file, excel_path):
     top_sys_dict = parse_top_sys_file(config_file)
     top_sys = TopSys.from_top_sys_dict(top_sys_dict)
 
-    block_template_list = parse_excels(excel_path, top_sys_dict)
+    block_types = get_block_types(top_sys_dict)
+    LOGGER.debug("Block types need to be checked: %s.", block_types)
+    block_template_list = parse_excels(excel_path, block_types)
     update_top_sys_block_template(block_template_list, top_sys)
 
     for blk in top_sys.blocks:

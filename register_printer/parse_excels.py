@@ -8,15 +8,7 @@ from register_printer.parser import parse_block_template_file
 LOGGER = logging.getLogger(__name__)
 
 
-def get_block_types(top_sys_dict):
-    block_types = []
-    block_instances = top_sys_dict["block_instances"]
-    for block_instance in block_instances:
-        block_types.append(block_instance['type'])
-    return block_types
-
-
-def parse_excels(work_path, top_sys_dict):
+def parse_excels(work_path, block_types=None):
 
     LOGGER.debug("Parsing with excel files in %s.", work_path)
 
@@ -28,8 +20,6 @@ def parse_excels(work_path, top_sys_dict):
         elif re.search(".xlsx", filename) is not None:
             full_filename = os.path.join(work_path, filename)
             LOGGER.info("Parsing excels file: %s", full_filename)
-            block_types = get_block_types(top_sys_dict)
-            LOGGER.debug("Block types need to be checked: %s.", block_types)
             temp_block_template_list = parse_block_template_file(
                 full_filename,
                 block_types)
