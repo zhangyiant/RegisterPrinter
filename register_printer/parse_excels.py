@@ -197,7 +197,7 @@ def get_sheet_list(workbook, block_types):
     return sheet_list
 
 
-def parse_excel_file(filename, top_sys, top_sys_dict):
+def parse_excel_file(filename, top_sys_dict):
     workbook = open_workbook(filename)
 
     block_types = get_block_types(top_sys_dict)
@@ -211,8 +211,7 @@ def parse_excel_file(filename, top_sys, top_sys_dict):
         )
         block_template_list.append(block_template)
 
-    update_top_sys_block_template(block_template_list, top_sys)
-    return
+    return block_template_list
 
 
 def update_top_sys_block_template(block_template_list, top_sys):
@@ -235,7 +234,8 @@ def parse_excels(top_sys, work_path, top_sys_dict):
         elif re.search(".xlsx", filename) is not None:
             full_filename = os.path.join(work_path, filename)
             LOGGER.info("Parsing excels file: %s", full_filename)
-            parse_excel_file(full_filename, top_sys, top_sys_dict)
+            block_template_list = parse_excel_file(full_filename, top_sys_dict)
+            update_top_sys_block_template(block_template_list, top_sys)
 
     for blk in top_sys.blocks:
         if len(blk.registers) == 0:
