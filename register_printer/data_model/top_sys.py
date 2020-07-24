@@ -102,10 +102,10 @@ class TopSys:
     @staticmethod
     def block_instance_to_dict(block_instance):
         result = {}
-        result["blockType"] = block_instance["block_type"]
-        result["name"] = block_instance["name"]
-        result["baseAddress"] = block_instance["base_address"]
-        result["blockSize"] = block_instance["block_size"]
+        result["blockType"] = block_instance.block_type
+        result["name"] = block_instance.name
+        result["baseAddress"] = block_instance.base_address
+        result["blockSize"] = block_instance.block_size
         return result
 
     @staticmethod
@@ -135,7 +135,7 @@ class TopSys:
         for block_instance in self.block_instances:
             block_instance_dict = TopSys.block_instance_to_dict(
                 block_instance)
-            result["block_instances"].append(block_instance_dict)
+            result["blockInstances"].append(block_instance_dict)
         return result
 
     @staticmethod
