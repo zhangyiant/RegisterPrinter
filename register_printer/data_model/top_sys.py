@@ -127,10 +127,10 @@ class TopSys:
             "dataWidth": self.data_width,
             "version": self.version,
             "author": self.author,
-            "blockTypes": []
+            "blocks": []
         }
         for block in self.blocks:
-            result["blockTypes"].append(block.to_dict())
+            result["blocks"].append(block.to_dict())
         result["blockInstances"] = []
         for block_instance in self.block_instances:
             block_instance_dict = TopSys.block_instance_to_dict(
@@ -151,7 +151,7 @@ class TopSys:
             data_width=data_width)
         top_sys.version = version
         top_sys.author = author
-        block_types_dict = top_sys_dict["blockTypes"]
+        block_types_dict = top_sys_dict["blocks"]
         for block_type_dict in block_types_dict:
             block_type = Block.from_dict(
                 block_type_dict)
