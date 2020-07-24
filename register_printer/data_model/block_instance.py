@@ -58,3 +58,7 @@ class BlockInstance:
     def raw_data_width(self, value):
         self._data_width = value
         return
+
+    @property
+    def block_type(self):
+        return self.block.block_type
