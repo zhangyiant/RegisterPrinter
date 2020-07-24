@@ -69,16 +69,14 @@ def parse_config(cfg_name):
             top_dict = parse_top_sys_sheet(sheet)
             LOGGER.debug("Parse top dict %s", top_dict)
 
-    top_sys = None
     if not found:
         LOGGER.error("Error: No Sheet named \"Top\" in config file!")
-    else:
-        top_sys = top_sys_dict_to_top_sys(top_dict)
-    return top_sys
+    return top_dict
 
 
 def parse_top_sys(config_file, excel_path):
-    top_sys = parse_config(config_file)
+    top_sys_dict = parse_config(config_file)
+    top_sys = top_sys_dict_to_top_sys(top_sys_dict)
     top_sys = parse_excels(top_sys, excel_path)
     return top_sys
 
