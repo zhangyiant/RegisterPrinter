@@ -1,4 +1,5 @@
 import logging
+from xlrd import open_workbook
 
 
 LOGGER = logging.getLogger(__name__)
@@ -56,4 +57,21 @@ def parse_top_sys_sheet(sheet):
         row = sheet.row(rowx)
         block_inst_dict = parse_block_instance_row(row)
         top_dict["block_instances"].append(block_inst_dict)
+    return top_dict
+
+
+def parse_top_sys_file(filename):
+    LOGGER.debug("Parsing top config file: %s", filename)
+    workbook = open_workbook(filename)
+
+    found = False
+    top_dict = None
+    for sheet in workbook.sheets():
+        if sheet.name == "Top":
+            found = True
+            top_dict = parse_top_sys_sheet(sheet)
+            LOGGER.debug("Parse top dict %s", top_dict)
+
+    if not found:
+        LOGGER.error("Error: No Sheet named \"Top\" in config file!")
     return top_dict
