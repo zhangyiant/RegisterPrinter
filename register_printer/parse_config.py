@@ -17,17 +17,6 @@ from .parser import parse_top_sys_sheet
 LOGGER = logging.getLogger(__name__)
 
 
-def parse_sheet(sheet):
-
-    top_dict = parse_top_sys_sheet(sheet)
-
-    LOGGER.debug("Parse top dict %s", top_dict)
-
-    top_sys = top_sys_dict_to_top_sys(top_dict)
-
-    return top_sys
-
-
 def top_sys_dict_to_top_sys(top_dict):
     top_sys = TopSys(
         top_dict["name"],
@@ -73,14 +62,18 @@ def parse_config(cfg_name):
     workbook = open_workbook(cfg_name)
 
     found = False
-    top_sys = None
+    top_dict = None
     for sheet in workbook.sheets():
         if sheet.name == "Top":
             found = True
-            top_sys = parse_sheet(sheet)
+            top_dict = parse_top_sys_sheet(sheet)
+            LOGGER.debug("Parse top dict %s", top_dict)
 
+    top_sys = None
     if not found:
         LOGGER.error("Error: No Sheet named \"Top\" in config file!")
+    else:
+        top_sys = top_sys_dict_to_top_sys(top_dict)
     return top_sys
 
 
