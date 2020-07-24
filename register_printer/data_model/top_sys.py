@@ -16,7 +16,6 @@ class TopSys:
         self._version = None
         self._author = None
         self.blocks = []
-        self.addr_map = []
         self.block_instances = []
         return
 
@@ -64,16 +63,6 @@ class TopSys:
         self.blocks.append(block)
         return
 
-    def add_block_to_address_map(self, block_type, block_instance, base_address, block_size):
-        address_map_entry = {
-            "block_type": block_type,
-            "block_instance": block_instance,
-            "base_address": base_address,
-            "block_size": block_size
-        }
-        self.addr_map.append(address_map_entry)
-        return
-
     def add_block_instance(self, block_instance):
         self.block_instances.append(block_instance)
         return
@@ -102,35 +91,34 @@ class TopSys:
             block_text = str(block)
             block_text = textwrap.indent(block_text, "        ")
             result += block_text + "\n"
-        result += "    Address map    :\n"
-        for entry in self.addr_map:
-            result += "      %s\t@0x%x\n" % (entry['block_instance'], entry['base_address'])
         result += "    Block instances:\n"
         for block_instance in self.block_instances:
-            result += "      %s\t@0x%x\n" % (block_instance.name, block_instance.base_address)
+            result += "      %s\t@0x%x\n" % (
+                block_instance.name,
+                block_instance.base_address)
         result += "--------------------------------"
         return result
 
     @staticmethod
-    def address_map_to_dict(address_map):
+    def block_instance_to_dict(block_instance):
         result = {}
-        result["blockType"] = address_map["block_type"]
-        result["blockInstance"] = address_map["block_instance"]
-        result["baseAddress"] = address_map["base_address"]
-        result["blockSize"] = address_map["block_size"]
+        result["blockType"] = block_instance["block_type"]
+        result["name"] = block_instance["name"]
+        result["baseAddress"] = block_instance["base_address"]
+        result["blockSize"] = block_instance["block_size"]
         return result
 
     @staticmethod
-    def address_map_from_dict(address_map_dict):
-        address_map = {}
-        address_map["block_type"] = address_map_dict["blockType"]
-        address_map["block_instance"] = \
-            address_map_dict["blockInstance"]
-        address_map["base_address"] = \
-            address_map_dict["baseAddress"]
-        address_map["block_size"] = \
-            address_map_dict["blockSize"]
-        return address_map
+    def block_instance_from_dict(block_instance_dict):
+        # Todo: Need to associate the block instance to TopSys.
+        block_instance = BlockInstance(
+            parent=None,
+            name=block_instance_dict["name"],
+            block=None,
+            base_address=block_instance_dict["baseAddress"],
+            block_size=block_instance_dict["blockSize"]
+        )
+        return block_instance
 
     def to_dict(self):
         result = {
@@ -143,11 +131,11 @@ class TopSys:
         }
         for block in self.blocks:
             result["blockTypes"].append(block.to_dict())
-        result["addressMaps"] = []
-        for addr_map in self.addr_map:
-            addr_map_dict = TopSys.address_map_to_dict(
-                addr_map)
-            result["addressMaps"].append(addr_map_dict)
+        result["blockInstances"] = []
+        for block_instance in self.block_instances:
+            block_instance_dict = TopSys.block_instance_to_dict(
+                block_instance)
+            result["block_instances"].append(block_instance_dict)
         return result
 
     @staticmethod
@@ -168,12 +156,12 @@ class TopSys:
             block_type = Block.from_dict(
                 block_type_dict)
             top_sys.blocks.append(block_type)
-        addr_maps_dict = top_sys_dict["addressMaps"]
-        for addr_map_dict in addr_maps_dict:
-            addr_map = TopSys.address_map_from_dict(
-                addr_map_dict)
-            top_sys.addr_map.append(
-                addr_map)
+        block_instances_dict = top_sys_dict["blockInstances"]
+        for block_instance_dict in block_instances_dict:
+            block_instance = TopSys.block_instance_from_dict(
+                block_instance_dict)
+            top_sys.block_instances.append(
+                block_instance)
         return top_sys
 
     @staticmethod
@@ -212,11 +200,6 @@ class TopSys:
                 block_inst_dict["base_address"],
                 block_inst_dict["size"]
             )
-            top_sys.add_block_to_address_map(
-                block_inst_dict["type"],
-                block_inst_dict["name"],
-                block_inst_dict["base_address"],
-                block_inst_dict["size"])
 
         for blk in top_sys.blocks:
             if len(blk.registers) == 0:
