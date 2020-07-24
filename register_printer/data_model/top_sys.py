@@ -133,13 +133,14 @@ class TopSys:
         return address_map
 
     def to_dict(self):
-        result = {}
-        result["name"] = self.name
-        result["addressWidth"] = self.addr_width
-        result["dataWidth"] = self.data_width
-        result["version"] = self.version
-        result["author"] = self.author
-        result["blockTypes"] = []
+        result = {
+            "name": self.name,
+            "addressWidth": self.addr_width,
+            "dataWidth": self.data_width,
+            "version": self.version,
+            "author": self.author,
+            "blockTypes": []
+        }
         for block in self.blocks:
             result["blockTypes"].append(block.to_dict())
         result["addressMaps"] = []
