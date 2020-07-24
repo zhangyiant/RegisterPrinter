@@ -171,21 +171,23 @@ def get_block_types(top_sys_dict):
     return block_types
 
 
-def is_sheet_parse_needed(sheet_name, top_sys, block_types):
+def is_sheet_parse_needed(sheet_name, block_types):
     if sheet_name == "Top":
         LOGGER.debug("Skip Top sheet")
         return False
-    block = top_sys.find_block_by_type(sheet_name)
-    if block is None:
-        return False
-    return True
+    result = False
+    for block_type in block_types:
+        if sheet_name.upper() == block_type.upper():
+            result = True
+            break
+    return result
 
 
-def get_sheet_list(workbook, top_sys, block_types):
+def get_sheet_list(workbook, block_types):
     sheet_list = []
     for sheet in workbook.sheets():
         LOGGER.debug("Process sheet: \"%s\"", sheet.name)
-        if is_sheet_parse_needed(sheet.name, top_sys, block_types):
+        if is_sheet_parse_needed(sheet.name, block_types):
             sheet_list.append(sheet)
         else:
             LOGGER.debug(
@@ -200,7 +202,7 @@ def parse_excel_file(filename, top_sys, top_sys_dict):
 
     block_types = get_block_types(top_sys_dict)
     LOGGER.debug("Block types need to be checked: %s.", block_types)
-    sheet_list = get_sheet_list(workbook, top_sys, block_types)
+    sheet_list = get_sheet_list(workbook, block_types)
 
     for sheet in sheet_list:
         block_template = generate_block_template_from_sheet(
