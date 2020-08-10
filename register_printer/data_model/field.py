@@ -1,7 +1,5 @@
-import re
-
-
 RW_TYPES = ['RW', 'RO', 'WO', 'RS', 'W1C', "W0C", 'RC', 'WRC', 'WRS', 'WSC', 'WC', '-']
+
 
 class Field:
     def __init__(self, name, msb, lsb, default, access, description):
@@ -52,29 +50,6 @@ class Field:
         if default >= (1 << (msb-lsb + 1)):
             raise Exception("Default value is out of range.")
         return
-
-    @staticmethod
-    def parse_excel_row(row):
-        '''
-            row is the type in xlrd library.
-            It's a sequence of cells.
-        '''
-        msb = int(row[2].value)
-        lsb = int(row[3].value)
-        field_name = row[4].value
-        access = row[5].value.upper()
-        default = row[6].value
-        description = "%s" % (row[7].value)
-        if re.match(r"0x", str(default)):
-            default = int(default, 16)
-        else:
-            try:
-                default = int(default)
-            except:
-                raise Exception("Invalid default value")
-        field = Field(field_name, msb, lsb, default, access, description)
-        field.validate()
-        return field
 
     def __str__(self):
         result = "Field " + str(self.name) + "\n"

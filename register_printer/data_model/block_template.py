@@ -1,5 +1,33 @@
 import textwrap
 
+from .register import Register
+from .field import Field
+
+
+def generate_block_template(block_template_dict):
+    block_template = BlockTemplate(
+        block_template_dict["name"]
+    )
+    for register_dict in block_template_dict["registers"]:
+        register = Register(
+            register_dict["name"],
+            register_dict["offset"],
+            register_dict["description"]
+        )
+        for field_dict in register_dict["fields"]:
+            field = Field(
+                field_dict["name"],
+                field_dict["msb"],
+                field_dict["lsb"],
+                field_dict["default"],
+                field_dict["access"],
+                field_dict["description"]
+            )
+            field.validate()
+            register.add_field(field)
+        block_template.add_register(register)
+    return block_template
+
 
 class BlockTemplate:
 
@@ -50,3 +78,7 @@ class BlockTemplate:
             register_strings.append(register_string)
         result += "\n".join(register_strings)
         return result
+
+    @staticmethod
+    def from_dict(block_template_dict):
+        return generate_block_template(block_template_dict)
