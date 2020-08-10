@@ -165,7 +165,13 @@ class TopSys:
         return top_sys
 
     @staticmethod
-    def generate_top_sys(top_sys_dict, block_template_list):
+    def generate_top_sys(top_sys_dict, block_template_dict_list):
+
+        block_template_list = []
+        for block_template_dict in block_template_dict_list:
+            block_template = BlockTemplate.from_dict(block_template_dict)
+            block_template_list.append(block_template)
+
         top_sys = TopSys(
             top_sys_dict["name"],
             top_sys_dict["default_addr_width"],

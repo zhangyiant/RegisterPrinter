@@ -1,7 +1,7 @@
 import json
 import logging
 from .data_model import (
-    TopSys, BlockTemplate
+    TopSys
 )
 from .parse_excels import parse_excels
 from .parser import parse_top_sys_file
@@ -26,12 +26,9 @@ def parse_top_sys(config_file, excel_path):
 
     block_template_dict_list = parse_excels(excel_path, block_types)
 
-    block_template_list = []
-    for block_template_dict in block_template_dict_list:
-        block_template = BlockTemplate.from_dict(block_template_dict)
-        block_template_list.append(block_template)
-
-    top_sys = TopSys.generate_top_sys(top_sys_dict, block_template_list)
+    top_sys = TopSys.generate_top_sys(
+        top_sys_dict,
+        block_template_dict_list)
 
     return top_sys
 
