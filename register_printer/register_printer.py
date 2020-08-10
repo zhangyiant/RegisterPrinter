@@ -2,7 +2,7 @@ import logging
 import os.path
 import json
 
-from .parse_config import (
+from register_printer.parser import (
     parse_top_sys,
     parse_top_sys_from_json)
 

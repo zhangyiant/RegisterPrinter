@@ -1,10 +1,10 @@
 import json
 import logging
-from .data_model import (
+from register_printer.data_model import (
     TopSys
 )
-from .parse_excels import parse_excels
-from .parser import parse_top_sys_file
+from register_printer.parser.parse_excels import parse_excels
+from register_printer.parser import parse_top_sys_file
 
 LOGGER = logging.getLogger(__name__)
 
