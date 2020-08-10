@@ -4,7 +4,6 @@ import re
 import logging
 
 from register_printer.parser import parse_block_template_file
-from register_printer.data_model import BlockTemplate
 
 
 LOGGER = logging.getLogger(__name__)
@@ -15,7 +14,7 @@ def parse_excels(work_path, block_types=None):
     LOGGER.debug("Parsing with excel files in %s.", work_path)
 
     filenames = os.listdir(work_path)
-    block_template_list = []
+    block_template_dict_list = []
     for filename in filenames:
         if re.match(r'~', filename):
             continue
@@ -29,9 +28,7 @@ def parse_excels(work_path, block_types=None):
                 "Parsed block template dict: %s",
                 temp_block_template_dict_list
             )
-            for block_template_dict in temp_block_template_dict_list:
-                block_template = BlockTemplate.from_dict(block_template_dict)
-                block_template_list.append(block_template)
+            block_template_dict_list.extend(temp_block_template_dict_list)
 
-    return block_template_list
+    return block_template_dict_list
 
