@@ -42,6 +42,15 @@ class Block:
         return None
 
     @property
+    def raw_addr_width(self):
+        return self._addr_width
+
+    @raw_addr_width.setter
+    def raw_addr_width(self, value):
+        self._addr_width = value
+        return
+
+    @property
     def data_width(self):
         if self._data_width is not None:
             return self._data_width
@@ -50,6 +59,15 @@ class Block:
             return self.parent.data_width
 
         return None
+
+    @property
+    def raw_data_width(self):
+        return self._data_width
+
+    @raw_data_width.setter
+    def raw_data_width(self, value):
+        self._data_width = value
+        return
 
     @property
     def block_template(self):

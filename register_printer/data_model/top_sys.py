@@ -93,9 +93,11 @@ class TopSys:
             result += block_text + "\n"
         result += "    Block instances:\n"
         for block_instance in self.block_instances:
-            result += "      %s\t@0x%x\n" % (
+            result += "      %s\t@0x%x\t%s\t%s\n" % (
                 block_instance.name,
-                block_instance.base_address)
+                block_instance.base_address,
+                block_instance.block.raw_addr_width,
+                block_instance.block.raw_data_width)
         result += "--------------------------------"
         return result
 
@@ -198,7 +200,7 @@ class TopSys:
                 )
                 top_sys.add_block(block)
 
-            new_block_instance = BlockInstance(
+            BlockInstance(
                 top_sys,
                 block_inst_dict["name"],
                 block,
