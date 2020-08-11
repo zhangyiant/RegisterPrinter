@@ -122,7 +122,7 @@ def generate_doc(top_sys):
     for block_instance in top_sys.block_instances:
         table.cell(i, 0).text = block_instance.name
         table.cell(i, 1).text = hex(block_instance.base_address)
-        table.cell(i, 2).text = hex(block_instance.block_size)
+        table.cell(i, 2).text = hex(block_instance.size)
         i += 1
     doc.add_page_break()
 
