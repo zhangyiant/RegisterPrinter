@@ -46,5 +46,29 @@ class ExcelGenerator:
         ws["A5"] = "Version"
         ws["B5"] = self.top_sys.version
 
+        # starting from row 8
+        row = 8
+        for block_instance in self.top_sys.block_instances:
+            name_cell = ws.cell(row, 1)
+            name_cell.value = block_instance.name
+            type_cell = ws.cell(row, 2)
+            type_cell.value = block_instance.block.block_type
+            base_address_cell = ws.cell(row, 3)
+            base_address_cell.value = hex(block_instance.base_address)
+            size_cell = ws.cell(row, 4)
+            size_cell.value = hex(block_instance.size)
+            addr_width_cell = ws.cell(row, 5)
+            raw_addr_width = block_instance.block.raw_addr_width
+            if raw_addr_width is None:
+                addr_width_cell.value = ""
+            else:
+                addr_width_cell.value = raw_addr_width
+            data_width_cell = ws.cell(row, 6)
+            raw_data_width = block_instance.block.raw_data_width
+            if raw_data_width is None:
+                data_width_cell.value = ""
+            else:
+                data_width_cell.value = raw_data_width
+            row += 1
         wb.save(filename=filename)
         return
