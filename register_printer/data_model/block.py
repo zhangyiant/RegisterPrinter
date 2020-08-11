@@ -8,28 +8,16 @@ class Block:
             parent,
             block_template,
             addr_width=None,
-            data_width=None,
-            size=None):
+            data_width=None):
         self.parent = parent
         self._block_template = block_template
         self._addr_width = addr_width
         self._data_width = data_width
-        self._size = size
         return
 
     @property
     def block_type(self):
         return self._block_template.block_type
-
-    @property
-    def size(self):
-        if self._size is not None:
-            return self._size
-
-        if self.parent is not None:
-            return self.parent.size
-
-        return None
 
     @property
     def addr_width(self):
@@ -98,7 +86,6 @@ class Block:
 
     def __str__(self):
         result = "Block " + str(self.block_type) + "\n"
-        result += "    Size         : " + str(self.size) + "\n"
         result += "    Address width: " + str(self.addr_width) + "\n"
         result += "    Data width   : " + str(self.data_width) + "\n"
         result += "    Registers:\n"
@@ -113,7 +100,6 @@ class Block:
     def to_dict(self):
         result = {}
         result["name"] = self.block_type
-        result["size"] = self.size
         result["addressWidth"] = self.addr_width
         result["dataWidth"] = self.data_width
         result["registers"] = []
@@ -124,12 +110,10 @@ class Block:
     @staticmethod
     def from_dict(block_type_dict):
         name = block_type_dict["name"]
-        size = block_type_dict["size"]
         addr_width = block_type_dict["addressWidth"]
         data_width = block_type_dict["dataWidth"]
         block_type = Block(
             block_type=name,
-            size=size,
             addr_len=addr_width,
             data_len=data_width)
         registers_dict = block_type_dict["registers"]

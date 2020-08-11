@@ -28,3 +28,7 @@ class BlockInstance:
     @property
     def block_type(self):
         return self.block.block_type
+
+    @property
+    def size(self):
+        return self.block_size

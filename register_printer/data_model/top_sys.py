@@ -195,8 +195,7 @@ class TopSys:
                     top_sys,
                     block_template,
                     addr_width=block_inst_dict["addr_width"],
-                    data_width=block_inst_dict["data_width"],
-                    size=block_inst_dict["size"]
+                    data_width=block_inst_dict["data_width"]
                 )
                 top_sys.add_block(block)
 
