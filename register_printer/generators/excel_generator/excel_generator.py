@@ -14,11 +14,50 @@ class ExcelGenerator:
         self.output_path = output_path
         return
 
+    def collect_block_templates(self):
+        block_templates = []
+        for block in self.top_sys.blocks:
+            if block.block_template not in block_templates:
+                block_templates.append(block.block_template)
+        return block_templates
+
     def generate(self):
         LOGGER.debug("Generating Excel files...")
 
         self.generate_top()
 
+        blocks_path = os.path.join(self.output_path, "blocks")
+
+        os.makedirs(blocks_path, exist_ok=True)
+
+        block_templates = self.collect_block_templates()
+
+        for block_template in block_templates:
+            LOGGER.debug(
+                "Generate excel block template %s",
+                block_template.block_type
+            )
+            filename = os.path.join(
+                blocks_path,
+                '{0}.xlsx'.format(
+                    block_template.block_type
+                )
+            )
+            self.generate_block_template(
+                filename,
+                block_template
+            )
+
+        return
+
+    def generate_block_template(
+            self,
+            filename,
+            block_template):
+        LOGGER.debug(
+            "Generate file: %s for block template %s",
+            filename,
+            block_template.block_type)
         return
 
     def generate_top(self):
