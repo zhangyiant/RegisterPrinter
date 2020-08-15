@@ -58,6 +58,41 @@ class ExcelGenerator:
             "Generate file: %s for block template %s",
             filename,
             block_template.block_type)
+
+        wb = Workbook()
+        ws = wb.active
+
+        ws.title = block_template.block_type
+
+        ws.cell(1, 1).value = "Module description:"
+        current_row = 4
+        for register in block_template.registers:
+            LOGGER.debug("register: %s", register.name)
+            offset_cell = ws.cell(current_row, 1)
+            offset_cell.value = hex(register.offset)
+            name_cell = ws.cell(current_row, 2)
+            name_cell.value = register.name
+            description_cell = ws.cell(current_row, 8)
+            description_cell.value = register.description
+            current_row += 1
+            for field in register.fields:
+                msb_cell = ws.cell(current_row, 3)
+                msb_cell.value = field.msb
+                lsb_cell = ws.cell(current_row, 4)
+                lsb_cell.value = field.lsb
+                field_name_cell = ws.cell(current_row, 5)
+                field_name_cell.value = field.name
+                access_cell = ws.cell(current_row, 6)
+                access_cell.value = field.access
+                default_value_cell = ws.cell(current_row, 7)
+                default_value_cell.value = field.default
+                field_description_cell = ws.cell(current_row, 8)
+                field_description_cell.value = field.description
+                current_row += 1
+            # Add an empty line
+            current_row += 1
+        wb.save(filename=filename)
+
         return
 
     def generate_top(self):
