@@ -59,6 +59,14 @@ class TopSys:
         self._author = author
         return
 
+    @property
+    def block_templates(self):
+        block_templates = []
+        for block in self.blocks:
+            if block.block_template not in block_templates:
+                block_templates.append(block.block_template)
+        return block_templates
+
     def add_block(self, block):
         self.blocks.append(block)
         return
