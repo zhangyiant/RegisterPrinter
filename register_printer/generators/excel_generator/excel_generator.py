@@ -26,25 +26,21 @@ class ExcelGenerator:
         block_templates = self.top_sys.block_templates
 
         for block_template in block_templates:
-            LOGGER.debug(
-                "Generate excel block template %s",
-                block_template.block_type
-            )
             filename = os.path.join(
                 blocks_path,
                 '{0}.xlsx'.format(
                     block_template.block_type
                 )
             )
-            self.generate_block_template(
+            ExcelGenerator.generate_block_template(
                 filename,
                 block_template
             )
 
         return
 
+    @staticmethod
     def generate_block_template(
-            self,
             filename,
             block_template):
         LOGGER.debug(
@@ -60,7 +56,6 @@ class ExcelGenerator:
         ws.cell(1, 1).value = "Module description:"
         current_row = 4
         for register in block_template.registers:
-            LOGGER.debug("register: %s", register.name)
             offset_cell = ws.cell(current_row, 1)
             offset_cell.value = hex(register.offset)
             name_cell = ws.cell(current_row, 2)
