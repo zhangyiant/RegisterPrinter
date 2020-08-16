@@ -34,6 +34,7 @@ def print_c_test(top_sys, out_path):
 
 
 def print_c_header_block(block, out_path):
+
     LOGGER.debug("Print block %s C header...", block.block_type)
 
     file_name = os.path.join(
@@ -42,11 +43,10 @@ def print_c_header_block(block, out_path):
     if os.path.exists(file_name):
         os.remove(file_name)
 
-
     struct_fields = []
     prev_offset = -4
     curr_offset = -4
-    byte_len = int(block.data_len / 8)
+    byte_len = int(block.data_width / 8)
     rsvd_idx = 0
     for reg in block.registers:
         prev_offset = curr_offset
@@ -94,6 +94,7 @@ def print_c_header_block(block, out_path):
 
     return
 
+
 def print_c_header_sys(top_sys, out_path):
     LOGGER.debug("Print top sys C header...")
 
@@ -106,16 +107,16 @@ def print_c_header_sys(top_sys, out_path):
 
     include_macro_name = "REGS_" + top_sys.name.upper() + "_H"
     include_filenames = []
-    for block in top_sys.blocks:
-        include_filename = "regs_" + block.block_type.lower() + ".h"
+    for block_instance in top_sys.block_instances:
+        include_filename = "regs_" + block_instance.block.block_type.lower() + ".h"
         include_filenames.append(include_filename)
-    block_instances = []
-    for addr_entry in top_sys.addr_map:
-        block_instances.append(
+    block_instances_data = []
+    for block_instance in top_sys.block_instances:
+        block_instances_data.append(
             {
-                "name": addr_entry['block_instance'].upper(),
-                "base_address": addr_entry["base_address"],
-                "type": addr_entry["block_type"]
+                "name": block_instance.name.upper(),
+                "base_address": block_instance.base_address,
+                "type": block_instance.block_type
             }
         )
 
@@ -125,7 +126,7 @@ def print_c_header_sys(top_sys, out_path):
         {
             "include_macro_name": include_macro_name,
             "include_filenames": include_filenames,
-            "block_instances": block_instances
+            "block_instances": block_instances_data
         }
     )
 
@@ -133,6 +134,7 @@ def print_c_header_sys(top_sys, out_path):
         sfh.write(content)
 
     return
+
 
 def print_c_header(top_sys, output_path="."):
     LOGGER.debug("Generating C header files...")
@@ -142,8 +144,10 @@ def print_c_header(top_sys, output_path="."):
         "regheaders")
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
+
     for block in top_sys.blocks:
         print_c_header_block(block, out_dir)
+
     print_c_header_sys(top_sys, out_dir)
     print_c_test(top_sys, out_dir)
     LOGGER.debug("C header files generated in directory %s", out_dir)

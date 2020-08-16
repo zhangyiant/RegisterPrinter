@@ -12,7 +12,7 @@ class {{ uvm_reg_type }} extends uvm_reg;
     {% endif %}
   {% endfor %}
 
-  function new(string name = "{{ uvm_reg_type }}", int unsigned n_bits = {{ block.data_len }});
+  function new(string name = "{{ uvm_reg_type }}", int unsigned n_bits = {{ block.data_width }});
     super.new(name, n_bits, UVM_NO_COVERAGE);
   endfunction: new
 
@@ -41,7 +41,7 @@ class {{ uvm_block_name }} extends uvm_reg_block;
   endfunction: new
 
   virtual function void build();
-    default_map = create_map("default_map", 0, {{ (block.data_len / 8) | int }}, UVM_BIG_ENDIAN, 0);
+    default_map = create_map("default_map", 0, {{ (block.data_width / 8) | int }}, UVM_BIG_ENDIAN, 0);
 
     {% for register in block.registers %}
     {% set reg_inst = register.name.lower() %}
@@ -50,7 +50,7 @@ class {{ uvm_block_name }} extends uvm_reg_block;
     {{ reg_inst }} = {{ reg_type }}::type_id::create("{{ reg_inst }}");
     {{ reg_inst }}.configure(this, , "");
     {{ reg_inst }}.build();
-    default_map.add_reg({{ reg_inst }}, {{ block.addr_len }}'h{{ '%x' | format(reg_offset) }});
+    default_map.add_reg({{ reg_inst }}, {{ block.addr_width }}'h{{ '%x' | format(reg_offset) }});
 
     {% endfor %}
   endfunction: build

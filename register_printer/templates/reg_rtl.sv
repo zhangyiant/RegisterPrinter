@@ -1,6 +1,6 @@
 module {{ block.block_type }}_reg
 #(
-    parameter int ADDR_WIDTH = {{ block.addr_len }}
+    parameter int ADDR_WIDTH = {{ block.addr_width }}
 )
 (
     input     reg_clk                                                       ,

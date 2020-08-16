@@ -1,4 +1,11 @@
 import textwrap
+import logging
+from .block import Block
+from .block_template import BlockTemplate
+from .block_instance import BlockInstance
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class TopSys:
@@ -9,7 +16,7 @@ class TopSys:
         self._version = None
         self._author = None
         self.blocks = []
-        self.addr_map = []
+        self.block_instances = []
         return
 
     @property
@@ -52,18 +59,20 @@ class TopSys:
         self._author = author
         return
 
+    @property
+    def block_templates(self):
+        block_templates = []
+        for block in self.blocks:
+            if block.block_template not in block_templates:
+                block_templates.append(block.block_template)
+        return block_templates
+
     def add_block(self, block):
         self.blocks.append(block)
         return
 
-    def add_block_to_address_map(self, block_type, block_instance, base_address, block_size):
-        address_map_entry = {
-            "block_type": block_type,
-            "block_instance": block_instance,
-            "base_address": base_address,
-            "block_size": block_size
-        }
-        self.addr_map.append(address_map_entry)
+    def add_block_instance(self, block_instance):
+        self.block_instances.append(block_instance)
         return
 
     def find_block_by_type(self, block_type):
@@ -90,48 +99,58 @@ class TopSys:
             block_text = str(block)
             block_text = textwrap.indent(block_text, "        ")
             result += block_text + "\n"
-        result += "    Address map    :\n"
-        for entry in self.addr_map:
-            result += "      %s\t@0x%x\n" % (entry['block_instance'], entry['base_address'])
+        result += "    Block instances:\n"
+        for block_instance in self.block_instances:
+            result += "      %s\t@0x%x\t%s\t%s\n" % (
+                block_instance.name,
+                block_instance.base_address,
+                block_instance.block.raw_addr_width,
+                block_instance.block.raw_data_width)
         result += "--------------------------------"
         return result
 
     @staticmethod
-    def address_map_to_dict(address_map):
-        result = {}
-        result["blockType"] = address_map["block_type"]
-        result["blockInstance"] = address_map["block_instance"]
-        result["baseAddress"] = address_map["base_address"]
-        result["blockSize"] = address_map["block_size"]
+    def block_instance_to_dict(block_instance):
+        result = {
+            "blockType": block_instance.block_type,
+            "name": block_instance.name,
+            "baseAddress": block_instance.base_address,
+            "blockSize": block_instance.block_size,
+            "addressWidth": block_instance.block.raw_addr_width,
+            "dataWidth": block_instance.block.raw_data_width
+        }
         return result
 
     @staticmethod
-    def address_map_from_dict(address_map_dict):
-        address_map = {}
-        address_map["block_type"] = address_map_dict["blockType"]
-        address_map["block_instance"] = \
-            address_map_dict["blockInstance"]
-        address_map["base_address"] = \
-            address_map_dict["baseAddress"]
-        address_map["block_size"] = \
-            address_map_dict["blockSize"]
-        return address_map
+    def block_instance_from_dict(block_instance_dict):
+        # Todo: Need to associate the block instance to TopSys.
+        block_instance = BlockInstance(
+            parent=None,
+            name=block_instance_dict["name"],
+            block=None,
+            base_address=block_instance_dict["baseAddress"],
+            block_size=block_instance_dict["blockSize"]
+        )
+        return block_instance
 
     def to_dict(self):
-        result = {}
-        result["name"] = self.name
-        result["addressWidth"] = self.addr_width
-        result["dataWidth"] = self.data_width
-        result["version"] = self.version
-        result["author"] = self.author
-        result["blockTypes"] = []
-        for block in self.blocks:
-            result["blockTypes"].append(block.to_dict())
-        result["addressMaps"] = []
-        for addr_map in self.addr_map:
-            addr_map_dict = TopSys.address_map_to_dict(
-                addr_map)
-            result["addressMaps"].append(addr_map_dict)
+        result = {
+            "name": self.name,
+            "addressWidth": self.addr_width,
+            "dataWidth": self.data_width,
+            "version": self.version,
+            "author": self.author,
+            "blockInstances": [],
+            "blockTemplates": []
+        }
+        result["blockInstances"] = []
+        for block_instance in self.block_instances:
+            block_instance_dict = TopSys.block_instance_to_dict(
+                block_instance)
+            result["blockInstances"].append(block_instance_dict)
+        for block_template in self.block_templates:
+            block_template_dict = block_template.to_dict()
+            result["blockTemplates"].append(block_template_dict)
         return result
 
     @staticmethod
@@ -147,15 +166,65 @@ class TopSys:
             data_width=data_width)
         top_sys.version = version
         top_sys.author = author
-        block_types_dict = top_sys_dict["blockTypes"]
+        block_types_dict = top_sys_dict["blocks"]
         for block_type_dict in block_types_dict:
             block_type = Block.from_dict(
                 block_type_dict)
             top_sys.blocks.append(block_type)
-        addr_maps_dict = top_sys_dict["addressMaps"]
-        for addr_map_dict in addr_maps_dict:
-            addr_map = TopSys.address_map_from_dict(
-                addr_map_dict)
-            top_sys.addr_map.append(
-                addr_map)
+        block_instances_dict = top_sys_dict["blockInstances"]
+        for block_instance_dict in block_instances_dict:
+            block_instance = TopSys.block_instance_from_dict(
+                block_instance_dict)
+            top_sys.block_instances.append(
+                block_instance)
+        return top_sys
+
+    @staticmethod
+    def generate_top_sys(top_sys_dict, block_template_dict_list):
+
+        block_template_list = []
+        for block_template_dict in block_template_dict_list:
+            block_template = BlockTemplate.from_dict(block_template_dict)
+            block_template_list.append(block_template)
+
+        top_sys = TopSys(
+            top_sys_dict["name"],
+            top_sys_dict["default_addr_width"],
+            top_sys_dict["default_data_width"]
+        )
+        top_sys.author = top_sys_dict["author"]
+        top_sys.version = top_sys_dict["version"]
+        for block_inst_dict in top_sys_dict["block_instances"]:
+
+            block = top_sys.find_block_by_type(
+                block_inst_dict["type"])
+            if block is None:
+                block_template = None
+                for temp_block_template in block_template_list:
+                    if temp_block_template.block_type.upper() == \
+                            block_inst_dict["type"].upper():
+                        block_template = temp_block_template
+
+                block = Block(
+                    top_sys,
+                    block_template,
+                    addr_width=block_inst_dict["addr_width"],
+                    data_width=block_inst_dict["data_width"]
+                )
+                top_sys.add_block(block)
+
+            BlockInstance(
+                top_sys,
+                block_inst_dict["name"],
+                block,
+                block_inst_dict["base_address"],
+                block_inst_dict["size"]
+            )
+
+        for blk in top_sys.blocks:
+            if len(blk.registers) == 0:
+                LOGGER.error(
+                    "No register definition for block %s",
+                    blk.name)
+                raise Exception("No register definition for block.")
         return top_sys

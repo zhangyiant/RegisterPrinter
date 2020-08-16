@@ -17,8 +17,8 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
     p.add_run('%s\n' % (hex(reg.offset)))
 
     for blk_inst in blk_insts:
-        p.add_run('    %s Address : ' % (blk_inst['inst_name'])).bold = True
-        p.add_run('%s\n' % (hex(blk_inst['inst_base'] + reg.offset)))
+        p.add_run('    %s Address : ' % (blk_inst.name)).bold = True
+        p.add_run('%s\n' % (hex(blk_inst.base_address + reg.offset)))
 
     p.add_run("    Reset Value : ").bold = True
     p.add_run("0x%x\n" % (reg.calculate_register_default()))
@@ -57,17 +57,18 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
         i += 1
     return
 
-def print_doc_block(block, doc, idx, instances):
+
+def print_doc_block(doc, idx, block, instances):
+
     doc.add_heading("%d %s Registers" % (idx, block.block_type), level=1)
     tb = doc.add_table(
         len(block.registers) + 1,
         2 + len(instances),
         style="Light Grid")
     hcells = tb.rows[0].cells
-    hdr = []
-    hdr.append("Offset")
+    hdr = ["Offset"]
     for instance in instances:
-        hdr.append("%s Addr" % (instance["inst_name"]))
+        hdr.append("%s Addr" % instance.name)
     hdr.append("Register")
     for i in range(len(hdr)):
         p = hcells[i].paragraphs[0]
@@ -79,7 +80,7 @@ def print_doc_block(block, doc, idx, instances):
         tb.cell(i, 0).text = hex(register.offset)
         for k in range(len(instances)):
             tb.cell(i, k+1).text = hex(
-                instances[k]['inst_base'] + register.offset)
+                instances[k].base_address + register.offset)
         tb.cell(i, len(hdr) - 1).text = str(register.name)
         i += 1
 
@@ -90,6 +91,7 @@ def print_doc_block(block, doc, idx, instances):
     doc.add_page_break()
     return
 
+
 def generate_doc(top_sys):
     doc = Document()
 
@@ -99,15 +101,15 @@ def generate_doc(top_sys):
     title.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     p = doc.add_paragraph()
-    p.add_run("Version : %s\n" % (top_sys.version))
-    p.add_run("Author : %s" % (top_sys.author))
+    p.add_run("Version : %s\n" % top_sys.version)
+    p.add_run("Author : %s" % top_sys.author)
     p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     doc.add_page_break()
 
     block_idx = 1
     doc.add_heading("%d Address Map" % block_idx, level=1)
     table = doc.add_table(
-        len(top_sys.addr_map) + 1,
+        len(top_sys.block_instances) + 1,
         3,
         style="Light Grid")
     hcell = table.rows[0].cells
@@ -117,10 +119,10 @@ def generate_doc(top_sys):
         run = p.add_run(headers[i])
         p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     i = 1
-    for addr_map in top_sys.addr_map:
-        table.cell(i, 0).text = str(addr_map['block_instance'])
-        table.cell(i, 1).text = hex(addr_map['base_address'])
-        table.cell(i, 2).text = hex(addr_map['block_size'])
+    for block_instance in top_sys.block_instances:
+        table.cell(i, 0).text = block_instance.name
+        table.cell(i, 1).text = hex(block_instance.base_address)
+        table.cell(i, 2).text = hex(block_instance.size)
         i += 1
     doc.add_page_break()
 
@@ -128,17 +130,14 @@ def generate_doc(top_sys):
     for block in top_sys.blocks:
         # get block instances
         blk_insts = []
-        for addr_entry in top_sys.addr_map:
-            if addr_entry['block_type'] == block.block_type:
-                inst = {
-                    "inst_name": addr_entry["block_instance"],
-                    "inst_base": int(addr_entry["base_address"])
-                }
-                blk_insts.append(inst)
+        for block_instance in top_sys.block_instances:
+            if block_instance.block.block_type == block.block_type:
+                blk_insts.append(block_instance)
 
-        print_doc_block(block, doc, block_idx, blk_insts)
+        print_doc_block(doc, block_idx, block, blk_insts)
         block_idx = block_idx + 1
     return doc
+
 
 def print_doc(top_sys, output_path="."):
     LOGGER.debug("Generating register description document...")
