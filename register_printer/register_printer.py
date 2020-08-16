@@ -89,11 +89,15 @@ class RegisterPrinter:
 
     def generate_json(self):
         rp_dict = self.top_sys.to_dict()
-        json_doc = json.dumps(rp_dict, indent=4)
+        json_doc = json.dumps(
+            rp_dict,
+            indent=4,
+            ensure_ascii=False
+        )
         filename = os.path.join(
             self.output_path,
             "register_printer.json")
-        with open(filename, "w") as f:
+        with open(filename, "w", encoding="utf-8") as f:
             f.write(json_doc)
         return
 

@@ -111,10 +111,14 @@ class TopSys:
 
     @staticmethod
     def block_instance_to_dict(block_instance):
-        result = {"blockType": block_instance.block_type,
-                  "name": block_instance.name,
-                  "baseAddress": block_instance.base_address,
-                  "blockSize": block_instance.block_size}
+        result = {
+            "blockType": block_instance.block_type,
+            "name": block_instance.name,
+            "baseAddress": block_instance.base_address,
+            "blockSize": block_instance.block_size,
+            "addressWidth": block_instance.block.raw_addr_width,
+            "dataWidth": block_instance.block.raw_data_width
+        }
         return result
 
     @staticmethod
@@ -136,15 +140,17 @@ class TopSys:
             "dataWidth": self.data_width,
             "version": self.version,
             "author": self.author,
-            "blocks": []
+            "blockInstances": [],
+            "blockTemplates": []
         }
-        for block in self.blocks:
-            result["blocks"].append(block.to_dict())
         result["blockInstances"] = []
         for block_instance in self.block_instances:
             block_instance_dict = TopSys.block_instance_to_dict(
                 block_instance)
             result["blockInstances"].append(block_instance_dict)
+        for block_template in self.block_templates:
+            block_template_dict = block_template.to_dict()
+            result["blockTemplates"].append(block_template_dict)
         return result
 
     @staticmethod

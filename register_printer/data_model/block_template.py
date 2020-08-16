@@ -82,3 +82,13 @@ class BlockTemplate:
     @staticmethod
     def from_dict(block_template_dict):
         return generate_block_template(block_template_dict)
+
+    def to_dict(self):
+        result = {
+            "blockType": self.block_type,
+            "registers": []
+        }
+        for register in self.registers:
+            register_dict = register.to_dict()
+            result["registers"].append(register_dict)
+        return result
