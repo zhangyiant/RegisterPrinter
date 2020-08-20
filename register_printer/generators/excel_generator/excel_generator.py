@@ -73,7 +73,7 @@ class ExcelGenerator:
                 access_cell = ws.cell(current_row, 6)
                 access_cell.value = field.access
                 default_value_cell = ws.cell(current_row, 7)
-                default_value_cell.value = field.default
+                default_value_cell.value = hex(field.default)
                 field_description_cell = ws.cell(current_row, 8)
                 field_description_cell.value = field.description
                 current_row += 1
