@@ -34,7 +34,7 @@ def parse_top_sys(config_file, excel_path):
 
 
 def parse_top_sys_from_json(json_file):
-    with open(json_file, "r") as json_file_handler:
+    with open(json_file, "r", encoding="utf-8") as json_file_handler:
         rp_doc_dict = json.load(json_file_handler)
     top_sys = TopSys.from_dict(rp_doc_dict)
     return top_sys
