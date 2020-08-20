@@ -58,7 +58,7 @@ def generate_block_template_from_sheet(sheet):
 
     rowx = 3
     block_template_dict = {
-        "name": sheet.name,
+        "blockType": sheet.name,
         "registers": []
     }
     while rowx < sheet.nrows:

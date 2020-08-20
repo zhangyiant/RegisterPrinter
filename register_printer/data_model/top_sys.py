@@ -166,11 +166,7 @@ class TopSys:
             data_width=data_width)
         top_sys.version = version
         top_sys.author = author
-        block_types_dict = top_sys_dict["blocks"]
-        for block_type_dict in block_types_dict:
-            block_type = Block.from_dict(
-                block_type_dict)
-            top_sys.blocks.append(block_type)
+        block_templates_dict = top_sys_dict['blockTemplates']
         block_instances_dict = top_sys_dict["blockInstances"]
         for block_instance_dict in block_instances_dict:
             block_instance = TopSys.block_instance_from_dict(
@@ -189,27 +185,27 @@ class TopSys:
 
         top_sys = TopSys(
             top_sys_dict["name"],
-            top_sys_dict["default_addr_width"],
-            top_sys_dict["default_data_width"]
+            top_sys_dict["addressWidth"],
+            top_sys_dict["dataWidth"]
         )
         top_sys.author = top_sys_dict["author"]
         top_sys.version = top_sys_dict["version"]
-        for block_inst_dict in top_sys_dict["block_instances"]:
+        for block_inst_dict in top_sys_dict["blockInstances"]:
 
             block = top_sys.find_block_by_type(
-                block_inst_dict["type"])
+                block_inst_dict["blockType"])
             if block is None:
                 block_template = None
                 for temp_block_template in block_template_list:
                     if temp_block_template.block_type.upper() == \
-                            block_inst_dict["type"].upper():
+                            block_inst_dict["blockType"].upper():
                         block_template = temp_block_template
 
                 block = Block(
                     top_sys,
                     block_template,
-                    addr_width=block_inst_dict["addr_width"],
-                    data_width=block_inst_dict["data_width"]
+                    addr_width=block_inst_dict["addressWidth"],
+                    data_width=block_inst_dict["dataWidth"]
                 )
                 top_sys.add_block(block)
 
@@ -217,8 +213,8 @@ class TopSys:
                 top_sys,
                 block_inst_dict["name"],
                 block,
-                block_inst_dict["base_address"],
-                block_inst_dict["size"]
+                block_inst_dict["baseAddress"],
+                block_inst_dict["blockSize"]
             )
 
         for blk in top_sys.blocks:

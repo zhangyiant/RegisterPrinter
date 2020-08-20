@@ -11,9 +11,9 @@ LOGGER = logging.getLogger(__name__)
 
 def get_block_types(top_sys_dict):
     block_types = []
-    block_instances = top_sys_dict["block_instances"]
+    block_instances = top_sys_dict["blockInstances"]
     for block_instance in block_instances:
-        block_types.append(block_instance['type'])
+        block_types.append(block_instance['blockType'])
     return block_types
 
 

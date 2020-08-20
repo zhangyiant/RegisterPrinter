@@ -15,8 +15,8 @@ def parse_top_sys_meta_data(sheet):
         "name": name,
         "author": author,
         "version": version,
-        "default_addr_width": addr_size,
-        "default_data_width": data_size
+        "addressWidth": addr_size,
+        "dataWidth": data_size
     }
     return result
 
@@ -36,11 +36,11 @@ def parse_block_instance_row(row):
         data_width = int(value)
     result = {
         "name": block_instance_name,
-        "type": block_type,
-        "base_address": block_base_address,
-        "size": block_size,
-        "addr_width": addr_width,
-        "data_width": data_width
+        "blockType": block_type,
+        "baseAddress": block_base_address,
+        "blockSize": block_size,
+        "addressWidth": addr_width,
+        "dataWidth": data_width
     }
     return result
 
@@ -52,11 +52,11 @@ def parse_top_sys_sheet(sheet):
     """
     top_dict = parse_top_sys_meta_data(sheet)
 
-    top_dict["block_instances"] = []
+    top_dict["blockInstances"] = []
     for rowx in range(7, sheet.nrows):
         row = sheet.row(rowx)
         block_inst_dict = parse_block_instance_row(row)
-        top_dict["block_instances"].append(block_inst_dict)
+        top_dict["blockInstances"].append(block_inst_dict)
     return top_dict
 
 

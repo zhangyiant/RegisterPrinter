@@ -6,7 +6,7 @@ from .field import Field
 
 def generate_block_template(block_template_dict):
     block_template = BlockTemplate(
-        block_template_dict["name"]
+        block_template_dict["blockType"]
     )
     for register_dict in block_template_dict["registers"]:
         register = Register(
