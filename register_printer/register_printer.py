@@ -35,7 +35,6 @@ class RegisterPrinter:
         if self.config_file is not None:
             self.top_sys = parse_top_sys(self.config_file, self.excel_path)
         elif self.json_file is not None:
-            # Todo: this function may already be broken
             self.top_sys = parse_top_sys_from_json(
                 self.json_file)
         else:

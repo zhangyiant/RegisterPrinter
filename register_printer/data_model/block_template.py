@@ -19,7 +19,7 @@ def generate_block_template(block_template_dict):
                 field_dict["name"],
                 field_dict["msb"],
                 field_dict["lsb"],
-                field_dict["default"],
+                field_dict["defaultValue"],
                 field_dict["access"],
                 field_dict["description"]
             )

@@ -155,24 +155,10 @@ class TopSys:
 
     @staticmethod
     def from_dict(top_sys_dict):
-        name = top_sys_dict["name"]
-        addr_width = top_sys_dict["addressWidth"]
-        data_width = top_sys_dict["dataWidth"]
-        version = top_sys_dict["version"]
-        author = top_sys_dict["author"]
-        top_sys = TopSys(
-            name=name,
-            addr_width=addr_width,
-            data_width=data_width)
-        top_sys.version = version
-        top_sys.author = author
-        block_templates_dict = top_sys_dict['blockTemplates']
-        block_instances_dict = top_sys_dict["blockInstances"]
-        for block_instance_dict in block_instances_dict:
-            block_instance = TopSys.block_instance_from_dict(
-                block_instance_dict)
-            top_sys.block_instances.append(
-                block_instance)
+        block_template_dict_list = top_sys_dict["blockTemplates"]
+        top_sys = TopSys.generate_top_sys(
+            top_sys_dict,
+            block_template_dict_list)
         return top_sys
 
     @staticmethod

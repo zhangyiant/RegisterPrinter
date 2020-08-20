@@ -27,7 +27,7 @@ def parse_field_row(row):
         "name": field_name,
         "msb": msb,
         "lsb": lsb,
-        "default": default,
+        "defaultValue": default,
         "access": access,
         "description": description
     }
