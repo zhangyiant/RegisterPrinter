@@ -205,8 +205,7 @@ class TopSys:
 
         for blk in top_sys.blocks:
             if len(blk.registers) == 0:
-                LOGGER.error(
+                LOGGER.warning(
                     "No register definition for block %s",
-                    blk.name)
-                raise Exception("No register definition for block.")
+                    blk.block_type)
         return top_sys
