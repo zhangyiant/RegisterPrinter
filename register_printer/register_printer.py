@@ -6,8 +6,6 @@ from register_printer.parser import (
     parse_top_sys,
     parse_top_sys_from_json)
 
-from .license import check_license
-
 from .generators import (
     ExcelGenerator,
     CHeaderGenerator,
@@ -27,7 +25,6 @@ class RegisterPrinter:
             excel_path=None,
             output_path=".",
             json_file=None):
-        check_license()
         self.config_file = config_file
         self.excel_path = excel_path
         self.output_path = output_path
