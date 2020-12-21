@@ -64,7 +64,7 @@ always @(posedge reg_clk or negedge reg_rstn) begin
     {% endfor %}
     end
     {% if (register.rc_flds | length) + (register.wrc_flds | length) + (register.rs_flds | length) + (register.wrs_flds | length) > 0 %}
-    else if(reg_rd && (reg_addr == {{ register.offset }})) begin
+    else if(reg_rd && (reg_addr == {{ (register.name + "_addr") | upper }})) begin
       {% for field in (register.rc_flds + register.wrc_flds) %}
         {{ register.name }}[{{ field.msb }}:{{ field.lsb}}] <= 0;
       {% endfor %}
