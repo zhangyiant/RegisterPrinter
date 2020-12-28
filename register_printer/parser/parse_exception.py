@@ -5,13 +5,26 @@ class ParseException(Exception):
 
 
 class ExcelParseException(ParseException):
-    def __init__(self, msg, filename=None, sheet_name=None, row=None, column=None):
+    def __init__(self, msg, context):
         ParseException.__init__(self, msg)
-        self.filename = filename
-        self.sheet_name = sheet_name
-        self.row = row
-        self.column = column
+        self.context = context
         return
+
+    @property
+    def filename(self):
+        return self.context.filename
+
+    @property
+    def sheet_name(self):
+        return self.context.sheet_name
+
+    @property
+    def row(self):
+        return self.context.row
+
+    @property
+    def column(self):
+        return self.context.column
 
     def __str__(self):
         msg = self.msg

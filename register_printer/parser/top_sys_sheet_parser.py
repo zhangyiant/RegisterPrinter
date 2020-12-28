@@ -1,6 +1,7 @@
 import logging
 from xlrd import open_workbook
 from .parse_exception import ExcelParseException
+from .parse_context import ExcelParseContext
 
 
 LOGGER = logging.getLogger(__name__)
@@ -63,6 +64,7 @@ def parse_top_sys_sheet(sheet):
 
 def parse_top_sys_file(filename):
     LOGGER.debug("Parsing top config file: %s", filename)
+    context = ExcelParseContext(filename=filename)
     workbook = open_workbook(filename)
 
     found = False
@@ -76,6 +78,6 @@ def parse_top_sys_file(filename):
     if not found:
         raise ExcelParseException(
             "No Sheet named \"Top\" in config file!",
-            filename=filename
+            context=context
         )
     return top_dict
