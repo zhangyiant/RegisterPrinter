@@ -7,10 +7,27 @@ from .parse_context import ExcelParseContext
 LOGGER = logging.getLogger(__name__)
 
 
-def parse_top_sys_meta_data(sheet):
+def parse_top_sys_meta_data(sheet, previous_context):
+    context = previous_context.copy()
+    context.row = 0
+    context.column = 1
     name = sheet.cell(0, 1).value.strip()
-    addr_size = int(sheet.cell(1, 1).value)
-    data_size = int(sheet.cell(2, 1).value)
+    try:
+        context.row = 1
+        context.column = 1
+        addr_size = int(sheet.cell(1, 1).value)
+    except Exception as e:
+        msg = "Parse address size error: {}.".format(e)
+        raise ExcelParseException(msg, context)
+
+    try:
+        context.row = 2
+        context.column = 1
+        data_size = int(sheet.cell(2, 1).value)
+    except Exception as e:
+        msg = "Parse data size error: {}.".format(e)
+        raise ExcelParseException(msg, context)
+
     author = sheet.cell(3, 1).value.strip()
     version = sheet.cell(4, 1).value
     result = {
@@ -23,7 +40,7 @@ def parse_top_sys_meta_data(sheet):
     return result
 
 
-def parse_block_instance_row(row):
+def parse_block_instance_row(row, previous_context):
     block_instance_name = row[0].value.strip()
     block_type = row[1].value.strip()
     block_base_address = int(row[2].value.strip(), 16)
@@ -47,17 +64,19 @@ def parse_block_instance_row(row):
     return result
 
 
-def parse_top_sys_sheet(sheet):
+def parse_top_sys_sheet(sheet, previous_context):
     """
     Parse top sys excel sheet.
     :type sheet: xlrd.sheet
     """
-    top_dict = parse_top_sys_meta_data(sheet)
+    context = previous_context.copy()
+    context.sheet_name = sheet.name
+    top_dict = parse_top_sys_meta_data(sheet, context)
 
     top_dict["blockInstances"] = []
     for rowx in range(7, sheet.nrows):
         row = sheet.row(rowx)
-        block_inst_dict = parse_block_instance_row(row)
+        block_inst_dict = parse_block_instance_row(row, context)
         top_dict["blockInstances"].append(block_inst_dict)
     return top_dict
 
@@ -72,7 +91,7 @@ def parse_top_sys_file(filename):
     for sheet in workbook.sheets():
         if sheet.name == "Top":
             found = True
-            top_dict = parse_top_sys_sheet(sheet)
+            top_dict = parse_top_sys_sheet(sheet, context)
             LOGGER.debug("Parse top dict %s", top_dict)
 
     if not found:

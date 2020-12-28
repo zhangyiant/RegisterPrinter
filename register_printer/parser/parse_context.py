@@ -5,3 +5,11 @@ class ExcelParseContext:
         self.row = row
         self.column = column
         return
+
+    def copy(self):
+        new_instance = ExcelParseContext()
+        new_instance.filename = self.filename
+        new_instance.sheet_name = self.sheet_name
+        new_instance.row = self.row
+        new_instance.column = self.column
+        return new_instance
