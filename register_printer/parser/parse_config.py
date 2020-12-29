@@ -4,7 +4,7 @@ from register_printer.data_model import (
     TopSys
 )
 from register_printer.parser.parse_excels import parse_excels
-from register_printer.parser import parse_top_sys_file
+from register_printer.parser.top_sys_sheet_parser import parse_top_sys_file
 
 LOGGER = logging.getLogger(__name__)
 

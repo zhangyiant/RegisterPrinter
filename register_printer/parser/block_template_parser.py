@@ -4,6 +4,8 @@ from xlrd import open_workbook
 
 
 from .register_parser import parse_register
+from .parse_context import ExcelParseContext
+from .parse_exception import ExcelParseException
 
 
 LOGGER = logging.getLogger(__name__)
@@ -23,18 +25,23 @@ def validate_field_block(field, block):
     return
 
 
-def validate_sheet(sheet):
+def validate_sheet(sheet, previous_context):
+    context = previous_context.copy()
     if sheet.ncols < 8:
         LOGGER.error(
             "sheet %s error: column number is wrong, must be greater than 8",
             sheet.name)
-        raise Exception("Sheet column number must be geater than 8")
+        msg = "Sheet column number must be greater than 8."
+        raise ExcelParseException(msg, context)
 
+    context.row = 0
+    context.column = 0
     if sheet.cell(0, 0).value != "Module description:":
         LOGGER.debug(
             "sheet %s error: find no \"Module description:\" in cell(0,0)",
             sheet.name)
-        raise Exception("No \"Module description:\" in cell(0,0)")
+        msg = "No \"Module description:\" in cell(0,0)."
+        raise ExcelParseException(msg, context)
     return
 
 
@@ -47,14 +54,18 @@ def is_register_row(row):
     return False
 
 
-def generate_block_template_from_sheet(sheet):
+def generate_block_template_from_sheet(sheet, previous_context):
+
+    context = previous_context.copy()
+    context.sheet_name = sheet.name
+
     LOGGER.debug(
         "Processing sheet %s row=%d col=%d",
         sheet.name,
         sheet.nrows,
         sheet.ncols)
 
-    validate_sheet(sheet)
+    validate_sheet(sheet, context)
 
     rowx = 3
     block_template_dict = {
@@ -63,10 +74,11 @@ def generate_block_template_from_sheet(sheet):
     }
     while rowx < sheet.nrows:
         row = sheet.row(rowx)
+        context.row = rowx
         if is_empty_row(row):
             rowx += 1
         elif is_register_row(row):
-            (register_dict, rowx) = parse_register(sheet, rowx)
+            (register_dict, rowx) = parse_register(sheet, rowx, context)
             block_template_dict["registers"].append(register_dict)
             # Todo: Add offset, size validation
             # if register.offset > block.size:
@@ -82,8 +94,8 @@ def generate_block_template_from_sheet(sheet):
                 "sheet %s row %d error: unknown row.",
                 sheet.name,
                 rowx)
-            LOGGER.error(" %s", sheet.cell(rowx, 0).value)
-            raise Exception("Unknown row")
+            msg = "Unknown row."
+            raise ExcelParseException(msg, context)
     LOGGER.debug(
         "Processing sheet %s done",
         sheet.name)
@@ -121,6 +133,7 @@ def get_sheet_list(workbook, block_types=None):
 
 
 def parse_block_template_file(filename, block_types=None):
+    context = ExcelParseContext(filename=filename)
     workbook = open_workbook(filename)
 
     sheet_list = get_sheet_list(workbook, block_types)
@@ -128,7 +141,8 @@ def parse_block_template_file(filename, block_types=None):
     block_template_dict_list = []
     for sheet in sheet_list:
         block_template_dict = generate_block_template_from_sheet(
-            sheet
+            sheet,
+            context
         )
         block_template_dict_list.append(block_template_dict)
 
