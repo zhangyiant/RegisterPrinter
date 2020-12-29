@@ -102,7 +102,8 @@ def parse_register(sheet, start_row, previous_context):
                 sheet.name,
                 rowx + 1)
         LOGGER.debug(err_msg)
-        raise Exception(err_msg)
+        msg = "No blank row between registers."
+        raise ExcelParseException(msg, context)
 
     register_dict["fields"] = field_dict_list
 
