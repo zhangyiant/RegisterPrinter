@@ -51,7 +51,13 @@ def parse_register_row(row, previous_context):
     context = previous_context.copy()
     validate_register_row_empty_field(row, context)
 
-    offset = int(row[0].value, 16)
+    context.column = 0
+    try:
+        offset = int(row[0].value, 16)
+    except Exception as exc:
+        msg = "Parse offset error: {}.".format(exc)
+        raise ExcelParseException(msg, context)
+
     name = row[1].value
     description = "%s" % row[7].value
 
@@ -70,37 +76,21 @@ def parse_register(sheet, start_row, previous_context):
 
     row = sheet.row(rowx)
     context.row = rowx
-    try:
-        register_dict = parse_register_row(row, context)
-    except Exception as exc:
-        LOGGER.error(
-            "sheet %s row %d error: %s",
-            sheet.name,
-            rowx + 1,
-            str(exc)
-        )
-        raise
+
+    register_dict = parse_register_row(row, context)
 
     rowx = rowx + 1
     row = sheet.row(rowx)
+    context.row = rowx
     field_dict_list = []
     while is_field_row(row):
-        try:
-            field_dict = parse_field_row(row)
-            field_dict_list.append(field_dict)
-        except Exception as exc:
-            LOGGER.error(
-                "sheet %s row %d error, Register %s: %s",
-                sheet.name,
-                rowx + 1,
-                register_dict["name"],
-                str(exc)
-            )
-            raise
+        field_dict = parse_field_row(row, context)
+        field_dict_list.append(field_dict)
 
         if rowx < sheet.nrows - 1:
             rowx = rowx + 1
             row = sheet.row(rowx)
+            context.row = rowx
         else:
             break
 
