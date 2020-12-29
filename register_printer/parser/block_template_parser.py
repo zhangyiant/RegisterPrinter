@@ -74,10 +74,11 @@ def generate_block_template_from_sheet(sheet, previous_context):
     }
     while rowx < sheet.nrows:
         row = sheet.row(rowx)
+        context.row = rowx
         if is_empty_row(row):
             rowx += 1
         elif is_register_row(row):
-            (register_dict, rowx) = parse_register(sheet, rowx)
+            (register_dict, rowx) = parse_register(sheet, rowx, context)
             block_template_dict["registers"].append(register_dict)
             # Todo: Add offset, size validation
             # if register.offset > block.size:
@@ -93,8 +94,8 @@ def generate_block_template_from_sheet(sheet, previous_context):
                 "sheet %s row %d error: unknown row.",
                 sheet.name,
                 rowx)
-            LOGGER.error(" %s", sheet.cell(rowx, 0).value)
-            raise Exception("Unknown row")
+            msg = "Unknown row."
+            raise ExcelParseException(msg, context)
     LOGGER.debug(
         "Processing sheet %s done",
         sheet.name)
