@@ -41,18 +41,44 @@ def parse_top_sys_meta_data(sheet, previous_context):
 
 
 def parse_block_instance_row(row, previous_context):
+    context = previous_context.copy()
     block_instance_name = row[0].value.strip()
     block_type = row[1].value.strip()
-    block_base_address = int(row[2].value.strip(), 16)
-    block_size = int(row[3].value.strip(), 16)
+
+    context.column = 2
+    try:
+        block_base_address = int(row[2].value.strip(), 16)
+    except Exception as exc:
+        msg = "Parse block base address error: {}.".format(exc)
+        raise ExcelParseException(msg, context)
+
+    context.column = 3
+    try:
+        block_size = int(row[3].value.strip(), 16)
+    except Exception as exc:
+        msg = "Parse block size error: {}.".format(exc)
+        raise ExcelParseException(msg, context)
+
+    context.column = 4
     addr_width = None
     value = row[4].value
     if value != "":
-        addr_width = int(value)
+        try:
+            addr_width = int(value)
+        except Exception as exc:
+            msg = "Parse address width error: {}.".format(exc)
+            raise ExcelParseException(msg, context)
+
+    context.column = 5
     data_width = None
     value = row[5].value
     if value != "":
-        data_width = int(value)
+        try:
+            data_width = int(value)
+        except Exception as exc:
+            msg = "Parse data width error: {}.".format(exc)
+            raise ExcelParseException(msg, context)
+
     result = {
         "name": block_instance_name,
         "blockType": block_type,
@@ -76,6 +102,7 @@ def parse_top_sys_sheet(sheet, previous_context):
     top_dict["blockInstances"] = []
     for rowx in range(7, sheet.nrows):
         row = sheet.row(rowx)
+        context.row = rowx
         block_inst_dict = parse_block_instance_row(row, context)
         top_dict["blockInstances"].append(block_inst_dict)
     return top_dict

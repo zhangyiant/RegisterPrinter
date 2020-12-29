@@ -34,8 +34,10 @@ class ExcelParseException(ParseException):
         if self.sheet_name is not None:
             info.append("Sheet name: {}".format(self.sheet_name))
         if self.row is not None:
-            info.append("Row: {}".format(self.row))
+            # self.row is 0-based
+            info.append("Row: {}".format(self.row + 1))
         if self.column is not None:
-            info.append("Column: {}".format(self.column))
+            # self.column is 0-based
+            info.append("Column: {}".format(self.column + 1))
         msg += " " + ", ".join(info)
         return msg
