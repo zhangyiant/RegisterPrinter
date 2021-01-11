@@ -1,4 +1,4 @@
-RW_TYPES = ['RW', 'RO', 'WO', 'RS', 'W1C', "W0C", 'RC', 'WRC', 'WRS', 'WSC', 'WC', '-']
+from register_printer.constants import RW_TYPES
 
 
 class Field:
@@ -34,22 +34,6 @@ class Field:
     @property
     def description(self):
         return self._description
-
-    def validate(self):
-        msb = self.msb
-        lsb = self.lsb
-        name = self.name
-        access = self.access
-        default = self.default
-        if lsb > msb:
-            raise Exception("lsb %d > msb %d" % (lsb, msb))
-        if name == "":
-            raise Exception("no Field Name")
-        if access not in RW_TYPES:
-            raise Exception("Invalid access type.")
-        if default >= (1 << (msb-lsb + 1)):
-            raise Exception("Default value is out of range.")
-        return
 
     def __str__(self):
         result = "Field " + str(self.name) + "\n"

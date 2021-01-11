@@ -23,7 +23,6 @@ def generate_block_template(block_template_dict):
                 field_dict["access"],
                 field_dict["description"]
             )
-            field.validate()
             register.add_field(field)
         block_template.add_register(register)
     return block_template
