@@ -6,7 +6,7 @@ class Register:
     def __init__(self, name, offset, description):
         self._name = name
         self._offset = offset
-        self._desciption = description
+        self._description = description
         self.fields = []
         return
 
@@ -20,7 +20,7 @@ class Register:
 
     @property
     def description(self):
-        return self._desciption
+        return self._description
 
     # all fields msb/lsb are in ascending order
     def add_field(self, new_field):
