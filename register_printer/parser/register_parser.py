@@ -69,6 +69,38 @@ def parse_register_row(row, previous_context):
 
     return result
 
+def validate_field(new_field, parsed_fields, previous_context):
+    context = previous_context
+
+    field_dict = new_field
+    field_dict_list = parsed_fields
+
+    fields = []
+    inserted = False
+    for field in field_dict_list:
+        if inserted:
+            fields.append(field)
+        overlapped = False
+        if field_dict["lsb"] > field["lsb"]:
+            if field_dict["lsb"] > field["msb"]:
+                fields.append(field)
+            else:
+                overlapped = True
+        elif field_dict["lsb"] == field["lsb"]:
+            overlapped = True
+        else:
+            if field_dict["msb"] < field["msb"]:
+                fields.append(field_dict)
+                fields.append(field)
+                inserted = True
+            else:
+                overlapped = True
+        if overlapped:
+            error_msg = "Fields overlap: \n{0}\n{1}".format(
+                field, field_dict)
+            raise ExcelParseException(error_msg, context)
+    return
+
 
 def parse_register(sheet, start_row, previous_context):
     context = previous_context.copy()
@@ -85,6 +117,9 @@ def parse_register(sheet, start_row, previous_context):
     field_dict_list = []
     while is_field_row(row):
         field_dict = parse_field_row(row, context)
+
+        validate_field(field_dict, field_dict_list, context)
+
         field_dict_list.append(field_dict)
 
         if rowx < sheet.nrows - 1:
