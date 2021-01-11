@@ -27,8 +27,8 @@ class ExcelParseException(ParseException):
         return self.context.column
 
     def __str__(self):
-        msg = self.msg
         info = []
+        info.append(self.msg)
         if self.filename is not None:
             info.append("Filename: {}".format(self.filename))
         if self.sheet_name is not None:
@@ -39,5 +39,5 @@ class ExcelParseException(ParseException):
         if self.column is not None:
             # self.column is 0-based
             info.append("Column: {}".format(self.column + 1))
-        msg += " " + ", ".join(info)
+        msg = "\n".join(info)
         return msg
