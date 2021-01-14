@@ -3,10 +3,14 @@ import os.path
 
 block_cipher = None
 
-with open(os.path.join(SPECPATH, "VERSION"), "r") as f:
+version_file_path = os.path.join(
+    SPECPATH,
+    "register_printer",
+    "VERSION"
+)
+with open(version_file_path, "r") as f:
     version_str = f.readline()
 version_str = version_str.strip()
-
 
 a = Analysis(['main.py'],
              pathex=[],
