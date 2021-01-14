@@ -14,8 +14,12 @@ def get_argument_parser():
     parser = argparse.ArgumentParser(
         prog="python -m register_printer",
         )
-    input_file_group = parser.add_mutually_exclusive_group(
-        required=True)
+    parser.add_argument(
+        "-v", "--version",dest="display_version",
+        action="store_true",
+        help="Display version"
+    )
+    input_file_group = parser.add_mutually_exclusive_group()
     input_file_group.add_argument(
         "-f", "--file", dest="config_file",
         help="Configuration input filename.",
@@ -101,7 +105,7 @@ def generate(
         register_printer.generate_c_header()
 
     if gen_json:
-        LOGGER.debug("Genarating JSON documents...")
+        LOGGER.debug("Generating JSON documents...")
         register_printer.generate_json()
 
     if gen_excel:
@@ -118,6 +122,19 @@ def main():
     parser = get_argument_parser()
 
     opts = parser.parse_args()
+
+    if opts.display_version:
+        print("1.1.234")
+        return
+
+    if opts.config_file is None and \
+        opts.input_json is None:
+        parser.print_usage()
+        print(
+            "Error: one of CONFIG_FILE_NAME and "
+            "INPUT_JSON_FILE must be provided."
+        )
+        return
 
     if opts.gen_all:
         opts.gen_doc = True
