@@ -52,7 +52,7 @@ def get_argument_parser():
         help="Generate register C header files."
     )
     parser.add_argument(
-        "-u", "--gen-uvm",dest="gen_uvm",
+        "-u", "--gen-uvm", dest="gen_uvm",
         action="store_true",
         help="Generate register UVM models."
     )
