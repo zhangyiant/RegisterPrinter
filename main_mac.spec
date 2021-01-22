@@ -15,7 +15,16 @@ version_str = version_str.strip()
 a = Analysis(['main.py'],
              pathex=[],
              binaries=[],
-             datas=[("register_printer/templates/*", "register_printer/templates")],
+             datas=[
+                 (
+                     "register_printer/templates/*",
+                     "register_printer/templates"
+                 ),
+                 (
+                     "register_printer/VERSION",
+                     "register_printer"
+                 )
+             ],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

@@ -124,11 +124,12 @@ def main():
     opts = parser.parse_args()
 
     if opts.display_version:
-        print("1.1.234")
+        version = RegisterPrinter.get_version()
+        print(version)
         return
 
     if opts.config_file is None and \
-        opts.input_json is None:
+       opts.input_json is None:
         parser.print_usage()
         print(
             "Error: one of CONFIG_FILE_NAME and "
@@ -172,6 +173,7 @@ def main():
     )
 
     return
+
 
 if __name__ == "__main__":
     main()

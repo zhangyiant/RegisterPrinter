@@ -14,6 +14,8 @@ from .generators import (
     UvmGenerator
 )
 
+from .get_version import get_version
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -102,3 +104,7 @@ class RegisterPrinter:
         excel_generator = ExcelGenerator(self.top_sys, self.output_path)
         excel_generator.generate()
         return
+
+    @staticmethod
+    def get_version():
+        return get_version()

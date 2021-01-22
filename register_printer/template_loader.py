@@ -6,6 +6,7 @@ from jinja2 import Environment, PackageLoader, Template
 
 LOGGER = logging.getLogger(__name__)
 
+
 def _get_template_pyinstaller(name):
     template_bin = pkgutil.get_data("register_printer", "templates/" + name)
     template_str = template_bin.decode('UTF-8')
@@ -16,6 +17,7 @@ def _get_template_pyinstaller(name):
     )
     return template
 
+
 def _get_template_pkg_loader(name):
     env = Environment(
         loader=PackageLoader("register_printer", "templates"),
@@ -24,6 +26,7 @@ def _get_template_pkg_loader(name):
     )
     template = env.get_template(name)
     return template
+
 
 def get_template(name):
     if hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
