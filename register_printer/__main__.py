@@ -11,12 +11,14 @@ LOGGER = logging.getLogger(__name__)
 
 
 def get_argument_parser():
+    version = RegisterPrinter.get_version()
     parser = argparse.ArgumentParser(
         prog="python -m register_printer",
         )
     parser.add_argument(
-        "-v", "--version",dest="display_version",
-        action="store_true",
+        "-v", "--version",
+        action="version",
+        version=version,
         help="Display version"
     )
     input_file_group = parser.add_mutually_exclusive_group()
@@ -122,11 +124,6 @@ def main():
     parser = get_argument_parser()
 
     opts = parser.parse_args()
-
-    if opts.display_version:
-        version = RegisterPrinter.get_version()
-        print(version)
-        return
 
     if opts.config_file is None and \
        opts.input_json is None:
