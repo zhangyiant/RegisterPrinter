@@ -1,1 +1,0 @@
-pyside2-uic ..\register_printer_gui\mainwindow.ui > ..\register_printer_gui\ui_mainwindow.py
