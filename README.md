@@ -1,5 +1,8 @@
 # RegisterPrinter
 
+## How to install
+`pip install register_printer`
+
 ## How to run
 ### install dependencies
 `pip install -r requirements.txt`
