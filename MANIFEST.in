@@ -1,0 +1,3 @@
+include register_printer/templates/*
+include register_printer/VERSION
+
