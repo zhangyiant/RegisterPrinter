@@ -3,6 +3,7 @@ import logging
 import argparse
 from . import RegisterPrinter
 
+
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s %(module)s %(message)s')
@@ -132,7 +133,7 @@ def main():
             "Error: one of CONFIG_FILE_NAME and "
             "INPUT_JSON_FILE must be provided."
         )
-        return
+        return 1
 
     if opts.gen_all:
         opts.gen_doc = True
@@ -146,7 +147,7 @@ def main():
             print(
                 "error: EXCEL_FILES_PATH must be provied "
                 "if CONFIG_FILE_NAME is provided.")
-            return
+            return 1
 
     LOGGER.debug("Initialize RegisterPrinter...")
     register_printer = RegisterPrinter(
@@ -169,8 +170,9 @@ def main():
         gen_excel=opts.gen_excel
     )
 
-    return
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    EXIT_CODE = main()
+    sys.exit(EXIT_CODE)
