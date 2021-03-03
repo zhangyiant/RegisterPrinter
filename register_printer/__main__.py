@@ -48,6 +48,12 @@ def get_argument_parser():
         help="Print parsed document."
     )
     parser.add_argument(
+        "--verbose", dest="verbose",
+        action="count",
+        default=0,
+        help="Logging more information."
+    )
+    parser.add_argument(
         "-d", "--gen-doc", dest="gen_doc",
         action="store_true",
         help="Generate register documents."
@@ -123,15 +129,20 @@ def generate(
 
 def main():
 
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(asctime)s %(module)s %(levelname)s: %(message)s')
-
     sys.stdout.reconfigure(encoding="utf-8")
 
     parser = get_argument_parser()
 
     opts = parser.parse_args()
+
+    if opts.verbose > 0:
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format='%(asctime)s %(module)s %(levelname)s: %(message)s')
+    else:
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s %(module)s %(levelname)s: %(message)s')
 
     if opts.config_file is None and \
        opts.input_json is None:
