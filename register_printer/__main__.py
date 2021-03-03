@@ -4,9 +4,7 @@ import argparse
 from . import RegisterPrinter
 
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s %(module)s %(message)s')
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -174,5 +172,8 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(module)s %(message)s')
     EXIT_CODE = main()
     sys.exit(EXIT_CODE)
