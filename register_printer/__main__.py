@@ -43,6 +43,11 @@ def get_argument_parser():
         metavar="OUTPUT_PATH"
     )
     parser.add_argument(
+        "--print", dest="print",
+        action="store_true",
+        help="Print parsed document."
+    )
+    parser.add_argument(
         "-d", "--gen-doc", dest="gen_doc",
         action="store_true",
         help="Generate register documents."
@@ -155,8 +160,9 @@ def main():
         json_file=opts.input_json
     )
 
-    register_printer.display()
-    sys.stdout.flush()
+    if opts.print:
+        register_printer.display()
+        sys.stdout.flush()
 
     generate(
         register_printer=register_printer,
