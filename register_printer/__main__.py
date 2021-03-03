@@ -101,27 +101,27 @@ def generate(
         gen_excel=False):
 
     if gen_uvm:
-        LOGGER.debug("Generate UVM models...")
+        LOGGER.info("Generate UVM models...")
         register_printer.generate_uvm()
 
     if gen_rtl:
-        LOGGER.debug("Generating RTL modules...")
+        LOGGER.info("Generating RTL modules...")
         register_printer.generate_rtl()
 
     if gen_doc:
-        LOGGER.debug("Generating documentations...")
+        LOGGER.info("Generating documentations...")
         register_printer.generate_document()
 
     if gen_c_header:
-        LOGGER.debug("Generating C headers...")
+        LOGGER.info("Generating C headers...")
         register_printer.generate_c_header()
 
     if gen_json:
-        LOGGER.debug("Generating JSON documents...")
+        LOGGER.info("Generating JSON documents...")
         register_printer.generate_json()
 
     if gen_excel:
-        LOGGER.debug("Generating Excel files...")
+        LOGGER.info("Generating Excel files...")
         register_printer.generate_excel()
 
     return
