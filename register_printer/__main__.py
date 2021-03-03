@@ -123,6 +123,10 @@ def generate(
 
 def main():
 
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(module)s %(levelname)s: %(message)s')
+
     sys.stdout.reconfigure(encoding="utf-8")
 
     parser = get_argument_parser()
@@ -178,8 +182,5 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(asctime)s %(module)s %(message)s')
     EXIT_CODE = main()
     sys.exit(EXIT_CODE)
