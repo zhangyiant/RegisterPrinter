@@ -34,3 +34,9 @@ optional arguments:
   -x, --gen-excel       Generate excel files.
   -a, --gen-all         Generate all files, same as -d -c -u -r
 ```
+
+## How to build
+`python -m build`
+
+## How to upload to pypi
+`python -m twine upload dist/*`
