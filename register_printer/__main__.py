@@ -3,9 +3,8 @@ import logging
 import argparse
 from . import RegisterPrinter
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s %(module)s %(message)s')
+
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,6 +41,17 @@ def get_argument_parser():
         default=".",
         help="Output path of generated files. Default \".\"",
         metavar="OUTPUT_PATH"
+    )
+    parser.add_argument(
+        "--print", dest="print",
+        action="store_true",
+        help="Print parsed document."
+    )
+    parser.add_argument(
+        "--verbose", dest="verbose",
+        action="count",
+        default=0,
+        help="Logging more information."
     )
     parser.add_argument(
         "-d", "--gen-doc", dest="gen_doc",
@@ -91,27 +101,27 @@ def generate(
         gen_excel=False):
 
     if gen_uvm:
-        LOGGER.debug("Generate UVM models...")
+        LOGGER.info("Generate UVM models...")
         register_printer.generate_uvm()
 
     if gen_rtl:
-        LOGGER.debug("Generating RTL modules...")
+        LOGGER.info("Generating RTL modules...")
         register_printer.generate_rtl()
 
     if gen_doc:
-        LOGGER.debug("Generating documentations...")
+        LOGGER.info("Generating documentations...")
         register_printer.generate_document()
 
     if gen_c_header:
-        LOGGER.debug("Generating C headers...")
+        LOGGER.info("Generating C headers...")
         register_printer.generate_c_header()
 
     if gen_json:
-        LOGGER.debug("Generating JSON documents...")
+        LOGGER.info("Generating JSON documents...")
         register_printer.generate_json()
 
     if gen_excel:
-        LOGGER.debug("Generating Excel files...")
+        LOGGER.info("Generating Excel files...")
         register_printer.generate_excel()
 
     return
@@ -125,6 +135,15 @@ def main():
 
     opts = parser.parse_args()
 
+    if opts.verbose > 0:
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format='%(asctime)s %(module)s %(levelname)s: %(message)s')
+    else:
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s %(module)s %(levelname)s: %(message)s')
+
     if opts.config_file is None and \
        opts.input_json is None:
         parser.print_usage()
@@ -132,7 +151,7 @@ def main():
             "Error: one of CONFIG_FILE_NAME and "
             "INPUT_JSON_FILE must be provided."
         )
-        return
+        return 1
 
     if opts.gen_all:
         opts.gen_doc = True
@@ -146,7 +165,7 @@ def main():
             print(
                 "error: EXCEL_FILES_PATH must be provied "
                 "if CONFIG_FILE_NAME is provided.")
-            return
+            return 1
 
     LOGGER.debug("Initialize RegisterPrinter...")
     register_printer = RegisterPrinter(
@@ -156,8 +175,9 @@ def main():
         json_file=opts.input_json
     )
 
-    register_printer.display()
-    sys.stdout.flush()
+    if opts.print:
+        register_printer.display()
+        sys.stdout.flush()
 
     generate(
         register_printer=register_printer,
@@ -169,8 +189,9 @@ def main():
         gen_excel=opts.gen_excel
     )
 
-    return
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    EXIT_CODE = main()
+    sys.exit(EXIT_CODE)
