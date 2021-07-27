@@ -5,10 +5,13 @@ module {{ block.block_type }}_reg
 (
     input     reg_clk                                                       ,
     input     reg_rstn                                                      ,
+    input     wp_dis                                                        ,
 {% for register in block.registers %}
   {% for field in register.fields %}
     {% set field_bits = field.msb - field.lsb %}
     {% if field.access == "RW" %}
+    output logic[{{ '%2s' | format(field_bits) }}: 0]     {{ "%-48s" | format(field.name) }},
+    {% elif field.access == "RWP" %}
     output logic[{{ '%2s' | format(field_bits) }}: 0]     {{ "%-48s" | format(field.name) }},
     {% elif field.access == "RC" %}
     input       [{{ '%2s' | format(field_bits) }}: 0]     {{ "%-48s" | format(field.name) }},
@@ -54,7 +57,7 @@ localparam int {{ (register.name + "_addr") | upper }} = 'h{{ "%x" | format(regi
 {% endfor %}
 
 {% for register in registers %}
-{% if (register.rw_flds | length ) + (register.rc_flds | length) + (register.rs_flds | length) + (register.w1c_flds | length) + (register.w0c_flds | length) + (register.wc_flds | length) + (register.wo_flds | length) + (register.wrc_flds | length) + (register.wrs_flds | length)  > 0 %}
+{% if (register.rw_flds | length ) + (register.rwp_flds | length ) + (register.rc_flds | length) + (register.rs_flds | length) + (register.w1c_flds | length) + (register.w0c_flds | length) + (register.wc_flds | length) + (register.wo_flds | length) + (register.wrc_flds | length) + (register.wrs_flds | length)  > 0 %}
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
     {% for field in register.fields %}
@@ -74,7 +77,7 @@ always @(posedge reg_clk or negedge reg_rstn) begin
       {% endfor %}
     end
     {% endif %}
-    {% if (register.rw_flds | length) + (register.wo_flds | length) + (register.wrc_flds | length) + (register.wrs_flds | length) + (register.rc_flds | length) + (register.rs_flds | length) + (register.w1c_flds | length) + (register.w0c_flds | length) + (register.wc_flds | length) > 0 %}
+    {% if (register.rw_flds | length) + (register.rwp_flds | length) + (register.wo_flds | length) + (register.wrc_flds | length) + (register.wrs_flds | length) + (register.rc_flds | length) + (register.rs_flds | length) + (register.w1c_flds | length) + (register.w0c_flds | length) + (register.wc_flds | length) > 0 %}
     else begin
       {% for field in (register.rc_flds + register.rs_flds) %}
         {{ register.name }}[{{ field.msb }}:{{ field.lsb }}] <= {{ field.name }}
@@ -91,7 +94,7 @@ always @(posedge reg_clk or negedge reg_rstn) begin
       {% set pos = (field.msb / 8) | int %}
         {{ register.name }}[{{ field.msb }}] <= {{ field.name | lower }}_set ? 1'b1 : ((reg_wr && reg_addr=={{ (register.name + "_addr") | upper }} && reg_we[{{ pos }}]) ? 1'b0 : {{ register.name }}[{{ field.msb }}]);
       {% endfor %}
-      {% for field in (register.rw_flds + register.wrc_flds + register.wrs_flds + register.wo_flds) %}
+      {% for field in (register.rw_flds + register.rwp_flds + register.wrc_flds + register.wrs_flds + register.wo_flds) %}
       {% set msb = field.msb %}
       {% set lsb = field.lsb %}
       {% set reg_name = register.name %}
@@ -135,41 +138,46 @@ always @(posedge reg_clk or negedge reg_rstn) begin
             {% endif %}
           {% endif %}
         {% else %}
+          {% if field.access == "RWP" %}
+            {% set RWP_CONTENT = " && wp_dis" %}
+          {% else %}
+            {% set RWP_CONTENT = "" %}
+          {% endif %}
           {% if msb < 8 %}
-        {{ reg_name }}[{{ msb }}:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[0]) ? reg_wdat[{{ msb }}:{{ lsb }}] : {{ reg_name }}[{{ msb }}:{{ lsb }}];
+        {{ reg_name }}[{{ msb }}:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[0]{{ RWP_CONTENT }}) ? reg_wdat[{{ msb }}:{{ lsb }}] : {{ reg_name }}[{{ msb }}:{{ lsb }}];
           {% elif msb < 16 %}
             {% if lsb < 8 %}
-        {{ reg_name }}[{{ msb }}:8] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]) ? reg_wdat[{{ msb }}:8] : {{ reg_name }}[{{ msb }}:8];
-        {{ reg_name }}[7:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[0]) ? reg_wdat[7:{{ lsb }}] : {{ reg_name }}[7:{{ lsb }}];
+        {{ reg_name }}[{{ msb }}:8] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]{{ RWP_CONTENT }}) ? reg_wdat[{{ msb }}:8] : {{ reg_name }}[{{ msb }}:8];
+        {{ reg_name }}[7:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[0]{{ RWP_CONTENT }}) ? reg_wdat[7:{{ lsb }}] : {{ reg_name }}[7:{{ lsb }}];
             {% else %}
-        {{ reg_name }}[{{ msb }}:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]) ? reg_wdat[{{ msb }}:{{ lsb }}] : {{ reg_name }}[{{ msb }}:{{ lsb }}];
+        {{ reg_name }}[{{ msb }}:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]{{ RWP_CONTENT }}) ? reg_wdat[{{ msb }}:{{ lsb }}] : {{ reg_name }}[{{ msb }}:{{ lsb }}];
             {% endif %}
           {% elif msb < 24 %}
             {% if lsb < 8 %}
-        {{ reg_name }}[{{ msb }}:16] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]) ? reg_wdat[{{ msb }}:16] : {{ reg_name }}[{{ msb }}:16];
+        {{ reg_name }}[{{ msb }}:16] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]{{ RWP_CONTENT }}) ? reg_wdat[{{ msb }}:16] : {{ reg_name }}[{{ msb }}:16];
         {{ reg_name }}[15:8] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]) ? reg_wdat[15:8] : {{ reg_name }}[15:8];
-        {{ reg_name }}[7:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[0]) ? reg_wdat[7:{{ lsb }}] : {{ reg_name }}[7:{{ lsb }}];
+        {{ reg_name }}[7:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[0]{{ RWP_CONTENT }}) ? reg_wdat[7:{{ lsb }}] : {{ reg_name }}[7:{{ lsb }}];
             {% elif lsb < 16 %}
-        {{ reg_name }}[{{ msb }}:16] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]) ? reg_wdat[{{ msb }}:16] : {{ reg_name }}[{{ msb }}:16];
-        {{ reg_name }}[15:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]) ? reg_wdat[15:{{ lsb }}] : {{ reg_name }}[15:{{ lsb }}];
+        {{ reg_name }}[{{ msb }}:16] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]{{ RWP_CONTENT }}) ? reg_wdat[{{ msb }}:16] : {{ reg_name }}[{{ msb }}:16];
+        {{ reg_name }}[15:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]{{ RWP_CONTENT }}) ? reg_wdat[15:{{ lsb }}] : {{ reg_name }}[15:{{ lsb }}];
             {% else %}
-        {{ reg_name }}[{{ msb }}:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]) ? reg_wdat[{{ msb }}:{{ lsb }}] : {{ reg_name }}[{{ msb }}:{{ lsb }}];
+        {{ reg_name }}[{{ msb }}:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]{{ RWP_CONTENT }}) ? reg_wdat[{{ msb }}:{{ lsb }}] : {{ reg_name }}[{{ msb }}:{{ lsb }}];
             {% endif %}
           {% else %}
             {% if lsb < 8 %}
-        {{ reg_name }}[{{ msb }}:24] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[3]) ? reg_wdat[{{ msb }}:24] : {{ reg_name }}[{{ msb }}:24];
-        {{ reg_name }}[23:16] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]) ? reg_wdat[23:16] : {{ reg_name }}[23:16];
-        {{ reg_name }}[15:8] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]) ? reg_wdat[15:8] : {{ reg_name }}[15:8];
-        {{ reg_name }}[7:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[0]) ? reg_wdat[7:{{ lsb }}] : {{ reg_name }}[7:{{ lsb }}];
+        {{ reg_name }}[{{ msb }}:24] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[3]{{ RWP_CONTENT }}) ? reg_wdat[{{ msb }}:24] : {{ reg_name }}[{{ msb }}:24];
+        {{ reg_name }}[23:16] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]{{ RWP_CONTENT }}) ? reg_wdat[23:16] : {{ reg_name }}[23:16];
+        {{ reg_name }}[15:8] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]{{ RWP_CONTENT }}) ? reg_wdat[15:8] : {{ reg_name }}[15:8];
+        {{ reg_name }}[7:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[0]{{ RWP_CONTENT }}) ? reg_wdat[7:{{ lsb }}] : {{ reg_name }}[7:{{ lsb }}];
             {% elif lsb < 16 %}
-        {{ reg_name }}[{{ msb }}:24] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[3]) ? reg_wdat[{{ msb }}:24] : {{ reg_name }}[{{ msb }}:24];
-        {{ reg_name }}[23:16] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]) ? reg_wdat[23:16] : {{ reg_name }}[23:16];
-        {{ reg_name }}[15:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]) ? reg_wdat[15:{{ lsb }}] : {{ reg_name }}[15:{{ lsb }}];
+        {{ reg_name }}[{{ msb }}:24] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[3]{{ RWP_CONTENT }}) ? reg_wdat[{{ msb }}:24] : {{ reg_name }}[{{ msb }}:24];
+        {{ reg_name }}[23:16] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]{{ RWP_CONTENT }}) ? reg_wdat[23:16] : {{ reg_name }}[23:16];
+        {{ reg_name }}[15:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[1]{{ RWP_CONTENT }}) ? reg_wdat[15:{{ lsb }}] : {{ reg_name }}[15:{{ lsb }}];
             {% elif lsb < 24 %}
-        {{ reg_name }}[{{ msb }}:24] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[3]) ? reg_wdat[{{ msb }}:24] : {{ reg_name }}[{{ msb }}:24];
-        {{ reg_name }}[23:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]) ? reg_wdat[23:{{ lsb }}] : {{ reg_name }}[23:{{ lsb }}];
+        {{ reg_name }}[{{ msb }}:24] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[3]{{ RWP_CONTENT }}) ? reg_wdat[{{ msb }}:24] : {{ reg_name }}[{{ msb }}:24];
+        {{ reg_name }}[23:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[2]{{ RWP_CONTENT }}) ? reg_wdat[23:{{ lsb }}] : {{ reg_name }}[23:{{ lsb }}];
             {% else %}
-        {{ reg_name }}[{{ msb }}:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[3]) ? reg_wdat[{{ msb }}:{{ lsb }}] : {{ reg_name }}[{{ msb }}:{{ lsb }}];
+        {{ reg_name }}[{{ msb }}:{{ lsb }}] <= (reg_wr && reg_addr == {{ reg_offset }} && reg_we[3]{{ RWP_CONTENT }}) ? reg_wdat[{{ msb }}:{{ lsb }}] : {{ reg_name }}[{{ msb }}:{{ lsb }}];
             {% endif %}
           {% endif %}
         {% endif %}
@@ -178,7 +186,7 @@ always @(posedge reg_clk or negedge reg_rstn) begin
     end
 end
 {% endif %}
-{% for field in (register.rw_flds + register.w1c_flds + register.w0c_flds + register.wc_flds + register.wo_flds + register.wrc_flds + register.wrs_flds) %}
+{% for field in (register.rw_flds + register.rwp_flds + register.w1c_flds + register.w0c_flds + register.wc_flds + register.wo_flds + register.wrc_flds + register.wrs_flds) %}
 assign {{ field.name }} = {{ register.name }}[{{ field.msb }}:{{ field.lsb }}];
 {% endfor %}
 {% for field in register.ro_flds %}
