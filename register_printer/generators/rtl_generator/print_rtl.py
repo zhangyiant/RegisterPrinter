@@ -26,6 +26,7 @@ def print_rtl_block(block, out_path):
         tmp_register["name"] = reg.name
         tmp_register["fields"] = []
         rw_flds = []
+        rwp_flds = []
         ro_flds = []
         rc_flds = []
         rs_flds = []
@@ -40,6 +41,8 @@ def print_rtl_block(block, out_path):
             tmp_register["fields"].append(fld)
             if fld.access == "RW":
                 rw_flds.append(fld)
+            elif fld.access == "RWP":
+                rwp_flds.append(fld)
             elif fld.access == "RC":
                 rc_flds.append(fld)
             elif fld.access == "RO":
@@ -61,6 +64,7 @@ def print_rtl_block(block, out_path):
             elif fld.access == "-":
                 ro_flds.append(fld)
         tmp_register["rw_flds"] = rw_flds
+        tmp_register["rwp_flds"] = rwp_flds
         tmp_register["ro_flds"] = ro_flds
         tmp_register["rc_flds"] = rc_flds
         tmp_register["rs_flds"] = rs_flds
