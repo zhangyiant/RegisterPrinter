@@ -21,6 +21,17 @@ def is_register_table_title_row(row):
         return True
     return False
 
+def is_array_table_title_row(row):
+    if row[0].value.upper() == "array_name".upper():
+        return True
+    return False
+
+def is_table_title_row(row):
+    if is_register_table_title_row(row) or \
+        is_array_table_title_row(row):
+        return True
+    return False
+
 # Todo： validate field in Block.
 def validate_field_block(field, block):
     msb = field.msb
@@ -56,6 +67,8 @@ def parse_register_table(sheet, start_rowx, previous_context):
     while rowx < sheet.nrows:
         row = sheet.row(rowx)
         context.row = rowx
+        if is_table_title_row(row):
+            break
         if is_empty_row(row):
             rowx += 1
         elif is_register_row(row):
