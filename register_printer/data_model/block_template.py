@@ -2,7 +2,7 @@ import textwrap
 
 from .register import Register
 from .field import Field
-
+from .array import Array
 
 def generate_block_template(block_template_dict):
     block_template = BlockTemplate(
@@ -25,6 +25,9 @@ def generate_block_template(block_template_dict):
             )
             register.add_field(field)
         block_template.add_register(register)
+    for array_dict in block_template_dict["arrays"]:
+        array = Array.from_dict(array_dict)
+        block_template.add_array(array)
     return block_template
 
 
@@ -33,6 +36,7 @@ class BlockTemplate:
     def __init__(self, block_type):
         self._block_type = block_type
         self.registers = []
+        self.arrays = []
         return
 
     @property
@@ -42,6 +46,10 @@ class BlockTemplate:
     def add_register(self, register):
         self.registers.append(register)
         self.sort_register_by_offset()
+        return
+
+    def add_array(self, array):
+        self.arrays.append(array)
         return
 
     def find_register_by_name(self, name):
@@ -68,7 +76,17 @@ class BlockTemplate:
         return
 
     def __str__(self):
-        result = "Block Template" + str(self._block_type) + "\n"
+        result = "Block Template: " + str(self._block_type) + "\n"
+
+        if len(self.arrays) > 0:
+            result += "    Arrays:\n"
+            array_strings = []
+            for array in self.arrays:
+                array_string = str(array)
+                array_string = textwrap.indent(array_string, "        ")
+                array_strings.append(array_string)
+            result += "\n".join(array_strings)
+            result += "\n"
         result += "    Registers:\n"
         register_strings = []
         for register in self.registers:

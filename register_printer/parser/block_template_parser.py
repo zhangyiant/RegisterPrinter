@@ -117,9 +117,9 @@ def parse_array_row(row, previous_context):
     description = row[5].value
 
     result = {
-        "arrayName": array_name,
-        "arrayLength": array_length,
-        "arrayOffset": array_offset,
+        "name": array_name,
+        "length": array_length,
+        "offset": array_offset,
         "startAddress": start_address,
         "endAddress": end_address,
         "description": description
