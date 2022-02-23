@@ -29,6 +29,24 @@ def validate_field_block(field, block):
     return
 
 
+def find_register_table_title_row(sheet, previous_context):
+    context = previous_context.copy()
+    rowx = 1
+    context.row = rowx
+    found = False
+    while rowx < sheet.nrows:
+        row = sheet.row(rowx)
+        if is_register_table_title_row(row):
+            found = True
+            break
+        else:
+            rowx += 1
+            context.row = rowx
+    if not found:
+        msg = "Register table title not found"
+        raise ExcelParseException(msg, context)
+    return rowx
+
 def validate_sheet(sheet, previous_context):
     context = previous_context.copy()
     if sheet.ncols < 8:
@@ -71,22 +89,12 @@ def generate_block_template_from_sheet(sheet, previous_context):
 
     validate_sheet(sheet, context)
 
-    rowx = 1
-    context.row = rowx
-    found = False
-    while rowx < sheet.nrows:
-        row = sheet.row(rowx)
-        if is_register_table_title_row(row):
-            found = True
-            break
-        else:
-            rowx += 1
-            context.row = rowx
-    if not found:
-        msg = "Register table title not found"
-        raise ExcelParseException(msg, context)
+    register_table_title_rowx = find_register_table_title_row(
+        sheet,
+        context
+    )
 
-    rowx += 1
+    rowx = register_table_title_rowx + 1
     context.row = rowx
     block_template_dict = {
         "blockType": sheet.name,
