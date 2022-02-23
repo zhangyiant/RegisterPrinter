@@ -109,8 +109,9 @@ class TopSys:
             result += block_text + "\n"
         result += "    Block instances:\n"
         for block_instance in self.block_instances:
-            result += "      %s\t@0x%x\t%s\t%s\n" % (
+            result += "      %s(%s)\t@0x%x\t%s\t%s\n" % (
                 block_instance.name,
+                block_instance.block.block_type,
                 block_instance.base_address,
                 block_instance.block.raw_addr_width,
                 block_instance.block.raw_data_width)
