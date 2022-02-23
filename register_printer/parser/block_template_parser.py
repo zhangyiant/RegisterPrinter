@@ -47,6 +47,38 @@ def find_register_table_title_row(sheet, previous_context):
         raise ExcelParseException(msg, context)
     return rowx
 
+def parse_register_table(sheet, start_rowx, previous_context):
+    context = previous_context.copy()
+    rowx = start_rowx
+    context.row = rowx
+
+    register_dict_list = []
+    while rowx < sheet.nrows:
+        row = sheet.row(rowx)
+        context.row = rowx
+        if is_empty_row(row):
+            rowx += 1
+        elif is_register_row(row):
+            (register_dict, rowx) = parse_register(sheet, rowx, context)
+            register_dict_list.append(register_dict)
+            # Todo: Add offset, size validation
+            # if register.offset > block.size:
+            #     LOGGER.error(
+            #         "sheet %s row %d error: offset %x > block size %x",
+            #         sheet.name,
+            #         rowx,
+            #         register.offset,
+            #         block.size)
+            #     raise Exception("offset > block size")
+        else:
+            LOGGER.error(
+                "sheet %s row %d error: unknown row.",
+                sheet.name,
+                rowx)
+            msg = "Unknown row."
+            raise ExcelParseException(msg, context)
+    return register_dict_list
+
 def validate_sheet(sheet, previous_context):
     context = previous_context.copy()
     if sheet.ncols < 8:
@@ -100,30 +132,12 @@ def generate_block_template_from_sheet(sheet, previous_context):
         "blockType": sheet.name,
         "registers": []
     }
-    while rowx < sheet.nrows:
-        row = sheet.row(rowx)
-        context.row = rowx
-        if is_empty_row(row):
-            rowx += 1
-        elif is_register_row(row):
-            (register_dict, rowx) = parse_register(sheet, rowx, context)
-            block_template_dict["registers"].append(register_dict)
-            # Todo: Add offset, size validation
-            # if register.offset > block.size:
-            #     LOGGER.error(
-            #         "sheet %s row %d error: offset %x > block size %x",
-            #         sheet.name,
-            #         rowx,
-            #         register.offset,
-            #         block.size)
-            #     raise Exception("offset > block size")
-        else:
-            LOGGER.error(
-                "sheet %s row %d error: unknown row.",
-                sheet.name,
-                rowx)
-            msg = "Unknown row."
-            raise ExcelParseException(msg, context)
+    block_template_dict["registers"] = parse_register_table(
+        sheet,
+        rowx,
+        context
+    )
+
     LOGGER.debug(
         "Processing sheet %s done",
         sheet.name)
