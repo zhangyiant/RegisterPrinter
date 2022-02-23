@@ -16,6 +16,10 @@ def is_empty_row(row):
         return True
     return False
 
+def is_register_table_title_row(row):
+    if row[0].value.upper() == "Offset".upper():
+        return True
+    return False
 
 # Todo： validate field in Block.
 def validate_field_block(field, block):
@@ -67,7 +71,23 @@ def generate_block_template_from_sheet(sheet, previous_context):
 
     validate_sheet(sheet, context)
 
-    rowx = 3
+    rowx = 1
+    context.row = rowx
+    found = False
+    while rowx < sheet.nrows:
+        row = sheet.row(rowx)
+        if is_register_table_title_row(row):
+            found = True
+            break
+        else:
+            rowx += 1
+            context.row = rowx
+    if not found:
+        msg = "Register table title not found"
+        raise ExcelParseException(msg, context)
+
+    rowx += 1
+    context.row = rowx
     block_template_dict = {
         "blockType": sheet.name,
         "registers": []
