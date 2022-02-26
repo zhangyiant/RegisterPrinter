@@ -1,4 +1,4 @@
-class Array:
+class ArrayTemplate:
     def __init__(self, name, length, offset, start_address, end_address, description):
         self._name = name
         self._length = length
@@ -33,7 +33,7 @@ class Array:
         return self._description
 
     def __str__(self):
-        result = "Array " + str(self.name) + "\n"
+        result = "Array Template: " + str(self.name) + "\n"
         result += "    length        : " + str(self.length) + "\n"
         result += "    offset        : 0x%x\n" % self.offset
         result += "    start address : 0x%x\n" % self.start_address
@@ -60,7 +60,7 @@ class Array:
         start_address = array_dict["startAddress"]
         end_address = array_dict["endAddress"]
         description = array_dict["description"]
-        array = Array(
+        array = ArrayTemplate(
             name=name,
             length=length,
             offset=offset,
