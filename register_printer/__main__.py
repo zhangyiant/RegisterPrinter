@@ -1,9 +1,8 @@
 import sys
 import logging
 import argparse
+import traceback
 from . import RegisterPrinter
-
-
 
 
 LOGGER = logging.getLogger(__name__)
@@ -167,28 +166,33 @@ def main():
                 "if CONFIG_FILE_NAME is provided.")
             return 1
 
-    LOGGER.debug("Initialize RegisterPrinter...")
-    register_printer = RegisterPrinter(
-        config_file=opts.config_file,
-        excel_path=opts.work_path,
-        output_path=opts.output_path,
-        json_file=opts.input_json
-    )
+    try:
+        LOGGER.debug("Initialize RegisterPrinter...")
+        register_printer = RegisterPrinter(
+            config_file=opts.config_file,
+            excel_path=opts.work_path,
+            output_path=opts.output_path,
+            json_file=opts.input_json
+        )
 
-    if opts.print:
-        register_printer.display()
-        sys.stdout.flush()
+        if opts.print:
+            register_printer.display()
+            sys.stdout.flush()
 
-    generate(
-        register_printer=register_printer,
-        gen_uvm=opts.gen_uvm,
-        gen_rtl=opts.gen_rtl,
-        gen_doc=opts.gen_doc,
-        gen_c_header=opts.gen_c_header,
-        gen_json=opts.gen_json,
-        gen_excel=opts.gen_excel
-    )
-
+        generate(
+            register_printer=register_printer,
+            gen_uvm=opts.gen_uvm,
+            gen_rtl=opts.gen_rtl,
+            gen_doc=opts.gen_doc,
+            gen_c_header=opts.gen_c_header,
+            gen_json=opts.gen_json,
+            gen_excel=opts.gen_excel
+        )
+    except Exception as exc:
+        if opts.verbose > 0:
+            traceback.print_exc()
+        print("Error: " + str(exc))
+        return 1
     return 0
 
 
