@@ -1,9 +1,8 @@
 import os
 import os.path
-import re
-import sys
 import logging
 from register_printer.template_loader import get_template
+from register_printer.data_model import RegisterType
 
 
 LOGGER = logging.getLogger(__name__)
@@ -33,57 +32,57 @@ def print_c_test(top_sys, out_path):
     return
 
 
-def print_c_header_block(block, out_path):
+def print_c_header_block(block_instance, out_path):
 
-    LOGGER.debug("Print block %s C header...", block.block_type)
+    LOGGER.debug("Print block %s C header...", block_instance.block_type)
 
     file_name = os.path.join(
         out_path,
-        "regs_" + block.block_type.lower() + ".h")
+        "regs_" + block_instance.block_type.lower() + ".h")
     if os.path.exists(file_name):
         os.remove(file_name)
 
     struct_fields = []
-    prev_offset = -4
-    curr_offset = -4
-    byte_len = int(block.data_width / 8)
     rsvd_idx = 0
-    for reg in block.registers:
-        prev_offset = curr_offset
-        curr_offset = reg.offset
-        nrsvd = (curr_offset - prev_offset) / byte_len - 1
-        mat = "    {:24}\t{:24}\t;\n"
-        if nrsvd > 0:
+    accumulated_number_rsvd_register = 0
+    for reg in block_instance.registers:
+        if reg.type == RegisterType.RESERVED:
+            accumulated_number_rsvd_register += 1
+        else:
+            if accumulated_number_rsvd_register > 1:
+                struct_field = {
+                    "type": "volatile const int",
+                    "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
+                }
+                struct_fields.append(struct_field)
+                rsvd_idx = rsvd_idx + 1
+                # reset accumulated_number_rsvd_register
+                accumulated_number_rsvd_register = 0
             struct_field = {
-                "type": "volatile const int",
-                "name": "RSVD%d[%d]" % (rsvd_idx, nrsvd)
+                "type": "volatile int",
+                "name": reg.name.upper()
             }
             struct_fields.append(struct_field)
-            rsvd_idx = rsvd_idx + 1
-        struct_field = {
-            "type": "volatile int",
-            "name": reg.name.upper()
-        }
-        struct_fields.append(struct_field)
 
     pos_mask_macros = []
-    for reg in block.registers:
-        for fld in reg.fields:
-            if fld.name != "-":
-                prefix = reg.name.upper() + "_" + fld.name.upper()
-                pos_value = fld.lsb
-                mask_value = (1 << (fld.msb - fld.lsb + 1)) - 1
-                pos_mask_macros.append({
-                    "prefix": prefix,
-                    "pos_value": pos_value,
-                    "mask_value": mask_value
-                })
+    for reg in block_instance.registers:
+        if reg.type != RegisterType.RESERVED:
+            for fld in reg.fields:
+                if fld.name != "-":
+                    prefix = reg.name.upper() + "_" + fld.name.upper()
+                    pos_value = fld.lsb
+                    mask_value = (1 << (fld.msb - fld.lsb + 1)) - 1
+                    pos_mask_macros.append({
+                        "prefix": prefix,
+                        "pos_value": pos_value,
+                        "mask_value": mask_value
+                    })
 
     template = get_template("c_header_block.h")
 
     content = template.render(
         {
-            "block_type": block.block_type,
+            "block_type": block_instance.block_type,
             "struct_fields": struct_fields,
             "pos_mask_macros": pos_mask_macros
         }
@@ -108,7 +107,7 @@ def print_c_header_sys(top_sys, out_path):
     include_macro_name = "REGS_" + top_sys.name.upper() + "_H"
     include_filenames = []
     for block_instance in top_sys.block_instances:
-        include_filename = "regs_" + block_instance.block.block_type.lower() + ".h"
+        include_filename = "regs_" + block_instance.block_type.lower() + ".h"
         include_filenames.append(include_filename)
     block_instances_data = []
     for block_instance in top_sys.block_instances:
@@ -145,8 +144,13 @@ def print_c_header(top_sys, output_path="."):
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
 
-    for block in top_sys.blocks:
-        print_c_header_block(block, out_dir)
+    generated_block_type_list = []
+    for block_instance in top_sys.block_instances:
+        if block_instance.block_type not in generated_block_type_list:
+            print_c_header_block(block_instance, out_dir)
+            generated_block_type_list.append(
+                block_instance.block_type
+            )
 
     print_c_header_sys(top_sys, out_dir)
     print_c_test(top_sys, out_dir)

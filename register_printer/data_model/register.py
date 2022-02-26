@@ -24,6 +24,10 @@ class Register:
         return
 
     @property
+    def type(self):
+        return self._type
+
+    @property
     def name(self):
         if self._type != RegisterType.RESERVED:
             return self._register_template.name
