@@ -49,7 +49,7 @@ class Register:
 
     def __str__(self):
         result = "Register " + str(self.name) + "\n"
-        result += "    offset: " + str(self.offset) + "\n"
+        result += "    offset: " + ("0x%x" % self.offset) + "\n"
         result += "    description: " \
             + str(self.description) \
             + "\n"

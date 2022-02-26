@@ -117,7 +117,7 @@ class TopSys:
                 block_instance.block.raw_data_width)
             registers = block_instance.registers
             for register in registers:
-                results += "\n" + str(register)
+                result += "\n" + str(register)
         result += "--------------------------------"
         return result
 

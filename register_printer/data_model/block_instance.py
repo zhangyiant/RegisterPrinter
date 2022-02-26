@@ -1,4 +1,5 @@
 import logging
+from .register import Register
 
 LOGGER = logging.getLogger(__name__)
 
@@ -39,7 +40,7 @@ class BlockInstance:
     @property
     def data_width_in_bytes(self):
         if self.data_width % 8 == 0:
-            return self.data_width / 8
+            return self.data_width // 8
         else:
             msg = "Block instance({}) data width({}) is not multiples of 8.".format(
                 self.name, self.data_width
@@ -49,7 +50,11 @@ class BlockInstance:
 
     def refresh_registers(self):
         self._registers = []
-        self.data_width_in_bytes
+        offset = 0
+        while offset < self.block_size:
+            register = Register(offset, reserved=True)
+            self._registers.append(register)
+            offset += self.data_width_in_bytes
         return
 
     @property
