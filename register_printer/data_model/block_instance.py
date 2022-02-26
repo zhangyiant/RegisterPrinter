@@ -12,8 +12,7 @@ class BlockInstance:
         self.base_address = base_address
         self.block_size = block_size
 
-        if self.parent is not None:
-            self.parent.block_instances.append(self)
+        self._registers = None
 
         return
 
@@ -32,3 +31,11 @@ class BlockInstance:
     @property
     def size(self):
         return self.block_size
+
+    def refresh_registers(self):
+        self._registers = []
+        return
+
+    @property
+    def registers(self):
+        return self._registers
