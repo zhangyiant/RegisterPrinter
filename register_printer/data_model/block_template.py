@@ -1,6 +1,6 @@
 import textwrap
 
-from .register import Register
+from .register_template import RegisterTemplate
 from .field import Field
 from .array_template import ArrayTemplate
 
@@ -9,7 +9,7 @@ def generate_block_template(block_template_dict):
         block_template_dict["blockType"]
     )
     for register_dict in block_template_dict["registers"]:
-        register = Register(
+        register = RegisterTemplate(
             register_dict["name"],
             register_dict["offset"],
             register_dict["description"]

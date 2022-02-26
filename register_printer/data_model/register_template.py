@@ -2,7 +2,7 @@ import re
 import textwrap
 from .field import Field
 
-class Register:
+class RegisterTemplate:
     def __init__(self, name, offset, description):
         self._name = name
         self._offset = offset
@@ -94,7 +94,7 @@ class Register:
         name = register_dict["name"]
         offset = register_dict["offset"]
         description = register_dict["description"]
-        register = Register(
+        register = RegisterTemplate(
             name=name,
             offset=offset,
             description=description)
