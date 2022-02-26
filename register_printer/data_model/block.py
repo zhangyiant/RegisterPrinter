@@ -1,5 +1,5 @@
 import textwrap
-from .register import Register
+from .register_template import RegisterTemplate
 
 
 class Block:
@@ -118,7 +118,7 @@ class Block:
             data_len=data_width)
         registers_dict = block_type_dict["registers"]
         for register_dict in registers_dict:
-            register = Register.from_dict(
+            register = RegisterTemplate.from_dict(
                 register_dict)
             block_type.registers.append(
                 register)
