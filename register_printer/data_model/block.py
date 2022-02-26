@@ -79,11 +79,6 @@ class Block:
             name
         )
 
-    def find_register_by_offset(self, offset):
-        return self._block_template.find_register_by_offset(
-            offset
-        )
-
     def __str__(self):
         result = "Block " + str(self.block_type) + "\n"
         result += "    Address width: " + str(self.addr_width) + "\n"

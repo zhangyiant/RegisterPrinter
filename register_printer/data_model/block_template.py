@@ -3,6 +3,7 @@ import textwrap
 from .register_template import RegisterTemplate
 from .field_template import FieldTemplate
 from .array_template import ArrayTemplate
+from .register import Register
 
 def generate_block_template(block_template_dict):
     block_template = BlockTemplate(
@@ -58,7 +59,7 @@ class BlockTemplate:
                 return register
         return None
 
-    def find_register_by_offset(self, offset):
+    def find_register_template_by_offset(self, offset):
         for register in self.registers:
             if register.offset == offset:
                 return register
@@ -71,8 +72,11 @@ class BlockTemplate:
         offsets.sort()
         registers = []
         for offset in offsets:
-            registers.append(self.find_register_by_offset(offset))
+            registers.append(self.find_register_template_by_offset(offset))
         self.registers = registers
+        return
+
+    def generate_register_by_offset(self, offset):
         return
 
     def __str__(self):
