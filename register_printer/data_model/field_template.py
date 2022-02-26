@@ -1,7 +1,7 @@
 from register_printer.constants import RW_TYPES
 
 
-class Field:
+class FieldTemplate:
     def __init__(self, name, msb, lsb, default, access, description):
         self._name = name
         self._msb = msb
@@ -63,7 +63,7 @@ class Field:
         default_value = field_dict["defaultValue"]
         access = field_dict["access"]
         description = field_dict["description"]
-        field = Field(
+        field = FieldTemplate(
             name=name,
             msb=msb,
             lsb=lsb,

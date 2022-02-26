@@ -1,6 +1,6 @@
 import re
 import textwrap
-from .field import Field
+from .field_template import FieldTemplate
 
 class RegisterTemplate:
     def __init__(self, name, offset, description):
@@ -100,7 +100,7 @@ class RegisterTemplate:
             description=description)
         fields_dict = register_dict["fields"]
         for field_dict in fields_dict:
-            field = Field.from_dict(
+            field = FieldTemplate.from_dict(
                 field_dict)
             register.fields.append(
                 field)
