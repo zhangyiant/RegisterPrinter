@@ -31,7 +31,7 @@ class Field:
         return self._field_template.description
 
     def __str__(self):
-        result = "Field " + str(self.name) + "\n"
+        result = "Field: " + str(self.name) + "\n"
         result += "    msb        : " + str(self.msb) + "\n"
         result += "    lsb        : " + str(self.lsb) + "\n"
         result += "    default    : " + str(self.default) + "\n"

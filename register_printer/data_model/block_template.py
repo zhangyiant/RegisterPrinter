@@ -5,7 +5,7 @@ from .register_template import RegisterTemplate
 from .field_template import FieldTemplate
 from .array_template import ArrayTemplate
 from .register import Register
-
+from .field import Field
 
 LOGGER = logging.getLogger(__name__)
 
@@ -85,6 +85,9 @@ class BlockTemplate:
         register_template = self.find_register_template_by_offset(offset)
         if register_template is not None:
             register = Register(offset, register_template=register_template)
+            for field_template in register_template.fields:
+                field = Field(field_template=field_template)
+                register.fields.append(field)
         else:
             register = Register(offset, reserved=True)
         return register
