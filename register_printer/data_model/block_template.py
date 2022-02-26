@@ -2,7 +2,7 @@ import textwrap
 
 from .register import Register
 from .field import Field
-from .array import Array
+from .array_template import ArrayTemplate
 
 def generate_block_template(block_template_dict):
     block_template = BlockTemplate(
@@ -26,7 +26,7 @@ def generate_block_template(block_template_dict):
             register.add_field(field)
         block_template.add_register(register)
     for array_dict in block_template_dict["arrays"]:
-        array = Array.from_dict(array_dict)
+        array = ArrayTemplate.from_dict(array_dict)
         block_template.add_array(array)
     return block_template
 
