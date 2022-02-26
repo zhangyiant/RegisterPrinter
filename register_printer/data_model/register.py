@@ -15,7 +15,7 @@ class Register:
         if reserved:
             self._type = RegisterType.RESERVED
         else:
-            if self.array_template is not None:
+            if self._array_template is not None:
                 self._type = RegisterType.ARRAY
             else:
                 self._type = RegisterType.NORMAL
@@ -48,7 +48,10 @@ class Register:
         return value
 
     def __str__(self):
-        result = "Register " + str(self.name) + "\n"
+        if self._type == RegisterType.RESERVED:
+            result = "Register: RESERVED\n"
+        else:
+            result = "Register: " + str(self.name) + "\n"
         result += "    offset: " + ("0x%x" % self.offset) + "\n"
         result += "    description: " \
             + str(self.description) \

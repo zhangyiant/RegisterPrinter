@@ -1,9 +1,13 @@
+import logging
 import textwrap
 
 from .register_template import RegisterTemplate
 from .field_template import FieldTemplate
 from .array_template import ArrayTemplate
 from .register import Register
+
+
+LOGGER = logging.getLogger(__name__)
 
 def generate_block_template(block_template_dict):
     block_template = BlockTemplate(
@@ -77,7 +81,13 @@ class BlockTemplate:
         return
 
     def generate_register_by_offset(self, offset):
-        return
+        LOGGER.debug("Generate register by offset: 0x%x", offset)
+        register_template = self.find_register_template_by_offset(offset)
+        if register_template is not None:
+            register = Register(offset, register_template=register_template)
+        else:
+            register = Register(offset, reserved=True)
+        return register
 
     def __str__(self):
         result = "Block Template: " + str(self._block_type) + "\n"

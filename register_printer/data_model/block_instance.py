@@ -52,7 +52,7 @@ class BlockInstance:
         self._registers = []
         offset = 0
         while offset < self.block_size:
-            register = Register(offset, reserved=True)
+            register = self.block.block_template.generate_register_by_offset(offset)
             self._registers.append(register)
             offset += self.data_width_in_bytes
         return
