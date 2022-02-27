@@ -32,20 +32,20 @@ def print_c_test(top_sys, out_path):
     return
 
 
-def print_c_header_block(block_instance, out_path):
+def print_c_header_block(block, out_path):
 
-    LOGGER.debug("Print block %s C header...", block_instance.block_type)
+    LOGGER.debug("Print block %s C header...", block.block_type)
 
     file_name = os.path.join(
         out_path,
-        "regs_" + block_instance.block_type.lower() + ".h")
+        "regs_" + block.block_type.lower() + ".h")
     if os.path.exists(file_name):
         os.remove(file_name)
 
     struct_fields = []
     rsvd_idx = 0
     accumulated_number_rsvd_register = 0
-    for reg in block_instance.registers:
+    for reg in block.mapped_registers:
         if reg.type == RegisterType.RESERVED:
             accumulated_number_rsvd_register += 1
         else:
@@ -65,7 +65,7 @@ def print_c_header_block(block_instance, out_path):
             struct_fields.append(struct_field)
 
     pos_mask_macros = []
-    for reg in block_instance.registers:
+    for reg in block.mapped_registers:
         if reg.type != RegisterType.RESERVED:
             for fld in reg.fields:
                 if fld.name != "-":
@@ -82,7 +82,7 @@ def print_c_header_block(block_instance, out_path):
 
     content = template.render(
         {
-            "block_type": block_instance.block_type,
+            "block_type": block.block_type,
             "struct_fields": struct_fields,
             "pos_mask_macros": pos_mask_macros
         }
@@ -144,13 +144,8 @@ def print_c_header(top_sys, output_path="."):
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
 
-    generated_block_type_list = []
-    for block_instance in top_sys.block_instances:
-        if block_instance.block_type not in generated_block_type_list:
-            print_c_header_block(block_instance, out_dir)
-            generated_block_type_list.append(
-                block_instance.block_type
-            )
+    for block in top_sys.blocks:
+        print_c_header_block(block, out_dir)
 
     print_c_header_sys(top_sys, out_dir)
     print_c_test(top_sys, out_dir)

@@ -80,6 +80,13 @@ class BlockTemplate:
         self.registers = registers
         return
 
+    def _biggest_register_offset(self):
+        result = 0
+        for register in self.registers:
+            if register.offset > result:
+                result = register.offset
+        return result
+
     def generate_register_by_offset(self, offset):
         LOGGER.debug("Generate register by offset: 0x%x", offset)
         register_template = self.find_register_template_by_offset(offset)
@@ -89,7 +96,10 @@ class BlockTemplate:
                 field = Field(field_template=field_template)
                 register.fields.append(field)
         else:
-            register = Register(offset, reserved=True)
+            if offset > self._biggest_register_offset():
+                register = None            
+            else:
+                register = Register(offset, reserved=True)
         return register
 
     def __str__(self):

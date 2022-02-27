@@ -78,7 +78,7 @@ def print_doc_block(doc, idx, block, instances):
         p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     i = 1
-    for register in instances[0].unreserved_registers:
+    for register in block.registers:
         tb.cell(i, 0).text = hex(register.offset)
         for k in range(len(instances)):
             tb.cell(i, k+1).text = hex(
@@ -87,7 +87,7 @@ def print_doc_block(doc, idx, block, instances):
         i += 1
 
     reg_idx = 0
-    for register in instances[0].unreserved_registers:
+    for register in block.registers:
         print_doc_reg(register, doc, reg_idx, idx, instances)
         reg_idx = reg_idx + 1
     doc.add_page_break()

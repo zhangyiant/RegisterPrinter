@@ -1,5 +1,9 @@
 import textwrap
+import logging
 from .register_template import RegisterTemplate
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Block:
@@ -13,6 +17,7 @@ class Block:
         self._block_template = block_template
         self._addr_width = addr_width
         self._data_width = data_width
+        self._mapped_registers = None
         return
 
     @property
@@ -49,6 +54,17 @@ class Block:
         return None
 
     @property
+    def data_width_in_bytes(self):
+        if self.data_width % 8 == 0:
+            return self.data_width // 8
+        else:
+            msg = "Block({}) data width({}) is not multiples of 8.".format(
+                self.block_type, self.data_width
+            )
+            LOGGER.error(msg)
+            raise Exception(msg)
+
+    @property
     def raw_data_width(self):
         return self._data_width
 
@@ -78,6 +94,24 @@ class Block:
         return self._block_template.find_register_by_name(
             name
         )
+
+    @property
+    def mapped_registers(self):
+        if self._mapped_registers is None:
+            self.refresh_registers()
+        return self._mapped_registers
+
+    def refresh_registers(self):
+        self._mapped_registers = []
+        offset = 0
+        while True:
+            register = self.block_template.generate_register_by_offset(offset)
+            # When the offset is too big, None will be returned.
+            if register is None:
+                break
+            self._mapped_registers.append(register)
+            offset += self.data_width_in_bytes
+        return
 
     def __str__(self):
         result = "Block " + str(self.block_type) + "\n"
