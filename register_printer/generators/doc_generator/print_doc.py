@@ -59,8 +59,9 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
     return
 
 
-def print_doc_block(doc, idx, block_type, num_register, instances):
-
+def print_doc_block(doc, idx, block, instances):
+    block_type = block.block_type
+    num_register = len(block.registers)
     doc.add_heading("%d %s Registers" % (idx, block_type), level=1)
     tb = doc.add_table(
         num_register + 1,
@@ -135,7 +136,7 @@ def generate_doc(top_sys):
             if instance.block_type == block_type:
                 blk_insts.append(instance)
 
-        print_doc_block(doc, block_idx, block_type, len(block.registers), blk_insts)
+        print_doc_block(doc, block_idx, block, blk_insts)
         block_idx = block_idx + 1
     return doc
 
