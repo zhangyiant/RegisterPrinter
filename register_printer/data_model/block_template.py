@@ -88,7 +88,6 @@ class BlockTemplate:
         return result
 
     def generate_register_by_offset(self, offset):
-        LOGGER.debug("Generate register by offset: 0x%x", offset)
         register_template = self.find_register_template_by_offset(offset)
         if register_template is not None:
             register = Register(offset, register_template=register_template)
