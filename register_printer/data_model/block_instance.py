@@ -36,35 +36,3 @@ class BlockInstance:
     @property
     def size(self):
         return self.block_size
-
-    @property
-    def data_width_in_bytes(self):
-        if self.data_width % 8 == 0:
-            return self.data_width // 8
-        else:
-            msg = "Block instance({}) data width({}) is not multiples of 8.".format(
-                self.name, self.data_width
-            )
-            LOGGER.error(msg)
-            raise Exception(msg)
-
-    def refresh_registers(self):
-        self._registers = []
-        offset = 0
-        while offset < self.block_size:
-            register = self.block.block_template.generate_register_by_offset(offset)
-            self._registers.append(register)
-            offset += self.data_width_in_bytes
-        return
-
-    @property
-    def registers(self):
-        return self._registers
-
-    @property
-    def unreserved_registers(self):
-        result = []
-        for register in self.registers:
-            if register.type != RegisterType.RESERVED:
-                result.append(register)
-        return result

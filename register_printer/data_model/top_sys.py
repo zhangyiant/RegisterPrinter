@@ -115,9 +115,6 @@ class TopSys:
                 block_instance.base_address,
                 block_instance.block.raw_addr_width,
                 block_instance.block.raw_data_width)
-            registers = block_instance.registers
-            for register in registers:
-                result += "\n" + str(register)
         result += "--------------------------------"
         return result
 
@@ -213,7 +210,6 @@ class TopSys:
                 block_inst_dict["baseAddress"],
                 block_inst_dict["blockSize"]
             )
-            block_instance.refresh_registers()
             top_sys.block_instances.append(block_instance)
 
         for blk in top_sys.blocks:
