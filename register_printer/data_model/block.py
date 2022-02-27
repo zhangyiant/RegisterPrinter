@@ -84,16 +84,7 @@ class Block:
 
     @property
     def registers(self):
-        return self._block_template.registers
-
-    def add_register(self, register):
-        self._block_template.add_register(register)
-        return
-
-    def find_register_by_name(self, name):
-        return self._block_template.find_register_by_name(
-            name
-        )
+        return self._block_template.register_templates
 
     @property
     def mapped_registers(self):

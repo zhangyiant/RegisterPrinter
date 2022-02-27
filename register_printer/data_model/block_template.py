@@ -40,8 +40,8 @@ class BlockTemplate:
 
     def __init__(self, block_type):
         self._block_type = block_type
-        self.registers = []
-        self.arrays = []
+        self.register_templates = []
+        self.array_templates = []
         return
 
     @property
@@ -49,40 +49,37 @@ class BlockTemplate:
         return self._block_type
 
     def add_register(self, register):
-        self.registers.append(register)
+        self.register_templates.append(register)
         self.sort_register_by_offset()
         return
 
     def add_array(self, array):
-        self.arrays.append(array)
+        self.array_templates.append(array)
         return
 
-    def find_register_by_name(self, name):
-        for register in self.registers:
-            if register.name == name:
-                return register
-        return None
-
     def find_register_template_by_offset(self, offset):
-        for register in self.registers:
+        for register in self.register_templates:
             if register.offset == offset:
                 return register
         return None
 
+    def get_array_template_by_register_template(self, register_template):
+        return
+
     def sort_register_by_offset(self):
         offsets = []
-        for register in self.registers:
+        for register in self.register_templates:
             offsets.append(register.offset)
         offsets.sort()
         registers = []
         for offset in offsets:
             registers.append(self.find_register_template_by_offset(offset))
-        self.registers = registers
+        self.register_templates = registers
         return
 
     def _biggest_register_offset(self):
         result = 0
-        for register in self.registers:
+        for register in self.register_templates:
             if register.offset > result:
                 result = register.offset
         return result
@@ -104,10 +101,10 @@ class BlockTemplate:
     def __str__(self):
         result = "Block Template: " + str(self._block_type) + "\n"
 
-        if len(self.arrays) > 0:
+        if len(self.array_templates) > 0:
             result += "    Arrays:\n"
             array_strings = []
-            for array in self.arrays:
+            for array in self.array_templates:
                 array_string = str(array)
                 array_string = textwrap.indent(array_string, "        ")
                 array_strings.append(array_string)
@@ -115,7 +112,7 @@ class BlockTemplate:
             result += "\n"
         result += "    Registers:\n"
         register_strings = []
-        for register in self.registers:
+        for register in self.register_templates:
             register_string = str(register)
             register_string = textwrap.indent(register_string, "        ")
             register_strings.append(register_string)
@@ -131,7 +128,7 @@ class BlockTemplate:
             "blockType": self.block_type,
             "registers": []
         }
-        for register in self.registers:
+        for register in self.register_templates:
             register_dict = register.to_dict()
             result["registers"].append(register_dict)
         return result
