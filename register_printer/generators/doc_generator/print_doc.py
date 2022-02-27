@@ -42,7 +42,7 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
     i = 0
     for header in headers:
         p = hcells[i].paragraphs[0]
-        run = p.add_run(header)
+        p.add_run(header)
         p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
         i += 1
 
@@ -58,11 +58,11 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
     return
 
 
-def print_doc_block(doc, idx, block, instances):
+def print_doc_block(doc, idx, block, block_type, num_register, instances):
 
-    doc.add_heading("%d %s Registers" % (idx, block.block_type), level=1)
+    doc.add_heading("%d %s Registers" % (idx, block_type), level=1)
     tb = doc.add_table(
-        len(block.registers) + 1,
+        num_register + 1,
         2 + len(instances),
         style="Light Grid")
     hcells = tb.rows[0].cells
@@ -76,7 +76,7 @@ def print_doc_block(doc, idx, block, instances):
         p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     i = 1
-    for register in block.registers:
+    for register in instances[0].unreserved_registers:
         tb.cell(i, 0).text = hex(register.offset)
         for k in range(len(instances)):
             tb.cell(i, k+1).text = hex(
@@ -85,7 +85,7 @@ def print_doc_block(doc, idx, block, instances):
         i += 1
 
     reg_idx = 0
-    for register in block.registers:
+    for register in instances[0].unreserved_registers:
         print_doc_reg(register, doc, reg_idx, idx, instances)
         reg_idx = reg_idx + 1
     doc.add_page_break()
@@ -116,7 +116,7 @@ def generate_doc(top_sys):
     headers = ["Block", "Start Address", "Size"]
     for i in range(3):
         p = hcell[i].paragraphs[0]
-        run = p.add_run(headers[i])
+        p.add_run(headers[i])
         p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     i = 1
     for block_instance in top_sys.block_instances:
@@ -134,7 +134,7 @@ def generate_doc(top_sys):
             if block_instance.block.block_type == block.block_type:
                 blk_insts.append(block_instance)
 
-        print_doc_block(doc, block_idx, block, blk_insts)
+        print_doc_block(doc, block_idx, block, block.block_type, len(block.registers), blk_insts)
         block_idx = block_idx + 1
     return doc
 

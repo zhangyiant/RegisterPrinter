@@ -1,5 +1,5 @@
 import logging
-from .register import Register
+from .register import Register, RegisterType
 
 LOGGER = logging.getLogger(__name__)
 
@@ -60,3 +60,11 @@ class BlockInstance:
     @property
     def registers(self):
         return self._registers
+
+    @property
+    def unreserved_registers(self):
+        result = []
+        for register in self.registers:
+            if register.type != RegisterType.RESERVED:
+                result.append(register)
+        return result
