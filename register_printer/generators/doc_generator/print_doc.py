@@ -128,19 +128,14 @@ def generate_doc(top_sys):
     doc.add_page_break()
 
     block_idx += 1
-    processed_block_type = []
-    for block_instance in top_sys.block_instances:
-        block_type = block_instance.block_type
-        if block_type in processed_block_type:
-            continue
-        else:
-            processed_block_type.append(block_type)
+    for block in top_sys.blocks:
+        block_type = block.block_type
         blk_insts = []
         for instance in top_sys.block_instances:
             if instance.block_type == block_type:
                 blk_insts.append(instance)
 
-        print_doc_block(doc, block_idx, block_type, len(block_instance.unreserved_registers), blk_insts)
+        print_doc_block(doc, block_idx, block_type, len(block.registers), blk_insts)
         block_idx = block_idx + 1
     return doc
 
