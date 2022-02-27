@@ -1,3 +1,4 @@
+from concurrent.futures import process
 import re
 import os
 import os.path
@@ -58,7 +59,7 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
     return
 
 
-def print_doc_block(doc, idx, block, block_type, num_register, instances):
+def print_doc_block(doc, idx, block_type, num_register, instances):
 
     doc.add_heading("%d %s Registers" % (idx, block_type), level=1)
     tb = doc.add_table(
@@ -127,14 +128,19 @@ def generate_doc(top_sys):
     doc.add_page_break()
 
     block_idx += 1
-    for block in top_sys.blocks:
-        # get block instances
+    processed_block_type = []
+    for block_instance in top_sys.block_instances:
+        block_type = block_instance.block_type
+        if block_type in processed_block_type:
+            continue
+        else:
+            processed_block_type.append(block_type)
         blk_insts = []
-        for block_instance in top_sys.block_instances:
-            if block_instance.block.block_type == block.block_type:
-                blk_insts.append(block_instance)
+        for instance in top_sys.block_instances:
+            if instance.block_type == block_type:
+                blk_insts.append(instance)
 
-        print_doc_block(doc, block_idx, block, block.block_type, len(block.registers), blk_insts)
+        print_doc_block(doc, block_idx, block_type, len(block_instance.unreserved_registers), blk_insts)
         block_idx = block_idx + 1
     return doc
 
