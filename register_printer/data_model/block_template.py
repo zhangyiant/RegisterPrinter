@@ -103,14 +103,15 @@ class BlockTemplate:
         block_size = self.get_minimum_block_size(data_width)
         offset = 0
         while offset < block_size:
-            register_template = self.find_register_template_by_offset(offset)
+            register_template = self.find_register_template_by_offset(
+                offset
+            )
             if register_template is not None:
-                register = Register(offset, data_width)
-                register.name = register_template.name
-                register.description = register_template.description
-                for field_template in register_template.fields:
-                    field = Field.from_field_template(field_template)
-                    register.fields.append(field)
+                register = Register.from_register_template(
+                    offset,
+                    data_width,
+                    register_template
+                )
                 registers.append(register)
             offset += data_width // 8
         return registers

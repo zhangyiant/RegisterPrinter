@@ -1,4 +1,6 @@
 import textwrap
+from .field import Field
+
 
 class Register:
     def __init__(self, offset, data_width=32):
@@ -39,3 +41,13 @@ class Register:
             field_strings.append(field_string)
         result += "\n".join(field_strings)
         return result
+
+    @staticmethod
+    def from_register_template(offset, data_width, register_template):
+        register = Register(offset, data_width)
+        register.name = register_template.name
+        register.description = register_template.description
+        for field_template in register_template.fields:
+            field = Field.from_field_template(field_template)
+            register.fields.append(field)
+        return register
