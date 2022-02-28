@@ -85,6 +85,7 @@ class BlockTemplate:
         return result
 
     def generate_registers(self, data_width):
+        
         return []
 
     def generate_register_by_offset(self, offset):

@@ -92,6 +92,10 @@ class Block:
         result = "Block " + str(self.block_type) + "\n"
         result += "    Address width: " + str(self.addr_width) + "\n"
         result += "    Data width   : " + str(self.data_width) + "\n"
+        result += "    Block templates: \n"
+        block_template_string = str(self.block_template)
+        block_template_string = textwrap.indent(block_template_string, " " * 8)
+        result += block_template_string + "\n"
         result += "    Registers:\n"
         register_strings = []
         for register in self.registers:
