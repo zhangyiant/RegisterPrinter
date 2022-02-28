@@ -2,7 +2,6 @@ import os
 import os.path
 import logging
 from register_printer.template_loader import get_template
-from register_printer.data_model import RegisterType
 
 
 LOGGER = logging.getLogger(__name__)
@@ -46,7 +45,8 @@ def print_c_header_block(block, out_path):
     rsvd_idx = 0
     accumulated_number_rsvd_register = 0
     for reg in block.mapped_registers:
-        if reg.type == RegisterType.RESERVED:
+        # Todo: reimplement this function
+        if reg.type == "RegisterType.RESERVED":
             accumulated_number_rsvd_register += 1
         else:
             if accumulated_number_rsvd_register > 1:

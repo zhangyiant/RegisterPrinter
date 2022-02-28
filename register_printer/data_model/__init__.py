@@ -1,6 +1,6 @@
 from .top_sys import TopSys
 from .register_template import RegisterTemplate
-from .register import Register, RegisterType
+from .register import Register
 from .field_template import FieldTemplate
 from .block_template import BlockTemplate
 from .block import Block
@@ -14,6 +14,5 @@ __all__ = [
     "BlockTemplate",
     "Block",
     "BlockInstance",
-    "Register",
-    "RegisterType"
+    "Register"
 ]

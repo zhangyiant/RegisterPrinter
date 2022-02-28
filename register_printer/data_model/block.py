@@ -17,7 +17,7 @@ class Block:
         self._block_template = block_template
         self._addr_width = addr_width
         self._data_width = data_width
-        self._mapped_registers = None
+        self._registers = None
         return
 
     @property
@@ -84,25 +84,9 @@ class Block:
 
     @property
     def registers(self):
-        return self._block_template.register_templates
-
-    @property
-    def mapped_registers(self):
-        if self._mapped_registers is None:
-            self.refresh_registers()
-        return self._mapped_registers
-
-    def refresh_registers(self):
-        self._mapped_registers = []
-        offset = 0
-        while True:
-            register = self.block_template.generate_register_by_offset(offset)
-            # When the offset is too big, None will be returned.
-            if register is None:
-                break
-            self._mapped_registers.append(register)
-            offset += self.data_width_in_bytes
-        return
+        if self._registers is None:
+            self._registers = self.block_template.generate_registers(self.data_width)
+        return self._registers
 
     def __str__(self):
         result = "Block " + str(self.block_type) + "\n"
@@ -116,30 +100,3 @@ class Block:
             register_strings.append(register_string)
         result += "\n".join(register_strings)
         return result
-
-    def to_dict(self):
-        result = {}
-        result["name"] = self.block_type
-        result["addressWidth"] = self.addr_width
-        result["dataWidth"] = self.data_width
-        result["registers"] = []
-        for register in self.registers:
-            result["registers"].append(register.to_dict())
-        return result
-
-    @staticmethod
-    def from_dict(block_type_dict):
-        name = block_type_dict["name"]
-        addr_width = block_type_dict["addressWidth"]
-        data_width = block_type_dict["dataWidth"]
-        block_type = Block(
-            block_type=name,
-            addr_len=addr_width,
-            data_len=data_width)
-        registers_dict = block_type_dict["registers"]
-        for register_dict in registers_dict:
-            register = RegisterTemplate.from_dict(
-                register_dict)
-            block_type.registers.append(
-                register)
-        return block_type

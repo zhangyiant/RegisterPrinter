@@ -1,5 +1,4 @@
 import logging
-from .register import Register, RegisterType
 
 LOGGER = logging.getLogger(__name__)
 
