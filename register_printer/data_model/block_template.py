@@ -6,7 +6,7 @@ from .field_template import FieldTemplate
 from .array_template import ArrayTemplate
 from .register import Register
 from .field import Field
-from .array import Array
+from .array import Array, DefaultOverwriteEntry
 from .struct import Struct
 
 LOGGER = logging.getLogger(__name__)
@@ -136,8 +136,24 @@ class BlockTemplate:
                 )
             struct.registers.append(register)
             offset += data_width // 8
-
         array = Array(struct, array_template.length)
+        while offset < array_template.array_stop_address:
+            register_template = self.find_register_template_by_offset(offset)
+            if register_template is None:
+                offset += data_width // 8
+                continue
+            index = (register_template.offset - start_address) // array_template.offset
+            register_name = register_template.name
+            for field_template in register_template.fields:
+                field_name = field_template.name
+                default = field_template.default
+                default_overwrite_entry = DefaultOverwriteEntry()
+                default_overwrite_entry.index = index
+                default_overwrite_entry.register_name = register_name
+                default_overwrite_entry.field_name = field_name
+                default_overwrite_entry.default = default
+                array.default_overwrite_entries.append(default_overwrite_entry)
+            offset += data_width // 8
         return array
 
     def generate_registers(self, data_width):
