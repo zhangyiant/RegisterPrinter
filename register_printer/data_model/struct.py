@@ -1,3 +1,5 @@
+import textwrap
+
 class Struct:
     def __init__(self, name):
         self.name = name
@@ -11,7 +13,11 @@ class Struct:
         return result
 
     def __str__(self):
-        result = "Struct: " + self.name
+        result = "Struct: " + self.name + "\n"
+        register_strings = []
         for register in self.registers:
-            result += "\n" + str(register)
+            register_string = str(register)
+            register_string = textwrap.indent(register_string, " " * 4)
+            register_strings.append(register_string)
+        result += "\n".join(register_strings)
         return result

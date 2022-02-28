@@ -6,6 +6,8 @@ from .field_template import FieldTemplate
 from .array_template import ArrayTemplate
 from .register import Register
 from .field import Field
+from .array import Array
+from .struct import Struct
 
 LOGGER = logging.getLogger(__name__)
 
@@ -114,8 +116,29 @@ class BlockTemplate:
             register = Register.create_reserved_register(offset, data_width)
         return register
 
-    def _get_array_by_array_template(self, offset, data_width, array_template):
-        return None
+    def _get_array_by_array_template(self, data_width, array_template):
+        start_address = array_template.start_address
+        end_address = array_template.end_address
+        offset = start_address
+        struct = Struct(array_template.name)
+        while offset <= end_address:
+            register_template = self.find_register_template_by_offset(offset)
+            if register_template is None:
+                register = Register.create_reserved_register(
+                    offset - start_address,
+                    data_width
+                )
+            else:
+                register = Register.from_register_template(
+                    offset - start_address,
+                    data_width,
+                    register_template
+                )
+            struct.registers.append(register)
+            offset += data_width // 8
+
+        array = Array(struct, array_template.length)
+        return array
 
     def generate_registers(self, data_width):
         registers = []
@@ -125,7 +148,7 @@ class BlockTemplate:
         while offset < block_size:
             array_template = self.get_array_template_by_offset(offset)
             if array_template is not None:
-                array = self._get_array_by_array_template(offset, data_width, array_template)
+                array = self._get_array_by_array_template(data_width, array_template)
                 registers.append(array)
                 offset += array_template.size
                 continue

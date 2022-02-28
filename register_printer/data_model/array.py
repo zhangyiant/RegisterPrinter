@@ -9,8 +9,8 @@ class Array:
     def __str__(self):
         result = "Array of " + self.content_type.name
         result += "\n    length: " + str(self.length)
-        result += "\n    content type: \n"
+        result += "\n    content type:"
         content_type_string = str(self.content_type)
         content_type_string = textwrap.indent(content_type_string, " " * 4)
-        result += "\n".join(content_type_string)
+        result += "\n" + content_type_string
         return result
