@@ -63,8 +63,14 @@ class BlockTemplate:
                 return register
         return None
 
-    def get_array_template_by_register_template(self, register_template):
-        return
+    def get_array_template_by_offset(self, offset):
+        result = None
+        for array_template in self.array_templates:
+            start_address = array_template.array_start_address
+            stop_address = array_template.array_stop_address
+            if offset >=start_address and offset < stop_address:
+                result = array_template
+        return result
 
     def sort_register_by_offset(self):
         offsets = []
@@ -77,6 +83,14 @@ class BlockTemplate:
         self.register_templates = registers
         return
 
+    def get_minimum_block_size(self, data_width):
+        biggest_offset = self._biggest_register_offset()
+        array_template = self.get_array_template_by_offset(biggest_offset)
+        if array_template is None:
+            return biggest_offset + data_width // 8
+        else:
+            return array_template.array_stop_address
+
     def _biggest_register_offset(self):
         result = 0
         for register in self.register_templates:
@@ -85,8 +99,27 @@ class BlockTemplate:
         return result
 
     def generate_registers(self, data_width):
-        
-        return []
+        registers = []
+        block_size = self.get_minimum_block_size(data_width)
+        offset = 0
+        while offset < block_size:
+            register_template = self.find_register_template_by_offset(offset)
+            if register_template is not None:
+                register = Register(offset, data_width)
+                register.name = register_template.name
+                register.description = register_template.description
+                for field_template in register_template.fields:
+                    field = Field()
+                    field.name = field_template.name
+                    field.msb = field_template.msb
+                    field.lsb = field_template.lsb
+                    field.default = field_template.default
+                    field.access = field_template.access
+                    field.description = field_template.description
+                    register.fields.append(field)
+                registers.append(register)
+            offset += data_width // 8
+        return registers
 
     def generate_register_by_offset(self, offset):
         register_template = self.find_register_template_by_offset(offset)
