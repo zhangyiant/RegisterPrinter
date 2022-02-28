@@ -51,3 +51,9 @@ class Register:
             field = Field.from_field_template(field_template)
             register.fields.append(field)
         return register
+
+    @staticmethod
+    def create_reserved_register(offset, data_width):
+        register = Register(offset, data_width)
+        register.is_reserved = True
+        return register

@@ -37,6 +37,10 @@ class ArrayTemplate:
         return self.start_address + self.offset * self.length
 
     @property
+    def size(self):
+        return self.array_stop_address - self.array_start_address
+
+    @property
     def description(self):
         return self._description
 
