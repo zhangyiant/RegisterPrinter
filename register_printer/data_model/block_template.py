@@ -114,6 +114,9 @@ class BlockTemplate:
             register = Register.create_reserved_register(offset, data_width)
         return register
 
+    def _get_array_by_array_template(self, offset, data_width, array_template):
+        return None
+
     def generate_registers(self, data_width):
         registers = []
         block_size = self.get_minimum_block_size(data_width)
@@ -122,6 +125,8 @@ class BlockTemplate:
         while offset < block_size:
             array_template = self.get_array_template_by_offset(offset)
             if array_template is not None:
+                array = self._get_array_by_array_template(offset, data_width, array_template)
+                registers.append(array)
                 offset += array_template.size
                 continue
 
