@@ -109,13 +109,7 @@ class BlockTemplate:
                 register.name = register_template.name
                 register.description = register_template.description
                 for field_template in register_template.fields:
-                    field = Field()
-                    field.name = field_template.name
-                    field.msb = field_template.msb
-                    field.lsb = field_template.lsb
-                    field.default = field_template.default
-                    field.access = field_template.access
-                    field.description = field_template.description
+                    field = Field.from_field_template(field_template)
                     register.fields.append(field)
                 registers.append(register)
             offset += data_width // 8

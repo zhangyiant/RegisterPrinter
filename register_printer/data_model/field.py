@@ -20,3 +20,14 @@ class Field:
         result += "    description: " \
             + str(self.description)
         return result
+
+    @staticmethod
+    def from_field_template(field_template):
+        field = Field()
+        field.name = field_template.name
+        field.msb = field_template.msb
+        field.lsb = field_template.lsb
+        field.default = field_template.default
+        field.access = field_template.access
+        field.description = field_template.description
+        return field
