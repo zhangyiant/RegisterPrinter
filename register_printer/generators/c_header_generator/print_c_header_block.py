@@ -2,6 +2,7 @@ import logging
 import os
 
 from register_printer.template_loader import get_template
+from register_printer.data_model import Register, Array, Struct
 
 
 LOGGER = logging.getLogger(__name__)
@@ -25,39 +26,57 @@ def print_c_header_block(block, out_path):
     struct_fields = []
     rsvd_idx = 0
     accumulated_number_rsvd_register = 0
-    for reg in block.mapped_registers:
-        # Todo: reimplement this function
-        if reg.type == "RegisterType.RESERVED":
-            accumulated_number_rsvd_register += 1
-        else:
-            if accumulated_number_rsvd_register > 1:
+    for reg in block.registers:
+        if isinstance(reg, Register):
+            if reg.is_reserved:
+                accumulated_number_rsvd_register += 1
+            else:
+                if accumulated_number_rsvd_register > 1:
+                    struct_field = {
+                        "type": "volatile const int",
+                        "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
+                    }
+                    struct_fields.append(struct_field)
+                    rsvd_idx = rsvd_idx + 1
+                    # reset accumulated_number_rsvd_register
+                    accumulated_number_rsvd_register = 0
                 struct_field = {
-                    "type": "volatile const int",
-                    "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
+                    "type": "volatile int",
+                    "name": reg.name.upper()
                 }
                 struct_fields.append(struct_field)
-                rsvd_idx = rsvd_idx + 1
-                # reset accumulated_number_rsvd_register
-                accumulated_number_rsvd_register = 0
+        elif isinstance(reg, Array):
+            if not isinstance(reg.content_type, Struct):
+                msg = "Unsupported: Content type in Array is not Struct."
+                LOGGER.error(msg)
+                raise Exception(msg)
+            struct = reg.content_type
             struct_field = {
-                "type": "volatile int",
-                "name": reg.name.upper()
+                "type": (struct.name + "_NAME").upper(),
+                "name": (struct.name).upper() + f"[{reg.length}]"
             }
             struct_fields.append(struct_field)
+        else:
+            pass
 
     pos_mask_macros = []
-    for reg in block.mapped_registers:
-        if reg.type != RegisterType.RESERVED:
-            for fld in reg.fields:
-                if fld.name != "-":
-                    prefix = reg.name.upper() + "_" + fld.name.upper()
-                    pos_value = fld.lsb
-                    mask_value = (1 << (fld.msb - fld.lsb + 1)) - 1
-                    pos_mask_macros.append({
-                        "prefix": prefix,
-                        "pos_value": pos_value,
-                        "mask_value": mask_value
-                    })
+    for reg in block.registers:
+        if isinstance(reg, Register):
+            if reg.is_reserved:
+                continue
+            else:
+                for fld in reg.fields:
+                    if fld.name != "-":
+                        prefix = reg.name.upper() + "_" + fld.name.upper()
+                        pos_value = fld.lsb
+                        mask_value = (1 << (fld.msb - fld.lsb + 1)) - 1
+                        pos_mask_macros.append({
+                            "prefix": prefix,
+                            "pos_value": pos_value,
+                            "mask_value": mask_value
+                        })
+        elif isinstance(reg, Array):
+            pass
 
     template = get_template("c_header_block.h")
 
