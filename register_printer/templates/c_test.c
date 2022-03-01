@@ -10,10 +10,8 @@ void single_test(char* inst, uint32_t addr, uint32_t size, uint32_t def_val) {
 
 
 int main() {
-    {% for block_instance in top_sys.block_instances %}
-    {% set block = block_instance.block %}
-    {% set default_value = block.registers[0].calculate_register_default() %}
-    single_test("{{ block_instance.name }}", 0x{{ "%x" | format(block_instance.base_address) }}, 0x{{ "%x" | format(block_instance.block_size) }}, 0x{{ "%x" | format(default_value) }});
+    {% for test_parameters in test_parameters_list %}
+    single_test("{{ test_parameters.instance_name }}", 0x{{ "%x" | format(test_parameters.base_address) }}, 0x{{ "%x" | format(test_parameters.block_size) }}, 0x{{ "%x" | format(test_parameters.default_value) }});
     {% endfor %}
     return 0;
 }
