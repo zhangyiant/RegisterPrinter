@@ -6,14 +6,19 @@ from register_printer.template_loader import get_template
 
 LOGGER = logging.getLogger(__name__)
 
+def get_filename(out_path, block):
+    filename = os.path.join(
+        out_path,
+        "regs_" + block.block_type.lower() + ".h")
+    return filename
+
 
 def print_c_header_block(block, out_path):
 
     LOGGER.debug("Print block %s C header...", block.block_type)
 
-    file_name = os.path.join(
-        out_path,
-        "regs_" + block.block_type.lower() + ".h")
+    file_name = get_filename(out_path, block)
+
     if os.path.exists(file_name):
         os.remove(file_name)
 
