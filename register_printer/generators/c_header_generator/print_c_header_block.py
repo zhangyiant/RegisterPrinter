@@ -13,20 +13,27 @@ def get_filename(out_path, block):
         "regs_" + block.block_type.lower() + ".h")
     return filename
 
+def generate_array_structs(registers):
+    c_structs = []
+    for register in registers:
+        if isinstance(register, Array):
+            if not isinstance(register.content_type, Struct):
+                msg = "Unsupported: Content type in Array is not Struct."
+                LOGGER.error(msg)
+                raise Exception(msg)
+            struct = register.content_type
+            c_struct = {}
+            c_struct["name"] = struct.name + "_NAME"
+            struct_fields = generate_struct_fields(struct.registers)
+            c_struct["struct_fields"] = struct_fields
+            c_structs.append(c_struct)
+    return c_structs
 
-def print_c_header_block(block, out_path):
-
-    LOGGER.debug("Print block %s C header...", block.block_type)
-
-    file_name = get_filename(out_path, block)
-
-    if os.path.exists(file_name):
-        os.remove(file_name)
-
+def generate_struct_fields(registers):
     struct_fields = []
     rsvd_idx = 0
     accumulated_number_rsvd_register = 0
-    for reg in block.registers:
+    for reg in registers:
         if isinstance(reg, Register):
             if reg.is_reserved:
                 accumulated_number_rsvd_register += 1
@@ -57,10 +64,23 @@ def print_c_header_block(block, out_path):
             }
             struct_fields.append(struct_field)
         else:
-            pass
+            LOGGER.warning("Unsupported register type.")
+    return struct_fields
 
+
+def generate_pos_mask_macros_from_array(array):
+    if not isinstance(array.content_type, Struct):
+        msg = "Unsupported: Content type in Array is not Struct."
+        LOGGER.error(msg)
+        raise Exception(msg)
+    struct = array.content_type
+    registers = struct.registers
+    pos_mask_macros = generate_pos_mask_macros(registers)
+    return pos_mask_macros
+
+def generate_pos_mask_macros(registers):
     pos_mask_macros = []
-    for reg in block.registers:
+    for reg in registers:
         if isinstance(reg, Register):
             if reg.is_reserved:
                 continue
@@ -76,13 +96,34 @@ def print_c_header_block(block, out_path):
                             "mask_value": mask_value
                         })
         elif isinstance(reg, Array):
-            pass
+            tmp_pos_mask_macros = generate_pos_mask_macros_from_array(reg)
+            pos_mask_macros.extend(tmp_pos_mask_macros)
+        else:
+            LOGGER.warning("Unsupported register type.")
+    return pos_mask_macros
+
+
+def print_c_header_block(block, out_path):
+
+    LOGGER.debug("Print block %s C header...", block.block_type)
+
+    file_name = get_filename(out_path, block)
+
+    if os.path.exists(file_name):
+        os.remove(file_name)
+
+    c_structs = generate_array_structs(block.registers)
+
+    struct_fields = generate_struct_fields(block.registers)
+
+    pos_mask_macros = generate_pos_mask_macros(block.registers)
 
     template = get_template("c_header_block.h")
 
     content = template.render(
         {
             "block_type": block.block_type,
+            "c_structs": c_structs,
             "struct_fields": struct_fields,
             "pos_mask_macros": pos_mask_macros
         }
