@@ -88,6 +88,9 @@ class {{ uvm_block.name }} extends uvm_reg_block;
       {{ register.name | lower }}[i].build();
       default_map.add_submap({{ register.name | lower }}[i].default_map);
     end
+    {% for overwrite in register.default_overwrites %}
+    {{ register.name | lower }}[{{ overwrite.index }}].{{ overwrite.register_name }}.{{ overwrite.field_name}}.set_default({{ overwrite.default }});
+    {% endfor %}
     {% else %}
     {% set reg_inst = register.name.lower() %}
     {% set reg_type = register.name.upper() %}

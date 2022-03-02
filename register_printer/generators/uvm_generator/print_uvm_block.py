@@ -45,7 +45,7 @@ def get_struct_list(registers):
                     if not reg.is_reserved:
                         register_dict = {}
                         register_dict["name"] = reg.name
-                        register_dict["offset"] = reg.offset - register.start_address
+                        register_dict["offset"] = reg.offset
                         struct_dict["registers"].append(register_dict)
             structs.append(struct_dict)
     return structs
@@ -63,6 +63,7 @@ def get_uvm_block(block):
                 reg_dict["offset"] = register.offset
                 reg_dict["is_struct"] = False
                 reg_dict["length"] = 0
+                reg_dict["default_overwrites"] = []
                 result["registers"].append(reg_dict)
         elif isinstance(register, Array):
             if not isinstance(register.content_type, Struct):
@@ -75,6 +76,14 @@ def get_uvm_block(block):
             reg_dict["offset"] = 0
             reg_dict["is_struct"] = True
             reg_dict["length"] = register.length
+            reg_dict["default_overwrites"] = []
+            for overwrite in register.default_overwrite_entries:
+                overwrite_dict = {}
+                overwrite_dict["index"] = overwrite.index
+                overwrite_dict["register_name"] = overwrite.register_name
+                overwrite_dict["field_name"] = overwrite.field_name
+                overwrite_dict["default"] = overwrite.default
+                reg_dict["default_overwrites"].append(overwrite_dict)
             result["registers"].append(reg_dict)
     return result
 
