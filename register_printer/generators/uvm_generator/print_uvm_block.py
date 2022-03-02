@@ -49,7 +49,35 @@ def get_struct_list(registers):
                         struct_dict["registers"].append(register_dict)
             structs.append(struct_dict)
     return structs
- 
+
+
+def get_uvm_block(block):
+    result = {}
+    result["name"] = (block.block_type + "_reg_model").lower()
+    result["registers"] = []
+    for register in block.registers:
+        if isinstance(register, Register):
+            if not register.is_reserved:
+                reg_dict = {}
+                reg_dict["name"] = register.name
+                reg_dict["offset"] = register.offset
+                reg_dict["is_struct"] = False
+                reg_dict["length"] = 0
+                result["registers"].append(reg_dict)
+        elif isinstance(register, Array):
+            if not isinstance(register.content_type, Struct):
+                msg = "Unsupported: Content type in Array is not Struct."
+                LOGGER.error(msg)
+                raise Exception(msg)
+            struct = register.content_type
+            reg_dict = {}
+            reg_dict["name"] = struct.name
+            reg_dict["offset"] = 0
+            reg_dict["is_struct"] = True
+            reg_dict["length"] = register.length
+            result["registers"].append(reg_dict)
+    return result
+
 def print_uvm_block(block, out_path):
     uvm_block_name = block.block_type.lower() + "_reg_model"
     file_name = os.path.join(
@@ -65,9 +93,11 @@ def print_uvm_block(block, out_path):
 
     structs = get_struct_list(block.registers)
 
+    uvm_block = get_uvm_block(block)
+
     content = template.render(
         {
-            "uvm_block_name": (block.block_type + "_reg_model").lower(),
+            "uvm_block": uvm_block, 
             "address_width": block.addr_width,
             "data_width": block.data_width,
             "registers": registers,
