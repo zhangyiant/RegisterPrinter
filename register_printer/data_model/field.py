@@ -21,6 +21,10 @@ class Field:
             + str(self.description)
         return result
 
+    def size(self):
+        result = self.msb - self.lsb + 1
+        return result
+
     @staticmethod
     def from_field_template(field_template):
         field = Field()

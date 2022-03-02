@@ -2,9 +2,20 @@ import os
 import os.path
 import logging
 from register_printer.template_loader import get_template
+from register_printer.data_model import Register, Array, Struct
 
 
 LOGGER = logging.getLogger(__name__)
+
+def get_full_registers(registers):
+    # remove reserved registers
+    # expand registers in Array
+    result = []
+    for register in registers:
+        if isinstance(register, Register):
+            if not register.is_reserved:
+                result.append(register)
+    return result
 
 def print_uvm_block(block, out_path):
     uvm_block_name = block.block_type.lower() + "_reg_model"
@@ -17,9 +28,14 @@ def print_uvm_block(block, out_path):
 
     template = get_template("reg_model.sv")
 
+    registers = get_full_registers(block.registers)
+
     content = template.render(
         {
-            "block": block
+            "uvm_block_name": block.block_type + "_reg_model",
+            "address_width": block.addr_width,
+            "data_width": block.data_width,
+            "registers": registers
         }
     )
 
