@@ -21,6 +21,7 @@ class Field:
             + str(self.description)
         return result
 
+    @property
     def size(self):
         result = self.msb - self.lsb + 1
         return result

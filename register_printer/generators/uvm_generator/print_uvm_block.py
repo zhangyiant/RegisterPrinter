@@ -15,6 +15,16 @@ def get_full_registers(registers):
         if isinstance(register, Register):
             if not register.is_reserved:
                 result.append(register)
+        elif isinstance(register, Array):
+            if not isinstance(register.content_type, Struct):
+                msg = "Unsupported: Content type in Array is not Struct."
+                LOGGER.error(msg)
+                raise Exception(msg)
+            struct = register.content_type
+            regs = get_full_registers(struct.registers)
+            result.extend(regs)
+        else:
+            LOGGER.warning("Unsupported register type")
     return result
 
 def print_uvm_block(block, out_path):
