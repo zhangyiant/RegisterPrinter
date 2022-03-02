@@ -136,7 +136,11 @@ class BlockTemplate:
                 )
             struct.registers.append(register)
             offset += data_width // 8
-        array = Array(struct, array_template.length)
+        array = Array(
+            struct,
+            array_template.length,
+            array_template.start_address
+        )
         while offset < array_template.array_stop_address:
             register_template = self.find_register_template_by_offset(offset)
             if register_template is None:

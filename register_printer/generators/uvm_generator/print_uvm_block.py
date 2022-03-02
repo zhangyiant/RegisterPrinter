@@ -27,6 +27,29 @@ def get_full_registers(registers):
             LOGGER.warning("Unsupported register type")
     return result
 
+def get_struct_list(registers):
+    structs= []
+    for register in registers:
+        if isinstance(register, Array):
+            if not isinstance(register.content_type, Struct):
+                msg = "Unsupported: Content type in Array is not Struct."
+                LOGGER.error(msg)
+                raise Exception(msg)
+            struct = register.content_type
+            struct_dict = {}
+            struct_dict["name"] = struct.name
+            struct_dict["registers"] = []
+            for reg in struct.registers:
+                if isinstance(reg, Register):
+                    # only support 1 level nesting
+                    if not reg.is_reserved:
+                        register_dict = {}
+                        register_dict["name"] = reg.name
+                        register_dict["offset"] = reg.offset - register.start_address
+                        struct_dict["registers"].append(register_dict)
+            structs.append(struct_dict)
+    return structs
+ 
 def print_uvm_block(block, out_path):
     uvm_block_name = block.block_type.lower() + "_reg_model"
     file_name = os.path.join(
@@ -40,12 +63,15 @@ def print_uvm_block(block, out_path):
 
     registers = get_full_registers(block.registers)
 
+    structs = get_struct_list(block.registers)
+
     content = template.render(
         {
-            "uvm_block_name": block.block_type + "_reg_model",
+            "uvm_block_name": (block.block_type + "_reg_model").lower(),
             "address_width": block.addr_width,
             "data_width": block.data_width,
-            "registers": registers
+            "registers": registers,
+            "structs": structs
         }
     )
 
