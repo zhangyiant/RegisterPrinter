@@ -19,13 +19,25 @@ def get_instances(block_instances):
             if isinstance(register, Register):
                 if not register.is_reserved:
                     reg_dict = {}
-                    reg_dict["name"] = register.name
+                    reg_dict["name"] = (block_instance.name + "_" + register.name + "_addr").upper()
                     reg_dict["offset"] = register.offset
                     instance_dict["registers"].append(reg_dict)
+            elif isinstance(register, Array):
+                if not isinstance(register.content_type, Struct):
+                    msg = "Unsupported: Content type in Array is not Struct."
+                    LOGGER.error(msg)
+                    raise Exception(msg)
+                struct = register.content_type
+                reg_dict = {}
+                reg_dict["name"] = (block_instance.name + "_" + struct.name + "_BASE_ADDR").upper()
+                reg_dict["offset"] = register.start_address
+                instance_dict["registers"].append(reg_dict)
         result.append(instance_dict)
     return result
 
 def print_sv_defines(top_sys, out_path):
+
+    LOGGER.debug("Print register_defines.svh")
 
     sv_def_name = top_sys.name.lower() + "_register_defines"
     file_name = os.path.join(
@@ -46,6 +58,7 @@ def print_sv_defines(top_sys, out_path):
         }
     )
 
+    LOGGER.debug("Output to %s", file_name)
     with open(file_name, "w") as bfh:
         bfh.write(content)
 
