@@ -24,6 +24,10 @@ class Array:
         self.start_address = start_address
         return
 
+    @property
+    def offset(self):
+        return self.content_type.size()
+
     def __str__(self):
         result = "Array of " + self.content_type.name
         result += "\n    length: " + str(self.length)

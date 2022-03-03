@@ -86,7 +86,7 @@ class {{ uvm_block.name }} extends uvm_reg_block;
       {{ register.name | lower }}[i] = {{ register.name | upper }}::type_id:create($sformatf("{{ register.name | lower }}[%0d]", i));
       {{ register.name | lower }}[i].configure(this, "");
       {{ register.name | lower }}[i].build();
-      default_map.add_submap({{ register.name | lower }}[i].default_map);
+      default_map.add_submap({{ register.name | lower }}[i].default_map, 'h{{ '%x' | format(register.start_address) }} + i * 'h{{ '%x' | format(register.offset) }});
     end
     {% for overwrite in register.default_overwrites %}
     {{ register.name | lower }}[{{ overwrite.index }}].{{ overwrite.register_name }}.{{ overwrite.field_name}}.set_default('h{{ '%x' | format(overwrite.default) }});

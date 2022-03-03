@@ -61,6 +61,7 @@ def get_uvm_block(block):
                 reg_dict = {}
                 reg_dict["name"] = register.name
                 reg_dict["offset"] = register.offset
+                reg_dict["start_address"] = 0
                 reg_dict["is_struct"] = False
                 reg_dict["length"] = 0
                 reg_dict["default_overwrites"] = []
@@ -73,7 +74,8 @@ def get_uvm_block(block):
             struct = register.content_type
             reg_dict = {}
             reg_dict["name"] = struct.name
-            reg_dict["offset"] = 0
+            reg_dict["start_address"] = register.start_address
+            reg_dict["offset"] = register.offset
             reg_dict["is_struct"] = True
             reg_dict["length"] = register.length
             reg_dict["default_overwrites"] = []
