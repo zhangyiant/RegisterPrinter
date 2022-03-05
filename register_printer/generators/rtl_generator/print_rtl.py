@@ -71,6 +71,18 @@ def get_register_dict_from_register(register):
     tmp_register["wrs_flds"] = wrs_flds
     return tmp_register
 
+
+def update_default(register_dict, index, overwrite_entries):
+    for overwrite_entry in overwrite_entries:
+        if overwrite_entry.index != index:
+            continue
+        if register_dict["name"] != overwrite_entry.register_name:
+            continue
+        for field in register_dict["fields"]:
+            if field["name"] == overwrite_entry.field_name:
+                field["default"] = overwrite_entry.default
+    return
+
 def print_rtl_block(block, out_path):
     file_name = os.path.join(
         out_path,
@@ -103,6 +115,8 @@ def print_rtl_block(block, out_path):
                         tmp_register_dict = get_register_dict_from_register(
                             struct_reg
                         )
+                        # Update default before register/field name update.
+                        update_default(tmp_register_dict, idx, reg.default_overwrite_entries)
                         tmp_register_dict["name"] = f"{struct_reg.name}_{idx}"
                         tmp_register_dict["offset"] = reg.start_address + idx * reg.offset + struct_reg.offset
                         for field_dict in tmp_register_dict["fields"]:
