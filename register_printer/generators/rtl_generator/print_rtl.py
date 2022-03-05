@@ -91,19 +91,23 @@ def print_rtl_block(block, out_path):
                     reg
                 )
                 tmp_registers.append(register_dict)
-        # elif isinstance(reg, Array):
-        #     if not isinstance(reg.content_type, Struct):
-        #         msg = "Unsupported: Content type in Array is not Struct."
-        #         LOGGER.error(msg)
-        #         raise Exception(msg)
-        #     struct = reg.content_type
-        #     for idx in range(reg.length):
-        #         for struct_reg in struct.registers:
-        #             if not struct_reg.is_reserved:
-        #                 tmp_register_dict = get_register_dict_from_register(
-        #                     struct_reg
-        #                 )
-
+        elif isinstance(reg, Array):
+            if not isinstance(reg.content_type, Struct):
+                msg = "Unsupported: Content type in Array is not Struct."
+                LOGGER.error(msg)
+                raise Exception(msg)
+            struct = reg.content_type
+            for idx in range(reg.length):
+                for struct_reg in struct.registers:
+                    if not struct_reg.is_reserved:
+                        tmp_register_dict = get_register_dict_from_register(
+                            struct_reg
+                        )
+                        tmp_register_dict["name"] = f"{struct_reg.name}_{idx}"
+                        tmp_register_dict["offset"] = reg.start_address + idx * reg.offset + struct_reg.offset
+                        for field_dict in tmp_register_dict["fields"]:
+                            field_dict["name"] = f'{struct_reg.name}_{idx}_{field_dict["name"]}'
+                        tmp_registers.append(tmp_register_dict)
         else:
             LOGGER.warning("Unsupported register type!")
 
