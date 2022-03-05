@@ -54,8 +54,17 @@ class ExcelGenerator:
         ws.title = block_template.block_type
 
         ws.cell(1, 1).value = "Module description:"
+        current_row = 3
+        ws.cell(current_row, 1).value = "Offset"
+        ws.cell(current_row, 2).value = "Name"
+        ws.cell(current_row, 3).value = "MSB"
+        ws.cell(current_row, 4).value = "LSB"
+        ws.cell(current_row, 5).value = "Field Name"
+        ws.cell(current_row, 6).value = "Access"
+        ws.cell(current_row, 7).value = "Default Value"
+        ws.cell(current_row, 8).value = "Description"
         current_row = 4
-        for register in block_template.registers:
+        for register in block_template.register_templates:
             offset_cell = ws.cell(current_row, 1)
             offset_cell.value = hex(register.offset)
             name_cell = ws.cell(current_row, 2)
