@@ -2,7 +2,7 @@ import os
 import os.path
 import logging
 from register_printer.template_loader import get_template
-from register_printer.data_model import Register
+from register_printer.data_model import Register, Array, Struct
 
 
 LOGGER = logging.getLogger(__name__)
@@ -26,31 +26,38 @@ def get_register_dict_from_register(register):
     wrs_flds = []
     #rsc_flds = []
     for fld in register.fields:
-        tmp_register["fields"].append(fld)
+        field_dict = {}
+        field_dict["name"] = fld.name
+        field_dict["msb"] = fld.msb
+        field_dict["lsb"] = fld.lsb
+        field_dict["default"] = fld.default
+        field_dict["access"] = fld.access
+        field_dict["description"] = fld.description
+        tmp_register["fields"].append(field_dict)
         if fld.access == "RW":
-            rw_flds.append(fld)
+            rw_flds.append(field_dict)
         elif fld.access == "RWP":
-            rwp_flds.append(fld)
+            rwp_flds.append(field_dict)
         elif fld.access == "RC":
-            rc_flds.append(fld)
+            rc_flds.append(field_dict)
         elif fld.access == "RO":
-            ro_flds.append(fld)
+            ro_flds.append(field_dict)
         elif fld.access == "RS":
-            rs_flds.append(fld)
+            rs_flds.append(field_dict)
         elif fld.access == "W1C":
-            w1c_flds.append(fld)
+            w1c_flds.append(field_dict)
         elif fld.access == "W0C":
-            w0c_flds.append(fld)
+            w0c_flds.append(field_dict)
         elif fld.access == "WC":
-            wc_flds.append(fld)
+            wc_flds.append(field_dict)
         elif fld.access == "WO":
-            wo_flds.append(fld)
+            wo_flds.append(field_dict)
         elif fld.access == "WRC":
-            wrc_flds.append(fld)
+            wrc_flds.append(field_dict)
         elif fld.access == "WRS":
-            wrs_flds.append(fld)
+            wrs_flds.append(field_dict)
         elif fld.access == "-":
-            ro_flds.append(fld)
+            ro_flds.append(field_dict)
     tmp_register["rw_flds"] = rw_flds
     tmp_register["rwp_flds"] = rwp_flds
     tmp_register["ro_flds"] = ro_flds
@@ -84,6 +91,21 @@ def print_rtl_block(block, out_path):
                     reg
                 )
                 tmp_registers.append(register_dict)
+        # elif isinstance(reg, Array):
+        #     if not isinstance(reg.content_type, Struct):
+        #         msg = "Unsupported: Content type in Array is not Struct."
+        #         LOGGER.error(msg)
+        #         raise Exception(msg)
+        #     struct = reg.content_type
+        #     for idx in range(reg.length):
+        #         for struct_reg in struct.registers:
+        #             if not struct_reg.is_reserved:
+        #                 tmp_register_dict = get_register_dict_from_register(
+        #                     struct_reg
+        #                 )
+
+        else:
+            LOGGER.warning("Unsupported register type!")
 
     content = template.render(
         {
