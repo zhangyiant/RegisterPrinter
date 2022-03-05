@@ -189,8 +189,7 @@ def main():
             gen_excel=opts.gen_excel
         )
     except Exception as exc:
-        if opts.verbose > 0:
-            traceback.print_exc()
+        traceback.print_exc()
         print("Error: " + str(exc))
         return 1
     return 0

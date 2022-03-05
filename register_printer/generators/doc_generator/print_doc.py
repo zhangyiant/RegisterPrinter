@@ -1,10 +1,9 @@
-from concurrent.futures import process
-import re
 import os
 import os.path
 import logging
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from register_printer.data_model import Register
 
 
 LOGGER = logging.getLogger(__name__)
@@ -59,9 +58,22 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
     return
 
 
+def get_unreserved_non_array_register(block):
+    result = []
+    for register in block.registers:
+        if not isinstance(register, Register):
+            continue
+        if register.is_reserved:
+            continue
+        result.append(register)
+    return result
+
 def print_doc_block(doc, idx, block, instances):
     block_type = block.block_type
-    num_register = len(block.registers)
+
+    registers = get_unreserved_non_array_register(block)
+    num_register = len(registers)
+
     doc.add_heading("%d %s Registers" % (idx, block_type), level=1)
     tb = doc.add_table(
         num_register + 1,
@@ -78,7 +90,7 @@ def print_doc_block(doc, idx, block, instances):
         p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     i = 1
-    for register in block.registers:
+    for register in registers:
         tb.cell(i, 0).text = hex(register.offset)
         for k in range(len(instances)):
             tb.cell(i, k+1).text = hex(
@@ -87,7 +99,7 @@ def print_doc_block(doc, idx, block, instances):
         i += 1
 
     reg_idx = 0
-    for register in block.registers:
+    for register in registers:
         print_doc_reg(register, doc, reg_idx, idx, instances)
         reg_idx = reg_idx + 1
     doc.add_page_break()
