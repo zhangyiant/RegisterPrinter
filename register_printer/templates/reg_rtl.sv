@@ -6,7 +6,7 @@ module {{ block.block_type }}_reg
     input     reg_clk                                                       ,
     input     reg_rstn                                                      ,
     input     wp_dis                                                        ,
-{% for register in block.registers %}
+{% for register in registers %}
   {% for field in register.fields %}
     {% set field_bits = field.msb - field.lsb %}
     {% if field.access == "RW" %}
@@ -48,11 +48,11 @@ module {{ block.block_type }}_reg
     output logic[31: 0]     reg_rdat
 );
 
-{% for register in block.registers %}
+{% for register in registers %}
 logic[31:0]     {{ register.name }};
 {% endfor %}
 
-{% for register in block.registers %}
+{% for register in registers %}
 localparam int {{ (register.name + "_addr") | upper }} = 'h{{ "%x" | format(register.offset) }};
 {% endfor %}
 
@@ -206,7 +206,7 @@ always @(negedge reg_rstn or posedge reg_clk) begin
     end
     else if (reg_rd) begin
         case(reg_addr)
-        {% for register in block.registers %}
+        {% for register in registers %}
         {{ "%-48s" | format((register.name + "_addr") | upper) }} : reg_rdat <= {{ register.name }};
         {% endfor %}
         default: reg_rdat <= 32'h0;

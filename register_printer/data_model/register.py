@@ -1,59 +1,15 @@
-import re
 import textwrap
 from .field import Field
 
+
 class Register:
-    def __init__(self, name, offset, description):
-        self._name = name
-        self._offset = offset
-        self._description = description
+    def __init__(self, offset, data_width=32):
+        self.offset = offset
+        self.data_width = data_width
+        self.name = ""
+        self.description = ""
+        self.is_reserved = False
         self.fields = []
-        return
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def offset(self):
-        return self._offset
-
-    @property
-    def description(self):
-        return self._description
-
-    # all fields msb/lsb are in ascending order
-    def add_field(self, new_field):
-        fields = []
-        inserted = False
-        for field in self.fields:
-            if inserted:
-                fields.append(field)
-                continue
-            overlapped = False
-            if new_field.lsb > field.lsb:
-                if new_field.lsb > field.msb:
-                    fields.append(field)
-                else:
-                    overlapped = True
-            elif new_field.lsb == field.lsb:
-                overlapped = True
-            else:
-                # new_field.lsb < field.lsb
-                if new_field.msb < field.msb:
-                    fields.append(new_field)
-                    fields.append(field)
-                    inserted = True
-                else:
-                    overlapped = True
-
-            if overlapped:
-                error_msg = "Fields overlap: \n{0}\n{1}".format(
-                    field, new_field)
-                raise Exception(error_msg)
-        if not inserted:
-            fields.append(new_field)
-        self.fields = fields
         return
 
     def calculate_register_default(self):
@@ -64,9 +20,16 @@ class Register:
             value = value | (val << pos)
         return value
 
+    def size(self):
+        return self.data_width // 8
+
     def __str__(self):
-        result = "Register " + str(self.name) + "\n"
-        result += "    offset: " + str(self.offset) + "\n"
+        if self.is_reserved:
+            result = "Register: RESERVED\n"
+        else:
+            result = "Register: " + str(self.name) + "\n"
+        result += "    offset: " + ("0x%x" % self.offset) + "\n"
+        result += "    data width: " + str(self.data_width)
         result += "    description: " \
             + str(self.description) \
             + "\n"
@@ -79,29 +42,18 @@ class Register:
         result += "\n".join(field_strings)
         return result
 
-    def to_dict(self):
-        result = {}
-        result["name"] = self.name
-        result["offset"] = self.offset
-        result["description"] = self.description
-        result["fields"] = []
-        for field in self.fields:
-            result["fields"].append(field.to_dict())
-        return result
+    @staticmethod
+    def from_register_template(offset, data_width, register_template):
+        register = Register(offset, data_width)
+        register.name = register_template.name
+        register.description = register_template.description
+        for field_template in register_template.fields:
+            field = Field.from_field_template(field_template)
+            register.fields.append(field)
+        return register
 
     @staticmethod
-    def from_dict(register_dict):
-        name = register_dict["name"]
-        offset = register_dict["offset"]
-        description = register_dict["description"]
-        register = Register(
-            name=name,
-            offset=offset,
-            description=description)
-        fields_dict = register_dict["fields"]
-        for field_dict in fields_dict:
-            field = Field.from_dict(
-                field_dict)
-            register.fields.append(
-                field)
+    def create_reserved_register(offset, data_width):
+        register = Register(offset, data_width)
+        register.is_reserved = True
         return register

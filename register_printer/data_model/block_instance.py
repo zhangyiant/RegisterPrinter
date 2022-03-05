@@ -1,3 +1,7 @@
+import logging
+
+LOGGER = logging.getLogger(__name__)
+
 class BlockInstance:
 
     def __init__(self,
@@ -12,8 +16,7 @@ class BlockInstance:
         self.base_address = base_address
         self.block_size = block_size
 
-        if self.parent is not None:
-            self.parent.block_instances.append(self)
+        self._registers = None
 
         return
 

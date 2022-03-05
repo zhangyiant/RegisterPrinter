@@ -1,3 +1,4 @@
+from concurrent.futures import process
 import re
 import os
 import os.path
@@ -42,7 +43,7 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
     i = 0
     for header in headers:
         p = hcells[i].paragraphs[0]
-        run = p.add_run(header)
+        p.add_run(header)
         p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
         i += 1
 
@@ -59,10 +60,11 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
 
 
 def print_doc_block(doc, idx, block, instances):
-
-    doc.add_heading("%d %s Registers" % (idx, block.block_type), level=1)
+    block_type = block.block_type
+    num_register = len(block.registers)
+    doc.add_heading("%d %s Registers" % (idx, block_type), level=1)
     tb = doc.add_table(
-        len(block.registers) + 1,
+        num_register + 1,
         2 + len(instances),
         style="Light Grid")
     hcells = tb.rows[0].cells
@@ -116,7 +118,7 @@ def generate_doc(top_sys):
     headers = ["Block", "Start Address", "Size"]
     for i in range(3):
         p = hcell[i].paragraphs[0]
-        run = p.add_run(headers[i])
+        p.add_run(headers[i])
         p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     i = 1
     for block_instance in top_sys.block_instances:
@@ -128,11 +130,11 @@ def generate_doc(top_sys):
 
     block_idx += 1
     for block in top_sys.blocks:
-        # get block instances
+        block_type = block.block_type
         blk_insts = []
-        for block_instance in top_sys.block_instances:
-            if block_instance.block.block_type == block.block_type:
-                blk_insts.append(block_instance)
+        for instance in top_sys.block_instances:
+            if instance.block_type == block_type:
+                blk_insts.append(instance)
 
         print_doc_block(doc, block_idx, block, blk_insts)
         block_idx = block_idx + 1

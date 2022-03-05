@@ -16,6 +16,21 @@ def is_empty_row(row):
         return True
     return False
 
+def is_register_table_title_row(row):
+    if row[0].value.upper() == "Offset".upper():
+        return True
+    return False
+
+def is_array_table_title_row(row):
+    if row[0].value.upper() == "array_name".upper():
+        return True
+    return False
+
+def is_table_title_row(row):
+    if is_register_table_title_row(row) or \
+        is_array_table_title_row(row):
+        return True
+    return False
 
 # Todo： validate field in Block.
 def validate_field_block(field, block):
@@ -24,6 +39,145 @@ def validate_field_block(field, block):
         raise Exception("Invalid msb %d" % msb)
     return
 
+
+def find_register_table_title_row(sheet, previous_context):
+    context = previous_context.copy()
+    rowx = 1
+    context.row = rowx
+    found = False
+    while rowx < sheet.nrows:
+        row = sheet.row(rowx)
+        if is_register_table_title_row(row):
+            found = True
+            break
+        else:
+            rowx += 1
+            context.row = rowx
+    if not found:
+        msg = "Register table title not found"
+        raise ExcelParseException(msg, context)
+    return rowx
+
+def find_array_table_title_row(sheet, previous_context):
+    context = previous_context.copy()
+    rowx = 1
+    context.row = rowx
+    found = False
+    while rowx < sheet.nrows:
+        row = sheet.row(rowx)
+        if is_array_table_title_row(row):
+            found = True
+            break
+        else:
+            rowx += 1
+            context.row = rowx
+    if found:
+        return rowx
+    return None
+
+def parse_array_row(row, previous_context):
+    """
+        row: xlrd row object. You can obtain it by sheet.row()
+                 a sequence of cells.
+    """
+    context = previous_context.copy()
+
+    context.column = 0
+    array_name = row[0].value
+
+    context.column = 1
+    try:
+        array_length = int(row[1].value)
+    except Exception as exc:
+        msg = "Parse array length error: {}.".format(exc)
+        raise ExcelParseException(msg, context)
+
+    context.column = 2
+    try:
+        array_offset = int(row[2].value, 16)
+    except Exception as exc:
+        msg = "Parse array offset error: {}.".format(exc)
+        raise ExcelParseException(msg, context)
+
+    context.column = 3
+    try:
+        start_address = int(row[3].value, 16)
+    except Exception as exc:
+        msg = "Parse start address error: {}.".format(exc)
+        raise ExcelParseException(msg, context)
+
+    context.column = 4
+    try:
+        end_address = int(row[4].value, 16)
+    except Exception as exc:
+        msg = "Parse end address error: {}.".format(exc)
+        raise ExcelParseException(msg, context)
+
+    context.column = 5
+    description = row[5].value
+
+    result = {
+        "name": array_name,
+        "length": array_length,
+        "offset": array_offset,
+        "startAddress": start_address,
+        "endAddress": end_address,
+        "description": description
+    }
+    return result
+
+def parse_array_table(sheet, start_rowx, previous_context):
+    context = previous_context.copy()
+    rowx = start_rowx
+    context.row = rowx
+
+    array_dict_list = []
+    while rowx < sheet.nrows:
+        row = sheet.row(rowx)
+        context.row = rowx
+        if is_table_title_row(row):
+            break
+        if is_empty_row(row):
+            rowx += 1
+        else:
+            array_dict = parse_array_row(row, context)
+            array_dict_list.append(array_dict)
+            rowx += 1
+    return array_dict_list
+
+def parse_register_table(sheet, start_rowx, previous_context):
+    context = previous_context.copy()
+    rowx = start_rowx
+    context.row = rowx
+
+    register_dict_list = []
+    while rowx < sheet.nrows:
+        row = sheet.row(rowx)
+        context.row = rowx
+        if is_table_title_row(row):
+            break
+        if is_empty_row(row):
+            rowx += 1
+        elif is_register_row(row):
+            (register_dict, rowx) = parse_register(sheet, rowx, context)
+            register_dict_list.append(register_dict)
+            # Todo: Add offset, size validation
+            # if register.offset > block.size:
+            #     LOGGER.error(
+            #         "sheet %s row %d error: offset %x > block size %x",
+            #         sheet.name,
+            #         rowx,
+            #         register.offset,
+            #         block.size)
+            #     raise Exception("offset > block size")
+        else:
+            LOGGER.error(
+                "sheet %s row %d error: unknown row.",
+                sheet.name,
+                rowx)
+            msg = "Unknown row."
+            raise ExcelParseException(msg, context)
+    return register_dict_list
 
 def validate_sheet(sheet, previous_context):
     context = previous_context.copy()
@@ -53,7 +207,6 @@ def is_register_row(row):
         return True
     return False
 
-
 def generate_block_template_from_sheet(sheet, previous_context):
 
     context = previous_context.copy()
@@ -67,35 +220,39 @@ def generate_block_template_from_sheet(sheet, previous_context):
 
     validate_sheet(sheet, context)
 
-    rowx = 3
+
     block_template_dict = {
         "blockType": sheet.name,
-        "registers": []
+        "registers": [],
+        "arrays": []
     }
-    while rowx < sheet.nrows:
-        row = sheet.row(rowx)
+
+    register_table_title_rowx = find_register_table_title_row(
+        sheet,
+        context
+    )
+    rowx = register_table_title_rowx + 1
+    context.row = rowx
+    block_template_dict["registers"] = parse_register_table(
+        sheet,
+        rowx,
+        context
+    )
+
+    array_table_title_rowx = find_array_table_title_row(
+        sheet,
+        context
+    )
+    if array_table_title_rowx is not None:
+        rowx = array_table_title_rowx + 1
         context.row = rowx
-        if is_empty_row(row):
-            rowx += 1
-        elif is_register_row(row):
-            (register_dict, rowx) = parse_register(sheet, rowx, context)
-            block_template_dict["registers"].append(register_dict)
-            # Todo: Add offset, size validation
-            # if register.offset > block.size:
-            #     LOGGER.error(
-            #         "sheet %s row %d error: offset %x > block size %x",
-            #         sheet.name,
-            #         rowx,
-            #         register.offset,
-            #         block.size)
-            #     raise Exception("offset > block size")
-        else:
-            LOGGER.error(
-                "sheet %s row %d error: unknown row.",
-                sheet.name,
-                rowx)
-            msg = "Unknown row."
-            raise ExcelParseException(msg, context)
+        array_dict_list = parse_array_table(
+            sheet,
+            rowx,
+            context
+        )
+        block_template_dict["arrays"] = array_dict_list
+
     LOGGER.debug(
         "Processing sheet %s done",
         sheet.name)

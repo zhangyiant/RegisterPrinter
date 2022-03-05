@@ -7,6 +7,14 @@ from .block_instance import BlockInstance
 
 LOGGER = logging.getLogger(__name__)
 
+def find_block_template_by_block_type(block_template_list, block_type):
+    block_template = None
+    for temp_block_template in block_template_list:
+        if temp_block_template.block_type.upper() == \
+            block_type.upper():
+            block_template = temp_block_template
+            break
+    return block_template
 
 class TopSys:
     def __init__(self, name, addr_width=12, data_width=32):
@@ -101,8 +109,9 @@ class TopSys:
             result += block_text + "\n"
         result += "    Block instances:\n"
         for block_instance in self.block_instances:
-            result += "      %s\t@0x%x\t%s\t%s\n" % (
+            result += "      %s(%s)\t@0x%x\t%s\t%s\n" % (
                 block_instance.name,
+                block_instance.block.block_type,
                 block_instance.base_address,
                 block_instance.block.raw_addr_width,
                 block_instance.block.raw_data_width)
@@ -181,11 +190,10 @@ class TopSys:
             block = top_sys.find_block_by_type(
                 block_inst_dict["blockType"])
             if block is None:
-                block_template = None
-                for temp_block_template in block_template_list:
-                    if temp_block_template.block_type.upper() == \
-                            block_inst_dict["blockType"].upper():
-                        block_template = temp_block_template
+                block_template = find_block_template_by_block_type(
+                    block_template_list,
+                    block_inst_dict["blockType"]
+                )
 
                 block = Block(
                     top_sys,
@@ -195,13 +203,14 @@ class TopSys:
                 )
                 top_sys.add_block(block)
 
-            BlockInstance(
+            block_instance = BlockInstance(
                 top_sys,
                 block_inst_dict["name"],
                 block,
                 block_inst_dict["baseAddress"],
                 block_inst_dict["blockSize"]
             )
+            top_sys.block_instances.append(block_instance)
 
         for blk in top_sys.blocks:
             if len(blk.registers) == 0:
