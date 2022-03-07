@@ -26,6 +26,29 @@ def is_register_table_title_row(row):
         return True
     return False
 
+def parse_register_table_title(row):
+    column_count = len(row)
+    result = {}
+    for i in range(column_count):
+        if row[i].value.upper() == "offset".upper():
+            result["offset"] = i
+        elif row[i].value.upper() == "name".upper():
+            result["name"] = i
+        elif row[i].value.upper() == "msb".upper():
+            result["msb"] = i
+        elif row[i].value.upper() == "lsb".upper():
+            result["lsb"] = i
+        elif row[i].value.upper() == "field name".upper():
+            result["field name"] = i
+        elif row[i].value.upper() == "access".upper():
+            result["access"] = i
+        elif row[i].value.upper() == "default value".upper():
+            result["default value"] = i
+        elif row[i].value.upper() == "description".upper():
+            result["description"] = i
+    LOGGER.debug("Register table column mapping: %s", result)
+    return result
+
 def is_array_table_flag_row(row):
     if row[0].value.upper() == "register array:".upper():
         return True
@@ -212,16 +235,23 @@ def parse_register_table(sheet, start_rowx, previous_context):
     rowx = start_rowx
     context.row = rowx
 
+    row = sheet.row(rowx)
+    register_table_column_mapping = parse_register_table_title(row)
+
+    rowx += 1
+    context.row = rowx
     register_dict_list = []
     while rowx < sheet.nrows:
         row = sheet.row(rowx)
         context.row = rowx
         if is_table_title_row(row):
             break
+        if is_table_flag_row(row):
+            break
         if is_empty_row(row):
             rowx += 1
         elif is_register_row(row):
-            (register_dict, rowx) = parse_register(sheet, rowx, context)
+            (register_dict, rowx) = parse_register(sheet, rowx, register_table_column_mapping, context)
             register_dict_list.append(register_dict)
             # Todo: Add offset, size validation
             # if register.offset > block.size:
@@ -293,7 +323,7 @@ def generate_block_template_from_sheet(sheet, previous_context):
         sheet,
         context
     )
-    rowx = register_table_title_rowx + 1
+    rowx = register_table_title_rowx
     context.row = rowx
     block_template_dict["registers"] = parse_register_table(
         sheet,
