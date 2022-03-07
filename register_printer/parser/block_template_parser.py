@@ -12,7 +12,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 def is_empty_row(row):
-    if row[0].value == "":
+    if row[0].value == "" and row[1].value == "":
+        return True
+    return False
+
+def is_register_table_flag_row(row):
+    if row[0].value.upper() == "register description:".upper():
         return True
     return False
 
@@ -21,14 +26,65 @@ def is_register_table_title_row(row):
         return True
     return False
 
-def is_array_table_title_row(row):
-    if row[0].value.upper() == "array_name".upper():
+def parse_register_table_title(row):
+    column_count = len(row)
+    result = {}
+    for i in range(column_count):
+        if row[i].value.upper() == "offset".upper():
+            result["offset"] = i
+        elif row[i].value.upper() == "name".upper():
+            result["name"] = i
+        elif row[i].value.upper() == "msb".upper():
+            result["msb"] = i
+        elif row[i].value.upper() == "lsb".upper():
+            result["lsb"] = i
+        elif row[i].value.upper() == "field name".upper():
+            result["field name"] = i
+        elif row[i].value.upper() == "access".upper():
+            result["access"] = i
+        elif row[i].value.upper() == "default value".upper():
+            result["default value"] = i
+        elif row[i].value.upper() == "description".upper():
+            result["description"] = i
+    LOGGER.debug("Register table column mapping: %s", result)
+    return result
+
+def is_array_table_flag_row(row):
+    if row[0].value.upper() == "register array:".upper():
         return True
     return False
+
+def is_array_table_title_row(row):
+    if row[1].value.upper() == "array_name".upper():
+        return True
+    return False
+
+def parse_array_table_title(row):
+    column_count = len(row)
+    result = {}
+    for i in range(column_count):
+        if row[i].value.upper() == "array_name".upper():
+            result["array_name"] = i
+        elif row[i].value.upper() == "array_len".upper():
+            result["array_len"] = i
+        elif row[i].value.upper() == "array_offset".upper():
+            result["array_offset"] = i
+        elif row[i].value.upper() == "start_addr".upper():
+            result["start_addr"] = i
+        elif row[i].value.upper() == "end_addr".upper():
+            result["end_addr"] = i
+    LOGGER.debug("Array table column mapping: %s", result)
+    return result
 
 def is_table_title_row(row):
     if is_register_table_title_row(row) or \
         is_array_table_title_row(row):
+        return True
+    return False
+
+def is_table_flag_row(row):
+    if is_array_table_flag_row(row) or \
+        is_register_table_flag_row(row):
         return True
     return False
 
@@ -47,14 +103,27 @@ def find_register_table_title_row(sheet, previous_context):
     found = False
     while rowx < sheet.nrows:
         row = sheet.row(rowx)
-        if is_register_table_title_row(row):
-            found = True
-            break
+        if is_register_table_flag_row(row):
+            LOGGER.debug("Register table flag row is found. Row: %s", rowx + 1)
+            rowx += 1
+            context.row = rowx
+            if rowx < sheet.nrows:
+                row = sheet.row(rowx)
+                if is_register_table_title_row(row):
+                    LOGGER.debug("Register table title row is found. Row: %s", rowx + 1)
+                    found = True
+                    break
+                else:
+                    msg = "No Register table title row found after Register table flag."
+                    raise ExcelParseException(msg, context)
+            else:
+                msg = "Unexpected end of sheet after finding Register table flag."
+                raise ExcelParseException(msg, context)
         else:
             rowx += 1
             context.row = rowx
     if not found:
-        msg = "Register table title not found"
+        msg = "Register table title row not found"
         raise ExcelParseException(msg, context)
     return rowx
 
@@ -65,9 +134,22 @@ def find_array_table_title_row(sheet, previous_context):
     found = False
     while rowx < sheet.nrows:
         row = sheet.row(rowx)
-        if is_array_table_title_row(row):
-            found = True
-            break
+        if is_array_table_flag_row(row):
+            LOGGER.debug("Array flag row is found. Row: %s", rowx)
+            rowx += 1
+            context.row = rowx
+            if rowx < sheet.nrows:
+                row = sheet.row(rowx)
+                if is_array_table_title_row(row):
+                    LOGGER.debug("Array table title row is found. Row: %s", rowx)
+                    found = True
+                    break
+                else:
+                    msg = "No Array table title row found after Array table flag."
+                    raise ExcelParseException(msg, context)
+            else:
+                msg = "Unexpected end of sheet after finding Array table flag."
+                raise ExcelParseException(msg, context)
         else:
             rowx += 1
             context.row = rowx
@@ -75,46 +157,43 @@ def find_array_table_title_row(sheet, previous_context):
         return rowx
     return None
 
-def parse_array_row(row, previous_context):
+def parse_array_row(row, array_table_column_mapping, previous_context):
     """
         row: xlrd row object. You can obtain it by sheet.row()
                  a sequence of cells.
     """
     context = previous_context.copy()
 
-    context.column = 0
-    array_name = row[0].value
+    context.column = array_table_column_mapping["array_name"]
+    array_name = row[context.column].value
 
-    context.column = 1
+    context.column = array_table_column_mapping["array_len"]
     try:
-        array_length = int(row[1].value)
+        array_length = int(row[context.column].value)
     except Exception as exc:
         msg = "Parse array length error: {}.".format(exc)
         raise ExcelParseException(msg, context)
 
-    context.column = 2
+    context.column = array_table_column_mapping["array_offset"]
     try:
-        array_offset = int(row[2].value, 16)
+        array_offset = int(row[context.column].value, 16)
     except Exception as exc:
         msg = "Parse array offset error: {}.".format(exc)
         raise ExcelParseException(msg, context)
 
-    context.column = 3
+    context.column = array_table_column_mapping["start_addr"]
     try:
-        start_address = int(row[3].value, 16)
+        start_address = int(row[context.column].value, 16)
     except Exception as exc:
         msg = "Parse start address error: {}.".format(exc)
         raise ExcelParseException(msg, context)
 
-    context.column = 4
+    context.column = array_table_column_mapping["end_addr"]
     try:
-        end_address = int(row[4].value, 16)
+        end_address = int(row[context.column].value, 16)
     except Exception as exc:
         msg = "Parse end address error: {}.".format(exc)
         raise ExcelParseException(msg, context)
-
-    context.column = 5
-    description = row[5].value
 
     result = {
         "name": array_name,
@@ -122,7 +201,7 @@ def parse_array_row(row, previous_context):
         "offset": array_offset,
         "startAddress": start_address,
         "endAddress": end_address,
-        "description": description
+        "description": ""
     }
     return result
 
@@ -131,16 +210,22 @@ def parse_array_table(sheet, start_rowx, previous_context):
     rowx = start_rowx
     context.row = rowx
 
+    row = sheet.row(rowx)
+    array_table_column_mapping = parse_array_table_title(row)
+
+    rowx += 1
     array_dict_list = []
     while rowx < sheet.nrows:
         row = sheet.row(rowx)
         context.row = rowx
         if is_table_title_row(row):
             break
+        if is_table_flag_row(row):
+            break
         if is_empty_row(row):
             rowx += 1
         else:
-            array_dict = parse_array_row(row, context)
+            array_dict = parse_array_row(row, array_table_column_mapping, context)
             array_dict_list.append(array_dict)
             rowx += 1
     return array_dict_list
@@ -150,16 +235,23 @@ def parse_register_table(sheet, start_rowx, previous_context):
     rowx = start_rowx
     context.row = rowx
 
+    row = sheet.row(rowx)
+    register_table_column_mapping = parse_register_table_title(row)
+
+    rowx += 1
+    context.row = rowx
     register_dict_list = []
     while rowx < sheet.nrows:
         row = sheet.row(rowx)
         context.row = rowx
         if is_table_title_row(row):
             break
+        if is_table_flag_row(row):
+            break
         if is_empty_row(row):
             rowx += 1
         elif is_register_row(row):
-            (register_dict, rowx) = parse_register(sheet, rowx, context)
+            (register_dict, rowx) = parse_register(sheet, rowx, register_table_column_mapping, context)
             register_dict_list.append(register_dict)
             # Todo: Add offset, size validation
             # if register.offset > block.size:
@@ -231,7 +323,7 @@ def generate_block_template_from_sheet(sheet, previous_context):
         sheet,
         context
     )
-    rowx = register_table_title_rowx + 1
+    rowx = register_table_title_rowx
     context.row = rowx
     block_template_dict["registers"] = parse_register_table(
         sheet,
@@ -244,7 +336,7 @@ def generate_block_template_from_sheet(sheet, previous_context):
         context
     )
     if array_table_title_rowx is not None:
-        rowx = array_table_title_rowx + 1
+        rowx = array_table_title_rowx
         context.row = rowx
         array_dict_list = parse_array_table(
             sheet,

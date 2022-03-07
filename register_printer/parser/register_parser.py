@@ -43,7 +43,7 @@ def validate_register_row_empty_field(row, previous_context):
     return
 
 
-def parse_register_row(row, previous_context):
+def parse_register_row(row, register_table_column_mapping, previous_context):
     """
         row: xlrd row object. You can obtain it by sheet.row()
                  a sequence of cells.
@@ -51,15 +51,18 @@ def parse_register_row(row, previous_context):
     context = previous_context.copy()
     validate_register_row_empty_field(row, context)
 
-    context.column = 0
+    context.column = register_table_column_mapping["offset"]
     try:
-        offset = int(row[0].value, 16)
+        offset = int(row[context.column].value, 16)
     except Exception as exc:
         msg = "Parse offset error: {}.".format(exc)
         raise ExcelParseException(msg, context)
 
-    name = row[1].value
-    description = "%s" % row[7].value
+    context.column = register_table_column_mapping["name"]
+    name = row[context.column].value
+
+    context.column = register_table_column_mapping["description"]
+    description = "%s" % row[context.column].value
 
     result = {
         "offset": offset,
@@ -102,21 +105,21 @@ def validate_field(new_field, parsed_fields, previous_context):
     return
 
 
-def parse_register(sheet, start_row, previous_context):
+def parse_register(sheet, start_row, register_table_column_mapping, previous_context):
     context = previous_context.copy()
     rowx = start_row
 
     row = sheet.row(rowx)
     context.row = rowx
 
-    register_dict = parse_register_row(row, context)
+    register_dict = parse_register_row(row, register_table_column_mapping, context)
 
     rowx = rowx + 1
     row = sheet.row(rowx)
     context.row = rowx
     field_dict_list = []
     while is_field_row(row):
-        field_dict = parse_field_row(row, context)
+        field_dict = parse_field_row(row, register_table_column_mapping, context)
 
         validate_field(field_dict, field_dict_list, context)
 
