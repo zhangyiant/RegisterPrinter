@@ -80,14 +80,27 @@ def find_register_table_title_row(sheet, previous_context):
     found = False
     while rowx < sheet.nrows:
         row = sheet.row(rowx)
-        if is_register_table_title_row(row):
-            found = True
-            break
+        if is_register_table_flag_row(row):
+            LOGGER.debug("Register table flag row is found. Row: %s", rowx + 1)
+            rowx += 1
+            context.row = rowx
+            if rowx < sheet.nrows:
+                row = sheet.row(rowx)
+                if is_register_table_title_row(row):
+                    LOGGER.debug("Register table title row is found. Row: %s", rowx + 1)
+                    found = True
+                    break
+                else:
+                    msg = "No Register table title row found after Register table flag."
+                    raise ExcelParseException(msg, context)
+            else:
+                msg = "Unexpected end of sheet after finding Register table flag."
+                raise ExcelParseException(msg, context)
         else:
             rowx += 1
             context.row = rowx
     if not found:
-        msg = "Register table title not found"
+        msg = "Register table title row not found"
         raise ExcelParseException(msg, context)
     return rowx
 
