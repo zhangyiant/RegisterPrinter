@@ -33,7 +33,7 @@ endclass: {{ uvm_reg_type }}
 {% endfor %}
 
 {% for struct in structs %}
-class {{ struct.name | upper }} extends uvm_reg;
+class {{ struct.name | upper }} extends uvm_reg_block;
   `uvm_object_utils({{ struct.name | upper }})
 
   {% for reg in struct.registers %}
