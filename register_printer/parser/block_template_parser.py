@@ -17,7 +17,7 @@ def is_empty_row(row):
     return False
 
 def is_register_table_flag_row(row):
-    if row[0].value.upper() == "register description:".upper():
+    if row[0].value.upper() == "register description".upper():
         return True
     return False
 
@@ -50,7 +50,7 @@ def parse_register_table_title(row):
     return result
 
 def is_array_table_flag_row(row):
-    if row[0].value.upper() == "register array:".upper():
+    if row[0].value.upper() == "register array".upper():
         return True
     return False
 
@@ -282,7 +282,7 @@ def validate_sheet(sheet, previous_context):
 
     context.row = 0
     context.column = 0
-    if sheet.cell(0, 0).value != "Module description:":
+    if sheet.cell(0, 0).value.upper() != "Module description".upper():
         LOGGER.debug(
             "sheet %s error: find no \"Module description:\" in cell(0,0)",
             sheet.name)
