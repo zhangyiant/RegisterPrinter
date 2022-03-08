@@ -44,7 +44,7 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
         msg = "Invalid access type: {}.".format(access)
         raise ExcelParseException(msg, context)
 
-    context.column = register_table_column_mapping["default value"]
+    context.column = register_table_column_mapping["default"]
     default = row[context.column].value
     try:
         if re.match(r"0x", str(default)):
