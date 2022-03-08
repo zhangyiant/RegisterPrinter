@@ -12,17 +12,17 @@ LOGGER = logging.getLogger(__name__)
 
 
 def is_empty_row(row):
-    if row[0].value == "" and row[1].value == "":
+    if row[0].value.strip() == "" and row[1].value.strip() == "":
         return True
     return False
 
 def is_register_table_flag_row(row):
-    if row[0].value.upper() == "register description:".upper():
+    if row[0].value.strip().upper() == "register description".upper():
         return True
     return False
 
 def is_register_table_title_row(row):
-    if row[0].value.upper() == "Offset".upper():
+    if row[0].value.strip().upper() == "Offset".upper():
         return True
     return False
 
@@ -30,32 +30,32 @@ def parse_register_table_title(row):
     column_count = len(row)
     result = {}
     for i in range(column_count):
-        if row[i].value.upper() == "offset".upper():
+        if row[i].value.strip().upper() == "offset".upper():
             result["offset"] = i
-        elif row[i].value.upper() == "name".upper():
+        elif row[i].value.strip().upper() == "name".upper():
             result["name"] = i
-        elif row[i].value.upper() == "msb".upper():
+        elif row[i].value.strip().upper() == "msb".upper():
             result["msb"] = i
-        elif row[i].value.upper() == "lsb".upper():
+        elif row[i].value.strip().upper() == "lsb".upper():
             result["lsb"] = i
-        elif row[i].value.upper() == "field name".upper():
+        elif row[i].value.strip().upper() == "field name".upper():
             result["field name"] = i
-        elif row[i].value.upper() == "access".upper():
+        elif row[i].value.strip().upper() == "access".upper():
             result["access"] = i
-        elif row[i].value.upper() == "default value".upper():
-            result["default value"] = i
-        elif row[i].value.upper() == "description".upper():
+        elif row[i].value.strip().upper() == "default".upper():
+            result["default"] = i
+        elif row[i].value.strip().upper() == "description".upper():
             result["description"] = i
     LOGGER.debug("Register table column mapping: %s", result)
     return result
 
 def is_array_table_flag_row(row):
-    if row[0].value.upper() == "register array:".upper():
+    if row[0].value.strip().upper() == "register array".upper():
         return True
     return False
 
 def is_array_table_title_row(row):
-    if row[1].value.upper() == "array_name".upper():
+    if row[1].value.strip().upper() == "array_name".upper():
         return True
     return False
 
@@ -63,15 +63,15 @@ def parse_array_table_title(row):
     column_count = len(row)
     result = {}
     for i in range(column_count):
-        if row[i].value.upper() == "array_name".upper():
+        if row[i].value.strip().upper() == "array_name".upper():
             result["array_name"] = i
-        elif row[i].value.upper() == "array_len".upper():
+        elif row[i].value.strip().upper() == "array_len".upper():
             result["array_len"] = i
-        elif row[i].value.upper() == "array_offset".upper():
+        elif row[i].value.strip().upper() == "array_offset".upper():
             result["array_offset"] = i
-        elif row[i].value.upper() == "start_addr".upper():
+        elif row[i].value.strip().upper() == "start_addr".upper():
             result["start_addr"] = i
-        elif row[i].value.upper() == "end_addr".upper():
+        elif row[i].value.strip().upper() == "end_addr".upper():
             result["end_addr"] = i
     LOGGER.debug("Array table column mapping: %s", result)
     return result
@@ -282,7 +282,7 @@ def validate_sheet(sheet, previous_context):
 
     context.row = 0
     context.column = 0
-    if sheet.cell(0, 0).value != "Module description:":
+    if sheet.cell(0, 0).value.upper() != "Module description".upper():
         LOGGER.debug(
             "sheet %s error: find no \"Module description:\" in cell(0,0)",
             sheet.name)
