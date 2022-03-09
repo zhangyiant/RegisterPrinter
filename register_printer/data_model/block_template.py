@@ -117,10 +117,9 @@ class BlockTemplate:
 
     def _get_array_by_array_template(self, array_template):
         start_address = array_template.start_address
-        end_address = array_template.end_address
         offset = start_address
         struct = Struct(array_template.name)
-        while offset <= end_address:
+        while offset < start_address + array_template.offset:
             register_template = self.find_register_template_by_offset(offset)
             if register_template is None:
                 register = Register.create_reserved_register(
