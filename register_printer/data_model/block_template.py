@@ -100,7 +100,7 @@ class BlockTemplate:
                 result = register.offset
         return result
 
-    def _get_register_by_offset(self, offset, data_width):
+    def _get_register_by_offset(self, offset):
         # offset must not in range of an array
         register = None
         register_template = self.find_register_template_by_offset(
@@ -109,14 +109,13 @@ class BlockTemplate:
         if register_template is not None:
             register = Register.from_register_template(
                 offset,
-                data_width,
                 register_template
             )
         else:
-            register = Register.create_reserved_register(offset, data_width)
+            register = Register.create_reserved_register(offset)
         return register
 
-    def _get_array_by_array_template(self, data_width, array_template):
+    def _get_array_by_array_template(self, array_template):
         start_address = array_template.start_address
         end_address = array_template.end_address
         offset = start_address
@@ -126,16 +125,14 @@ class BlockTemplate:
             if register_template is None:
                 register = Register.create_reserved_register(
                     offset - start_address,
-                    data_width
                 )
             else:
                 register = Register.from_register_template(
                     offset - start_address,
-                    data_width,
                     register_template
                 )
             struct.registers.append(register)
-            offset += data_width // 8
+            offset += register.size
         array = Array(
             struct,
             array_template.length,
@@ -144,7 +141,7 @@ class BlockTemplate:
         while offset < array_template.array_stop_address:
             register_template = self.find_register_template_by_offset(offset)
             if register_template is None:
-                offset += data_width // 8
+                offset += 1
                 continue
             index = (register_template.offset - start_address) // array_template.offset
             register_name = register_template.name
@@ -157,7 +154,7 @@ class BlockTemplate:
                 default_overwrite_entry.field_name = field_name
                 default_overwrite_entry.default = default
                 array.default_overwrite_entries.append(default_overwrite_entry)
-            offset += data_width // 8
+            offset += register_template.num_of_bytes
         return array
 
     def generate_registers(self, data_width):
@@ -168,15 +165,15 @@ class BlockTemplate:
         while offset < block_size:
             array_template = self.get_array_template_by_offset(offset)
             if array_template is not None:
-                array = self._get_array_by_array_template(data_width, array_template)
+                array = self._get_array_by_array_template(array_template)
                 registers.append(array)
                 offset += array_template.size
                 continue
 
-            register = self._get_register_by_offset(offset, data_width)
+            register = self._get_register_by_offset(offset)
             registers.append(register)
 
-            offset += data_width // 8
+            offset += register.size
         return registers
 
     def generate_register_by_offset(self, offset):
