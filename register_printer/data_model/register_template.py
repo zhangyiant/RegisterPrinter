@@ -56,6 +56,16 @@ class RegisterTemplate:
         self.fields = fields
         return
 
+    @property
+    def num_of_bytes(self):
+        biggest_msb = 0
+        for field in self.fields:
+            msb = field.msb
+            if msb > biggest_msb:
+                biggest_msb = msb
+        num_of_bytes = biggest_msb // 8 + 1
+        return num_of_bytes
+
     def calculate_register_default(self):
         value = 0
         for field in self.fields:
@@ -67,6 +77,7 @@ class RegisterTemplate:
     def __str__(self):
         result = "Register " + str(self.name) + "\n"
         result += "    offset: " + str(self.offset) + "\n"
+        result += "    number of bytes: " + str(self.num_of_bytes) + "\n"
         result += "    description: " \
             + str(self.description) \
             + "\n"
