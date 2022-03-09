@@ -40,19 +40,34 @@ def generate_struct_fields(registers):
             else:
                 if accumulated_number_rsvd_register > 1:
                     struct_field = {
-                        "type": "volatile const int",
+                        "type": "volatile const char",
                         "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
                     }
                     struct_fields.append(struct_field)
                     rsvd_idx = rsvd_idx + 1
                     # reset accumulated_number_rsvd_register
                     accumulated_number_rsvd_register = 0
+                if reg.size == 1:
+                    type_str = "volatile char"
+                elif reg.size == 2:
+                    type_str = "volatile short"
+                elif reg.size == 4:
+                    type_str = "volatile int"
                 struct_field = {
-                    "type": "volatile int",
+                    "type": type_str,
                     "name": reg.name.upper()
                 }
                 struct_fields.append(struct_field)
         elif isinstance(reg, Array):
+            if accumulated_number_rsvd_register > 1:
+                struct_field = {
+                    "type": "volatile const char",
+                    "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
+                }
+                struct_fields.append(struct_field)
+                rsvd_idx = rsvd_idx + 1
+                # reset accumulated_number_rsvd_register
+                accumulated_number_rsvd_register = 0
             if not isinstance(reg.content_type, Struct):
                 msg = "Unsupported: Content type in Array is not Struct."
                 LOGGER.error(msg)
@@ -65,6 +80,17 @@ def generate_struct_fields(registers):
             struct_fields.append(struct_field)
         else:
             LOGGER.warning("Unsupported register type.")
+
+    # write the last reserved register
+    if accumulated_number_rsvd_register > 1:
+        struct_field = {
+            "type": "volatile const char",
+            "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
+        }
+        struct_fields.append(struct_field)
+        rsvd_idx = rsvd_idx + 1
+        # reset accumulated_number_rsvd_register
+        accumulated_number_rsvd_register = 0
     return struct_fields
 
 

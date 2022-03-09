@@ -1,6 +1,7 @@
 import re
 import textwrap
 from .field_template import FieldTemplate
+from .utility import msb_to_bytes
 
 class RegisterTemplate:
     def __init__(self, name, offset, description):
@@ -63,7 +64,7 @@ class RegisterTemplate:
             msb = field.msb
             if msb > biggest_msb:
                 biggest_msb = msb
-        num_of_bytes = biggest_msb // 8 + 1
+        num_of_bytes = msb_to_bytes(biggest_msb)
         return num_of_bytes
 
     def calculate_register_default(self):
