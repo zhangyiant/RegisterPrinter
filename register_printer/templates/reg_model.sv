@@ -78,7 +78,7 @@ class {{ uvm_block.name }} extends uvm_reg_block;
   endfunction: new
 
   virtual function void build();
-    default_map = create_map("default_map", 0, {{ (data_width / 8) | int }}, UVM_BIG_ENDIAN, 0);
+    default_map = create_map("default_map", 0, {{ (data_width // 8) | int }}, UVM_BIG_ENDIAN, 0);
 
     {% for register in uvm_block.registers %}
     {% if register.is_struct %}
