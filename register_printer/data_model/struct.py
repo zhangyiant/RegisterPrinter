@@ -9,7 +9,7 @@ class Struct:
     def size(self):
         result = 0
         for register in self.registers:
-            result += register.size()
+            result += register.size
         return result
 
     def __str__(self):

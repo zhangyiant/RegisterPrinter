@@ -18,7 +18,7 @@ class {{ uvm_sys_name }} extends uvm_reg_block;
   endfunction: new
 
 virtual function void build();
-  default_map = create_map("default_map", 0, {{ (top_sys.data_width / 8) | int }}, UVM_BIG_ENDIAN, 0);
+  default_map = create_map("default_map", 0, {{ (top_sys.data_width // 8) | int }}, UVM_BIG_ENDIAN, 0);
 
   {% for block_instance in top_sys.block_instances %}
   {% set block_instance_name = block_instance.name.lower() %}
