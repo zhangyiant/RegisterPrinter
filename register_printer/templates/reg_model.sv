@@ -45,7 +45,7 @@ class {{ struct.name | upper }} extends uvm_reg_block;
 
 endclass: {{ struct.name | upper }}
 
-function void {{ struct.name | upper }}::new(string name="{{ struct.name | upper }}");
+function {{ struct.name | upper }}::new(string name="{{ struct.name | upper }}");
   super.name(name);
 endfunction: new
 
@@ -83,7 +83,7 @@ class {{ uvm_block.name }} extends uvm_reg_block;
     {% for register in uvm_block.registers %}
     {% if register.is_struct %}
     for(int i=0; i<{{ register.length }}; i++) begin
-      {{ register.name | lower }}[i] = {{ register.name | upper }}::type_id:create($sformatf("{{ register.name | lower }}[%0d]", i));
+      {{ register.name | lower }}[i] = {{ register.name | upper }}::type_id::create($sformatf("{{ register.name | lower }}[%0d]", i));
       {{ register.name | lower }}[i].configure(this, "");
       {{ register.name | lower }}[i].build();
       default_map.add_submap({{ register.name | lower }}[i].default_map, 'h{{ '%x' | format(register.start_address) }} + i * 'h{{ '%x' | format(register.offset) }});
