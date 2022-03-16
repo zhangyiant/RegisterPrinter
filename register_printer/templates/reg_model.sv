@@ -11,7 +11,7 @@ class {{ uvm_reg_type }} extends uvm_reg;
     {% endif %}
   {% endfor %}
 
-  function new(string name = "{{ uvm_reg_type }}", int unsigned n_bits = {{ data_width }});
+  function new(string name = "{{ uvm_reg_type }}", int unsigned n_bits = {{ register.size * 8 }});
     super.new(name, n_bits, UVM_NO_COVERAGE);
   endfunction: new
 
