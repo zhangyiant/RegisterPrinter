@@ -54,7 +54,7 @@ class ExcelGenerator:
         ws.title = block_template.block_type
 
         current_row = 1
-        ws.cell(1, 1).value = "Module description:"
+        ws.cell(1, 1).value = "Module description"
 
         current_row += 2
         ws.cell(current_row, 1).value = "array description"
