@@ -1,4 +1,3 @@
-import re
 import textwrap
 from .field_template import FieldTemplate
 from .utility import msb_to_bytes
