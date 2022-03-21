@@ -53,17 +53,41 @@ class ExcelGenerator:
 
         ws.title = block_template.block_type
 
-        ws.cell(1, 1).value = "Module description:"
-        current_row = 3
+        current_row = 1
+        ws.cell(1, 1).value = "Module description"
+
+        current_row += 2
+        ws.cell(current_row, 1).value = "array description"
+
+        current_row += 1
+        ws.cell(current_row, 1).value = "array_name"
+        ws.cell(current_row, 2).value = "array_len"
+        ws.cell(current_row, 3).value = "array_offset"
+        ws.cell(current_row, 4).value = "start_addr"
+        ws.cell(current_row, 5).value = "end_addr"
+
+        current_row += 1
+        for array_template in block_template.array_templates:
+            ws.cell(current_row, 1).value = array_template.name
+            ws.cell(current_row, 2).value = array_template.length
+            ws.cell(current_row, 3).value = hex(array_template.offset)
+            ws.cell(current_row, 4).value = hex(array_template.start_address)
+            ws.cell(current_row, 5).value = hex(array_template.end_address)
+            current_row += 1
+
+        current_row += 2
+        ws.cell(current_row, 1).value = "register description"
+
+        current_row += 1
         ws.cell(current_row, 1).value = "Offset"
         ws.cell(current_row, 2).value = "Name"
         ws.cell(current_row, 3).value = "MSB"
         ws.cell(current_row, 4).value = "LSB"
         ws.cell(current_row, 5).value = "Field Name"
         ws.cell(current_row, 6).value = "Access"
-        ws.cell(current_row, 7).value = "Default Value"
+        ws.cell(current_row, 7).value = "Default"
         ws.cell(current_row, 8).value = "Description"
-        current_row = 4
+        current_row += 1
         for register in block_template.register_templates:
             offset_cell = ws.cell(current_row, 1)
             offset_cell.value = hex(register.offset)

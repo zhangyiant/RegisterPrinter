@@ -217,8 +217,12 @@ class BlockTemplate:
     def to_dict(self):
         result = {
             "blockType": self.block_type,
+            "arrays": [],
             "registers": []
         }
+        for array_template in self.array_templates:
+            array_template_dict = array_template.to_dict()
+            result["arrays"].append(array_template_dict)
         for register in self.register_templates:
             register_dict = register.to_dict()
             result["registers"].append(register_dict)
