@@ -6,8 +6,8 @@ key.txt
 key.py
 build/
 dist/
-output/
-output*/
+/output/
+/output*/
 .idea/
 .DS_Store
 \#*\#
