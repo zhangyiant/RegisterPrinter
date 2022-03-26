@@ -66,6 +66,45 @@ class TestRegisterPrinter(TestCase):
 
         return
 
+    def test_rtl_generator(self):
+        with TemporaryDirectory() as tmp_dir:
+            output_path = tmp_dir
+            register_printer = RegisterPrinter(
+                config_file=self.config_file,
+                excel_path=self.excel_path,
+                output_path=output_path
+            )
+            register_printer.generate_rtl()
+
+            reg_rtl_file_path = os.path.join(tmp_dir, "regrtls")
+            baseline_reg_rtl_file_path = os.path.join(
+                TestRegisterPrinter.DATASET_PATH,
+                "output",
+                "regrtls"
+            )
+
+            compare_files = [
+                "Type1_reg.sv",
+                "Type2_reg.sv"
+            ]
+
+            (match_list, mismatch_list, error_list) = filecmp.cmpfiles(
+                reg_rtl_file_path,
+                baseline_reg_rtl_file_path,
+                compare_files
+            )
+
+            self.assertTrue(
+                len(mismatch_list) == 0,
+                "RTL generator files mismatched: {}".format(mismatch_list)
+            )
+            self.assertTrue(
+                len(error_list) == 0,
+                "RTL generator files errored: {}".format(error_list)
+            )
+
+        return
+
     def test_c_generator(self):
         with TemporaryDirectory() as tmp_dir:
             output_path = tmp_dir
