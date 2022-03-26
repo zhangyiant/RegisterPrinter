@@ -1,5 +1,6 @@
 import os.path
 from tempfile import TemporaryDirectory
+import filecmp
 from ..register_printer import RegisterPrinter
 from unittest import TestCase
 
@@ -32,10 +33,27 @@ class TestRegisterPrinter(TestCase):
             register_printer.generate_c_header()
 
             reg_headers_file_path = os.path.join(tmp_dir, "regheaders")
-            top_module_filename = os.path.join(reg_headers_file_path, "regs_top_module.h")
+            baseline_reg_headers_file_path = os.path.join(
+                TestRegisterPrinter.DATASET_PATH,
+                "output",
+                "regheaders"
+            )
+            top_module_filename = os.path.join(
+                reg_headers_file_path, "regs_top_module.h")
             self.assertTrue(
                 os.path.exists(top_module_filename),
                 "Top module header file is not generated."
+            )
+            baseline_top_module_filename = os.path.join(
+                baseline_reg_headers_file_path,
+                "regs_top_module.h"
+            )
+            self.assertTrue(
+                filecmp.cmp(
+                    top_module_filename,
+                    baseline_top_module_filename
+                ),
+                "Top module header file content is not correct."
             )
             type1_header_filename = os.path.join(
                 reg_headers_file_path,
