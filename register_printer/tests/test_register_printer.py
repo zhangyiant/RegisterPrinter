@@ -202,3 +202,30 @@ class TestRegisterPrinter(TestCase):
                 "Test.c file content is not correct."
             )
         return
+
+    def test_doc_generator(self):
+        with TemporaryDirectory() as tmp_dir:
+            output_path = tmp_dir
+            register_printer = RegisterPrinter(
+                config_file=self.config_file,
+                excel_path=self.excel_path,
+                output_path=output_path
+            )
+            register_printer.generate_document()
+
+            doc_file_path = tmp_dir
+
+            doc_filename = os.path.join(
+                doc_file_path,
+                "top_module_registers.docx"
+            )
+            self.assertTrue(
+                os.path.exists(doc_filename),
+                "Docx file is not generated."
+            )
+
+            # Currently, it's not easy to compare the docx contents,
+            # because there are generated datetime in the content of docx.
+            # So here, we only make sure the file is generated.
+
+        return
