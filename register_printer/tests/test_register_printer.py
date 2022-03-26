@@ -37,5 +37,28 @@ class TestRegisterPrinter(TestCase):
                 os.path.exists(top_module_filename),
                 "Top module header file is not generated."
             )
+            type1_header_filename = os.path.join(
+                reg_headers_file_path,
+                "regs_type1.h"
+            )
+            self.assertTrue(
+                os.path.exists(type1_header_filename),
+                "Type1 header file is not generated."
+            )
+            type2_header_filename = os.path.join(
+                reg_headers_file_path,
+                "regs_type2.h"
+            )
+            self.assertTrue(
+                os.path.exists(type2_header_filename),
+                "Type2 header file is not generated."
+            )
+            test_c_filename = os.path.join(
+                reg_headers_file_path,
+                "test.c"
+            )
+            self.assertTrue(
+                os.path.exists(test_c_filename),
+                "test.c is not generated."
+            )
         return
-
