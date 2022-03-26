@@ -25,6 +25,20 @@ def get_register_dict_from_register(register):
     wrc_flds = []
     wrs_flds = []
     # rsc_flds = []
+    access_to_fields_mapping = {
+        "RW": rw_flds,
+        "RWP": rwp_flds,
+        "RC": rc_flds,
+        "RO": ro_flds,
+        "RS": rs_flds,
+        "W1C": w1c_flds,
+        "W0C": w0c_flds,
+        "WC": wc_flds,
+        "WO": wo_flds,
+        "WRC": wrc_flds,
+        "WRS": wrs_flds,
+        "-": ro_flds
+    }
     for fld in register.fields:
         field_dict = {}
         field_dict["name"] = fld.name
@@ -34,30 +48,7 @@ def get_register_dict_from_register(register):
         field_dict["access"] = fld.access
         field_dict["description"] = fld.description
         tmp_register["fields"].append(field_dict)
-        if fld.access == "RW":
-            rw_flds.append(field_dict)
-        elif fld.access == "RWP":
-            rwp_flds.append(field_dict)
-        elif fld.access == "RC":
-            rc_flds.append(field_dict)
-        elif fld.access == "RO":
-            ro_flds.append(field_dict)
-        elif fld.access == "RS":
-            rs_flds.append(field_dict)
-        elif fld.access == "W1C":
-            w1c_flds.append(field_dict)
-        elif fld.access == "W0C":
-            w0c_flds.append(field_dict)
-        elif fld.access == "WC":
-            wc_flds.append(field_dict)
-        elif fld.access == "WO":
-            wo_flds.append(field_dict)
-        elif fld.access == "WRC":
-            wrc_flds.append(field_dict)
-        elif fld.access == "WRS":
-            wrs_flds.append(field_dict)
-        elif fld.access == "-":
-            ro_flds.append(field_dict)
+        access_to_fields_mapping[fld.access].append(field_dict)
     tmp_register["rw_flds"] = rw_flds
     tmp_register["rwp_flds"] = rwp_flds
     tmp_register["ro_flds"] = ro_flds
