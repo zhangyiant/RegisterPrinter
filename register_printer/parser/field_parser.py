@@ -1,4 +1,3 @@
-from atexit import register
 import re
 import logging
 from .parse_exception import ExcelParseException

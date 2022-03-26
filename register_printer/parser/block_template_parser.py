@@ -119,14 +119,19 @@ def find_register_table_title_row(sheet, previous_context):
             if rowx < sheet.nrows:
                 row = sheet.row(rowx)
                 if is_register_table_title_row(row):
-                    LOGGER.debug("Register table title row is found. Row: %s", rowx + 1)
+                    LOGGER.debug(
+                        "Register table title row is found. Row: %s",
+                        rowx + 1
+                    )
                     found = True
                     break
                 else:
-                    msg = "No Register table title row found after Register table flag."
+                    msg = "No Register table title row found" \
+                          "after Register table flag."
                     raise ExcelParseException(msg, context)
             else:
-                msg = "Unexpected end of sheet after finding Register table flag."
+                msg = 'Unexpected end of sheet ' \
+                      'after finding Register table flag.'
                 raise ExcelParseException(msg, context)
         else:
             rowx += 1
@@ -151,11 +156,15 @@ def find_array_table_title_row(sheet, previous_context):
             if rowx < sheet.nrows:
                 row = sheet.row(rowx)
                 if is_array_table_title_row(row):
-                    LOGGER.debug("Array table title row is found. Row: %s", rowx)
+                    LOGGER.debug(
+                        "Array table title row is found. Row: %s",
+                        rowx
+                    )
                     found = True
                     break
                 else:
-                    msg = "No Array table title row found after Array table flag."
+                    msg = "No Array table title row found " \
+                          "after Array table flag."
                     raise ExcelParseException(msg, context)
             else:
                 msg = "Unexpected end of sheet after finding Array table flag."
