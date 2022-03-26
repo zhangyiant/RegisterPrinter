@@ -101,6 +101,7 @@ def print_rtl_block(block, out_path):
                 LOGGER.error(msg)
                 raise Exception(msg)
             struct = reg.content_type
+            tmp_register_dict_list = []
             for idx in range(reg.length):
                 for struct_reg in struct.registers:
                     if not struct_reg.is_reserved:
@@ -121,7 +122,8 @@ def print_rtl_block(block, out_path):
                         for field_dict in tmp_register_dict["fields"]:
                             field_dict["name"] = \
                                 f'{struct_reg.name}_{idx}_{field_dict["name"]}'
-                        tmp_registers.append(tmp_register_dict)
+                        tmp_register_dict_list.append(tmp_register_dict)
+            tmp_registers.extend(tmp_register_dict_list)
         else:
             LOGGER.warning("Unsupported register type!")
 
