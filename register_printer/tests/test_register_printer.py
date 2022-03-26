@@ -26,7 +26,45 @@ class TestRegisterPrinter(TestCase):
         return
 
     def test_uvm_generator(self):
-        pass
+        with TemporaryDirectory() as tmp_dir:
+            output_path = tmp_dir
+            register_printer = RegisterPrinter(
+                config_file=self.config_file,
+                excel_path=self.excel_path,
+                output_path=output_path
+            )
+            register_printer.generate_uvm()
+
+            reg_models_file_path = os.path.join(tmp_dir, "regmodels")
+            baseline_reg_models_file_path = os.path.join(
+                TestRegisterPrinter.DATASET_PATH,
+                "output",
+                "regmodels"
+            )
+
+            compare_files = [
+                "top_module_reg_model.sv",
+                "top_module_register_defines.svh",
+                "type1_reg_model.sv",
+                "type2_reg_model.sv"
+            ]
+
+            (match_list, mismatch_list, error_list) = filecmp.cmpfiles(
+                reg_models_file_path,
+                baseline_reg_models_file_path,
+                compare_files
+            )
+
+            self.assertTrue(
+                len(mismatch_list) == 0,
+                "UVM generator files mismatched: {}".format(mismatch_list)
+            )
+            self.assertTrue(
+                len(error_list) == 0,
+                "UVM generator files errored: {}".format(error_list)
+            )
+
+        return
 
     def test_c_generator(self):
         with TemporaryDirectory() as tmp_dir:
