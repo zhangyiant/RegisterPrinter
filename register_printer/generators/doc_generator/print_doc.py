@@ -2,7 +2,7 @@ import os
 import os.path
 import logging
 from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from register_printer.data_model import Register
 
 
@@ -43,7 +43,7 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
     for header in headers:
         p = hcells[i].paragraphs[0]
         p.add_run(header)
-        p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         i += 1
 
     i = 1
@@ -87,7 +87,7 @@ def print_doc_block(doc, idx, block, instances):
     for i in range(len(hdr)):
         p = hcells[i].paragraphs[0]
         run = p.add_run(hdr[i])
-        p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
     i = 1
     for register in registers:
@@ -112,12 +112,12 @@ def generate_doc(top_sys):
     title = doc.add_heading(
         top_sys.name + " Registers",
         level=0)
-    title.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    title.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
     p = doc.add_paragraph()
     p.add_run("Version : %s\n" % top_sys.version)
     p.add_run("Author : %s" % top_sys.author)
-    p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     doc.add_page_break()
 
     block_idx = 1
@@ -131,7 +131,7 @@ def generate_doc(top_sys):
     for i in range(3):
         p = hcell[i].paragraphs[0]
         p.add_run(headers[i])
-        p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     i = 1
     for block_instance in top_sys.block_instances:
         table.cell(i, 0).text = block_instance.name
