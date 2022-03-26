@@ -16,15 +16,18 @@ def is_empty_row(row):
         return True
     return False
 
+
 def is_register_table_flag_row(row):
     if row[0].value.strip().upper() == "register description".upper():
         return True
     return False
 
+
 def is_register_table_title_row(row):
     if row[0].value.strip().upper() == "Offset".upper():
         return True
     return False
+
 
 def parse_register_table_title(row):
     column_count = len(row)
@@ -49,15 +52,18 @@ def parse_register_table_title(row):
     LOGGER.debug("Register table column mapping: %s", result)
     return result
 
+
 def is_array_table_flag_row(row):
     if row[0].value.strip().upper() == "register array".upper():
         return True
     return False
 
+
 def is_array_table_title_row(row):
     if row[1].value.strip().upper() == "array_name".upper():
         return True
     return False
+
 
 def parse_array_table_title(row):
     column_count = len(row)
@@ -76,17 +82,20 @@ def parse_array_table_title(row):
     LOGGER.debug("Array table column mapping: %s", result)
     return result
 
+
 def is_table_title_row(row):
     if is_register_table_title_row(row) or \
-        is_array_table_title_row(row):
+            is_array_table_title_row(row):
         return True
     return False
 
+
 def is_table_flag_row(row):
     if is_array_table_flag_row(row) or \
-        is_register_table_flag_row(row):
+            is_register_table_flag_row(row):
         return True
     return False
+
 
 # Todo： validate field in Block.
 def validate_field_block(field, block):
@@ -127,6 +136,7 @@ def find_register_table_title_row(sheet, previous_context):
         raise ExcelParseException(msg, context)
     return rowx
 
+
 def find_array_table_title_row(sheet, previous_context):
     context = previous_context.copy()
     rowx = 1
@@ -156,6 +166,7 @@ def find_array_table_title_row(sheet, previous_context):
     if found:
         return rowx
     return None
+
 
 def parse_array_row(row, array_table_column_mapping, previous_context):
     """
@@ -205,6 +216,7 @@ def parse_array_row(row, array_table_column_mapping, previous_context):
     }
     return result
 
+
 def parse_array_table(sheet, start_rowx, previous_context):
     context = previous_context.copy()
     rowx = start_rowx
@@ -229,6 +241,7 @@ def parse_array_table(sheet, start_rowx, previous_context):
             array_dict_list.append(array_dict)
             rowx += 1
     return array_dict_list
+
 
 def parse_register_table(sheet, start_rowx, previous_context):
     context = previous_context.copy()
@@ -271,6 +284,7 @@ def parse_register_table(sheet, start_rowx, previous_context):
             raise ExcelParseException(msg, context)
     return register_dict_list
 
+
 def validate_sheet(sheet, previous_context):
     context = previous_context.copy()
     if sheet.ncols < 8:
@@ -298,6 +312,7 @@ def is_register_row(row):
     if re.match(r'0x', str(row[0].value)):
         return True
     return False
+
 
 def generate_block_template_from_sheet(sheet, previous_context):
 
