@@ -38,6 +38,8 @@ class TestRegisterPrinter(TestCase):
                 "output",
                 "regheaders"
             )
+
+            # Compare top module header file
             top_module_filename = os.path.join(
                 reg_headers_file_path, "regs_top_module.h")
             self.assertTrue(
@@ -55,28 +57,65 @@ class TestRegisterPrinter(TestCase):
                 ),
                 "Top module header file content is not correct."
             )
+
+            # Compare block header files
             type1_header_filename = os.path.join(
                 reg_headers_file_path,
+                "regs_type1.h"
+            )
+            baseline_type1_header_filename = os.path.join(
+                baseline_reg_headers_file_path,
                 "regs_type1.h"
             )
             self.assertTrue(
                 os.path.exists(type1_header_filename),
                 "Type1 header file is not generated."
             )
+            self.assertTrue(
+                filecmp.cmp(
+                    type1_header_filename,
+                    baseline_type1_header_filename
+                ),
+                "Type1 file content is not correct."
+            )
             type2_header_filename = os.path.join(
                 reg_headers_file_path,
+                "regs_type2.h"
+            )
+            baseline_type2_header_filename = os.path.join(
+                baseline_reg_headers_file_path,
                 "regs_type2.h"
             )
             self.assertTrue(
                 os.path.exists(type2_header_filename),
                 "Type2 header file is not generated."
             )
+            self.assertTrue(
+                filecmp.cmp(
+                    type2_header_filename,
+                    baseline_type2_header_filename
+                ),
+                "Type2 file content is not correct."
+            )
+
+            # compare test.c file
             test_c_filename = os.path.join(
                 reg_headers_file_path,
+                "test.c"
+            )
+            baseline_test_c_filename = os.path.join(
+                baseline_reg_headers_file_path,
                 "test.c"
             )
             self.assertTrue(
                 os.path.exists(test_c_filename),
                 "test.c is not generated."
+            )
+            self.assertTrue(
+                filecmp.cmp(
+                    test_c_filename,
+                    baseline_test_c_filename
+                ),
+                "Test.c file content is not correct."
             )
         return
