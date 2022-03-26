@@ -2,6 +2,7 @@ import textwrap
 from .field_template import FieldTemplate
 from .utility import msb_to_bytes
 
+
 class RegisterTemplate:
     def __init__(self, name, offset, description):
         self._name = name
