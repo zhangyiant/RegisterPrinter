@@ -156,6 +156,6 @@ def parse_register(
         msg = "No blank row between registers."
         raise ExcelParseException(msg, context)
 
-    register_dict["fields"] = field_dict_list
+    register_dict["fieldTemplates"] = field_dict_list
 
     return register_dict, rowx

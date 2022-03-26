@@ -347,8 +347,8 @@ def generate_block_template_from_sheet(sheet, previous_context):
 
     block_template_dict = {
         "blockType": sheet.name,
-        "registers": [],
-        "arrays": []
+        "registerTemplates": [],
+        "arrayTemplates": []
     }
 
     register_table_title_rowx = find_register_table_title_row(
@@ -357,7 +357,7 @@ def generate_block_template_from_sheet(sheet, previous_context):
     )
     rowx = register_table_title_rowx
     context.row = rowx
-    block_template_dict["registers"] = parse_register_table(
+    block_template_dict["registerTemplates"] = parse_register_table(
         sheet,
         rowx,
         context
@@ -375,7 +375,7 @@ def generate_block_template_from_sheet(sheet, previous_context):
             rowx,
             context
         )
-        block_template_dict["arrays"] = array_dict_list
+        block_template_dict["arrayTemplates"] = array_dict_list
 
     LOGGER.debug(
         "Processing sheet %s done",
