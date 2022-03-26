@@ -68,6 +68,7 @@ def get_unreserved_non_array_register(block):
         result.append(register)
     return result
 
+
 def print_doc_block(doc, idx, block, instances):
     block_type = block.block_type
 
@@ -86,7 +87,7 @@ def print_doc_block(doc, idx, block, instances):
     hdr.append("Register")
     for i in range(len(hdr)):
         p = hcells[i].paragraphs[0]
-        run = p.add_run(hdr[i])
+        p.add_run(hdr[i])
         p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
     i = 1
@@ -167,5 +168,8 @@ def print_doc(top_sys, output_path="."):
 
     doc.save(doc_file_name)
 
-    LOGGER.debug("Register description document is generated %s", doc_file_name)
+    LOGGER.debug(
+        "Register description document is generated %s",
+        doc_file_name
+    )
     return

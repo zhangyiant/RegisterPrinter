@@ -111,7 +111,7 @@ def print_uvm_block(block, out_path):
 
     content = template.render(
         {
-            "uvm_block": uvm_block, 
+            "uvm_block": uvm_block,
             "address_width": block.addr_width,
             "data_width": block.data_width,
             "registers": registers,

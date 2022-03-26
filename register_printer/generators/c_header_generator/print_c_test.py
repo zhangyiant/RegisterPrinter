@@ -7,6 +7,7 @@ from register_printer.template_loader import get_template
 
 LOGGER = logging.getLogger(__name__)
 
+
 def get_default_value(registers):
     result = 0xffffffff
     if len(registers) > 0:
@@ -22,7 +23,8 @@ def get_default_value(registers):
             struct = register.content_type
             result = get_default_value(struct.registers)
     return result
- 
+
+
 def generate_test_parameters(block_instance):
     default_value = get_default_value(block_instance.block.registers)
     test_parameters = {}

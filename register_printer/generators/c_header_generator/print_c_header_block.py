@@ -7,11 +7,13 @@ from register_printer.data_model import Register, Array, Struct
 
 LOGGER = logging.getLogger(__name__)
 
+
 def get_filename(out_path, block):
     filename = os.path.join(
         out_path,
         "regs_" + block.block_type.lower() + ".h")
     return filename
+
 
 def generate_array_structs(registers):
     c_structs = []
@@ -29,6 +31,7 @@ def generate_array_structs(registers):
             c_structs.append(c_struct)
     return c_structs
 
+
 def generate_struct_fields(registers):
     struct_fields = []
     rsvd_idx = 0
@@ -39,9 +42,11 @@ def generate_struct_fields(registers):
                 accumulated_number_rsvd_register += 1
             else:
                 if accumulated_number_rsvd_register > 1:
+                    name = "RSVD%d[%d]" % \
+                           (rsvd_idx, accumulated_number_rsvd_register)
                     struct_field = {
                         "type": "volatile const char",
-                        "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
+                        "name": name
                     }
                     struct_fields.append(struct_field)
                     rsvd_idx = rsvd_idx + 1
