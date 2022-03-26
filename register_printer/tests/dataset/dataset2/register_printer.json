@@ -25,13 +25,13 @@
     "blockTemplates": [
         {
             "blockType": "Type2",
-            "arrays": [],
-            "registers": [
+            "arrayTemplates": [],
+            "registerTemplates": [
                 {
                     "name": "reg1",
                     "offset": 0,
                     "description": "register 1",
-                    "fields": [
+                    "fieldTemplates": [
                         {
                             "name": "Field1",
                             "msb": 7,
@@ -54,7 +54,7 @@
                     "name": "reg2",
                     "offset": 8,
                     "description": "register 2",
-                    "fields": [
+                    "fieldTemplates": [
                         {
                             "name": "Field2",
                             "msb": 7,
@@ -77,7 +77,7 @@
         },
         {
             "blockType": "Type1",
-            "arrays": [
+            "arrayTemplates": [
                 {
                     "name": "reg_array1",
                     "length": 16,
@@ -95,12 +95,12 @@
                     "description": ""
                 }
             ],
-            "registers": [
+            "registerTemplates": [
                 {
                     "name": "reg1",
                     "offset": 0,
                     "description": "register 1",
-                    "fields": [
+                    "fieldTemplates": [
                         {
                             "name": "Field1",
                             "msb": 7,
@@ -123,7 +123,7 @@
                     "name": "reg2",
                     "offset": 4,
                     "description": "register 2",
-                    "fields": [
+                    "fieldTemplates": [
                         {
                             "name": "Field2",
                             "msb": 7,
@@ -146,7 +146,7 @@
                     "name": "reg_a1",
                     "offset": 16,
                     "description": "register aa",
-                    "fields": [
+                    "fieldTemplates": [
                         {
                             "name": "Field4",
                             "msb": 3,
@@ -169,7 +169,7 @@
                     "name": "reg_a2",
                     "offset": 256,
                     "description": "register a2",
-                    "fields": [
+                    "fieldTemplates": [
                         {
                             "name": "Field6",
                             "msb": 10,
@@ -192,7 +192,7 @@
                     "name": "reg_a3",
                     "offset": 280,
                     "description": "register a3",
-                    "fields": [
+                    "fieldTemplates": [
                         {
                             "name": "Field8",
                             "msb": 11,
@@ -215,7 +215,7 @@
                     "name": "reg_a2",
                     "offset": 288,
                     "description": "register a2",
-                    "fields": [
+                    "fieldTemplates": [
                         {
                             "name": "Field6",
                             "msb": 10,
@@ -238,7 +238,7 @@
                     "name": "regtt",
                     "offset": 416,
                     "description": "",
-                    "fields": [
+                    "fieldTemplates": [
                         {
                             "name": "Field9",
                             "msb": 10,
