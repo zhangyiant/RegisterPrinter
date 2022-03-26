@@ -7,6 +7,7 @@ from register_printer.data_model import Register, Array, Struct
 
 LOGGER = logging.getLogger(__name__)
 
+
 def get_full_registers(registers):
     # remove reserved registers
     # expand registers in Array
@@ -27,8 +28,9 @@ def get_full_registers(registers):
             LOGGER.warning("Unsupported register type")
     return result
 
+
 def get_struct_list(registers):
-    structs= []
+    structs = []
     for register in registers:
         if isinstance(register, Array):
             if not isinstance(register.content_type, Struct):
@@ -89,6 +91,7 @@ def get_uvm_block(block):
             result["registers"].append(reg_dict)
     return result
 
+
 def print_uvm_block(block, out_path):
     uvm_block_name = block.block_type.lower() + "_reg_model"
     file_name = os.path.join(
@@ -108,7 +111,7 @@ def print_uvm_block(block, out_path):
 
     content = template.render(
         {
-            "uvm_block": uvm_block, 
+            "uvm_block": uvm_block,
             "address_width": block.addr_width,
             "data_width": block.data_width,
             "registers": registers,

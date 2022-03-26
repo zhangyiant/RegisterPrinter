@@ -16,15 +16,18 @@ def is_empty_row(row):
         return True
     return False
 
+
 def is_register_table_flag_row(row):
     if row[0].value.strip().upper() == "register description".upper():
         return True
     return False
 
+
 def is_register_table_title_row(row):
     if row[0].value.strip().upper() == "Offset".upper():
         return True
     return False
+
 
 def parse_register_table_title(row):
     column_count = len(row)
@@ -49,15 +52,18 @@ def parse_register_table_title(row):
     LOGGER.debug("Register table column mapping: %s", result)
     return result
 
+
 def is_array_table_flag_row(row):
     if row[0].value.strip().upper() == "register array".upper():
         return True
     return False
 
+
 def is_array_table_title_row(row):
     if row[1].value.strip().upper() == "array_name".upper():
         return True
     return False
+
 
 def parse_array_table_title(row):
     column_count = len(row)
@@ -76,17 +82,20 @@ def parse_array_table_title(row):
     LOGGER.debug("Array table column mapping: %s", result)
     return result
 
+
 def is_table_title_row(row):
     if is_register_table_title_row(row) or \
-        is_array_table_title_row(row):
+            is_array_table_title_row(row):
         return True
     return False
 
+
 def is_table_flag_row(row):
     if is_array_table_flag_row(row) or \
-        is_register_table_flag_row(row):
+            is_register_table_flag_row(row):
         return True
     return False
+
 
 # Todo： validate field in Block.
 def validate_field_block(field, block):
@@ -110,14 +119,19 @@ def find_register_table_title_row(sheet, previous_context):
             if rowx < sheet.nrows:
                 row = sheet.row(rowx)
                 if is_register_table_title_row(row):
-                    LOGGER.debug("Register table title row is found. Row: %s", rowx + 1)
+                    LOGGER.debug(
+                        "Register table title row is found. Row: %s",
+                        rowx + 1
+                    )
                     found = True
                     break
                 else:
-                    msg = "No Register table title row found after Register table flag."
+                    msg = "No Register table title row found" \
+                          "after Register table flag."
                     raise ExcelParseException(msg, context)
             else:
-                msg = "Unexpected end of sheet after finding Register table flag."
+                msg = 'Unexpected end of sheet ' \
+                      'after finding Register table flag.'
                 raise ExcelParseException(msg, context)
         else:
             rowx += 1
@@ -126,6 +140,7 @@ def find_register_table_title_row(sheet, previous_context):
         msg = "Register table title row not found"
         raise ExcelParseException(msg, context)
     return rowx
+
 
 def find_array_table_title_row(sheet, previous_context):
     context = previous_context.copy()
@@ -141,11 +156,15 @@ def find_array_table_title_row(sheet, previous_context):
             if rowx < sheet.nrows:
                 row = sheet.row(rowx)
                 if is_array_table_title_row(row):
-                    LOGGER.debug("Array table title row is found. Row: %s", rowx)
+                    LOGGER.debug(
+                        "Array table title row is found. Row: %s",
+                        rowx
+                    )
                     found = True
                     break
                 else:
-                    msg = "No Array table title row found after Array table flag."
+                    msg = "No Array table title row found " \
+                          "after Array table flag."
                     raise ExcelParseException(msg, context)
             else:
                 msg = "Unexpected end of sheet after finding Array table flag."
@@ -156,6 +175,7 @@ def find_array_table_title_row(sheet, previous_context):
     if found:
         return rowx
     return None
+
 
 def parse_array_row(row, array_table_column_mapping, previous_context):
     """
@@ -205,6 +225,7 @@ def parse_array_row(row, array_table_column_mapping, previous_context):
     }
     return result
 
+
 def parse_array_table(sheet, start_rowx, previous_context):
     context = previous_context.copy()
     rowx = start_rowx
@@ -225,10 +246,15 @@ def parse_array_table(sheet, start_rowx, previous_context):
         if is_empty_row(row):
             rowx += 1
         else:
-            array_dict = parse_array_row(row, array_table_column_mapping, context)
+            array_dict = parse_array_row(
+                row,
+                array_table_column_mapping,
+                context
+            )
             array_dict_list.append(array_dict)
             rowx += 1
     return array_dict_list
+
 
 def parse_register_table(sheet, start_rowx, previous_context):
     context = previous_context.copy()
@@ -251,7 +277,12 @@ def parse_register_table(sheet, start_rowx, previous_context):
         if is_empty_row(row):
             rowx += 1
         elif is_register_row(row):
-            (register_dict, rowx) = parse_register(sheet, rowx, register_table_column_mapping, context)
+            (register_dict, rowx) = parse_register(
+                sheet,
+                rowx,
+                register_table_column_mapping,
+                context
+            )
             register_dict_list.append(register_dict)
             # Todo: Add offset, size validation
             # if register.offset > block.size:
@@ -270,6 +301,7 @@ def parse_register_table(sheet, start_rowx, previous_context):
             msg = "Unknown row."
             raise ExcelParseException(msg, context)
     return register_dict_list
+
 
 def validate_sheet(sheet, previous_context):
     context = previous_context.copy()
@@ -299,6 +331,7 @@ def is_register_row(row):
         return True
     return False
 
+
 def generate_block_template_from_sheet(sheet, previous_context):
 
     context = previous_context.copy()
@@ -311,7 +344,6 @@ def generate_block_template_from_sheet(sheet, previous_context):
         sheet.ncols)
 
     validate_sheet(sheet, context)
-
 
     block_template_dict = {
         "blockType": sheet.name,

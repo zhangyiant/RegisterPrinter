@@ -7,11 +7,13 @@ from register_printer.data_model import Register, Array, Struct
 
 LOGGER = logging.getLogger(__name__)
 
+
 def get_filename(out_path, block):
     filename = os.path.join(
         out_path,
         "regs_" + block.block_type.lower() + ".h")
     return filename
+
 
 def generate_array_structs(registers):
     c_structs = []
@@ -29,6 +31,7 @@ def generate_array_structs(registers):
             c_structs.append(c_struct)
     return c_structs
 
+
 def generate_struct_fields(registers):
     struct_fields = []
     rsvd_idx = 0
@@ -39,30 +42,29 @@ def generate_struct_fields(registers):
                 accumulated_number_rsvd_register += 1
             else:
                 if accumulated_number_rsvd_register > 1:
+                    name = "RSVD%d[%d]" % \
+                           (rsvd_idx, accumulated_number_rsvd_register)
                     struct_field = {
                         "type": "volatile const char",
-                        "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
+                        "name": name
                     }
                     struct_fields.append(struct_field)
                     rsvd_idx = rsvd_idx + 1
                     # reset accumulated_number_rsvd_register
                     accumulated_number_rsvd_register = 0
-                if reg.size == 1:
-                    type_str = "volatile char"
-                elif reg.size == 2:
-                    type_str = "volatile short"
-                elif reg.size == 4:
-                    type_str = "volatile int"
+                type_str = get_c_type_by_size(reg.size)
                 struct_field = {
-                    "type": type_str,
+                    "type": f"volatile {type_str}",
                     "name": reg.name.upper()
                 }
                 struct_fields.append(struct_field)
         elif isinstance(reg, Array):
             if accumulated_number_rsvd_register > 1:
+                name = "RSVD%d[%d]" % \
+                       (rsvd_idx, accumulated_number_rsvd_register)
                 struct_field = {
                     "type": "volatile const char",
-                    "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
+                    "name": name
                 }
                 struct_fields.append(struct_field)
                 rsvd_idx = rsvd_idx + 1
@@ -94,6 +96,16 @@ def generate_struct_fields(registers):
     return struct_fields
 
 
+def get_c_type_by_size(size):
+    if size == 1:
+        type_str = "char"
+    elif size == 2:
+        type_str = "short"
+    elif size == 4:
+        type_str = "int"
+    return type_str
+
+
 def generate_pos_mask_macros_from_array(array):
     if not isinstance(array.content_type, Struct):
         msg = "Unsupported: Content type in Array is not Struct."
@@ -103,6 +115,7 @@ def generate_pos_mask_macros_from_array(array):
     registers = struct.registers
     pos_mask_macros = generate_pos_mask_macros(registers)
     return pos_mask_macros
+
 
 def generate_pos_mask_macros(registers):
     pos_mask_macros = []

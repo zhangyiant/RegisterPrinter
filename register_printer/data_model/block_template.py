@@ -11,6 +11,7 @@ from .struct import Struct
 
 LOGGER = logging.getLogger(__name__)
 
+
 def generate_block_template(block_template_dict):
     block_template = BlockTemplate(
         block_template_dict["blockType"]
@@ -71,7 +72,7 @@ class BlockTemplate:
         for array_template in self.array_templates:
             start_address = array_template.array_start_address
             stop_address = array_template.array_stop_address
-            if offset >=start_address and offset < stop_address:
+            if offset >= start_address and offset < stop_address:
                 result = array_template
         return result
 
@@ -143,7 +144,8 @@ class BlockTemplate:
             if register_template is None:
                 offset += 1
                 continue
-            index = (register_template.offset - start_address) // array_template.offset
+            offset_difference = register_template.offset - start_address
+            index = offset_difference // array_template.offset
             register_name = register_template.name
             for field_template in register_template.fields:
                 field_name = field_template.name
@@ -185,7 +187,7 @@ class BlockTemplate:
                 register.fields.append(field)
         else:
             if offset > self._biggest_register_offset():
-                register = None            
+                register = None
             else:
                 register = Register(offset, reserved=True)
         return register

@@ -4,17 +4,18 @@ from .block import Block
 from .block_template import BlockTemplate
 from .block_instance import BlockInstance
 
-
 LOGGER = logging.getLogger(__name__)
+
 
 def find_block_template_by_block_type(block_template_list, block_type):
     block_template = None
     for temp_block_template in block_template_list:
         if temp_block_template.block_type.upper() == \
-            block_type.upper():
+                block_type.upper():
             block_template = temp_block_template
             break
     return block_template
+
 
 class TopSys:
     def __init__(self, name, addr_width=12, data_width=32):

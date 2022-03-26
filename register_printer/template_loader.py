@@ -33,4 +33,3 @@ def get_template(name):
         return _get_template_pyinstaller(name)
     else:
         return _get_template_pyinstaller(name)
-

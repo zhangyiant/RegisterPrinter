@@ -1,4 +1,3 @@
-from atexit import register
 import re
 import logging
 from .parse_exception import ExcelParseException
@@ -16,18 +15,13 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
     context = previous_context.copy()
 
     context.column = register_table_column_mapping["msb"]
-    try:
-        msb = int(row[context.column].value)
-    except Exception as exc:
-        msg = "Parse 'msb' error: {}.".format(exc)
-        raise ExcelParseException(msg, context)
 
+    # parse msb field
+    msb = parse_msb(row[context.column].value, context)
+
+    # parse lsb field
     context.column = register_table_column_mapping["lsb"]
-    try:
-        lsb = int(row[context.column].value)
-    except Exception as exc:
-        msg = "Parse 'lsb' error: {}.".format(exc)
-        raise ExcelParseException(msg, context)
+    lsb = parse_lsb(row[context.column].value, context)
     if lsb > msb:
         msg = "Error: lsb %d > msb %d." % (lsb, msb)
         raise ExcelParseException(msg, context)
@@ -70,3 +64,21 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
         "description": description
     }
     return field_dict
+
+
+def parse_lsb(value, context):
+    try:
+        lsb = int(value)
+    except Exception as exc:
+        msg = "Parse 'lsb' error: {}.".format(exc)
+        raise ExcelParseException(msg, context)
+    return lsb
+
+
+def parse_msb(value, context):
+    try:
+        msb = int(value)
+    except Exception as exc:
+        msg = "Parse 'msb' error: {}.".format(exc)
+        raise ExcelParseException(msg, context)
+    return msb

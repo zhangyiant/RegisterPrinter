@@ -1,6 +1,3 @@
-from register_printer.constants import RW_TYPES
-
-
 class FieldTemplate:
     def __init__(self, name, msb, lsb, default, access, description):
         self._name = name

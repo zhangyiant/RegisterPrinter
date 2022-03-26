@@ -46,11 +46,10 @@ def parse_block_instance_row(row, previous_context):
     block_type = row[1].value.strip()
 
     context.column = 2
-    try:
-        block_base_address = int(row[2].value.strip(), 16)
-    except Exception as exc:
-        msg = "Parse block base address error: {}.".format(exc)
-        raise ExcelParseException(msg, context)
+    block_base_address = parse_base_address(
+        row[context.column].value,
+        context
+    )
 
     context.column = 3
     try:
@@ -88,6 +87,15 @@ def parse_block_instance_row(row, previous_context):
         "dataWidth": data_width
     }
     return result
+
+
+def parse_base_address(value, context):
+    try:
+        block_base_address = int(value.strip(), 16)
+    except Exception as exc:
+        msg = "Parse block base address error: {}.".format(exc)
+        raise ExcelParseException(msg, context)
+    return block_base_address
 
 
 def parse_top_sys_sheet(sheet, previous_context):

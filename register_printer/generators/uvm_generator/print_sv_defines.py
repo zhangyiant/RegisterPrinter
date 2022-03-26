@@ -19,7 +19,8 @@ def get_instances(block_instances):
             if isinstance(register, Register):
                 if not register.is_reserved:
                     reg_dict = {}
-                    reg_dict["name"] = (block_instance.name + "_" + register.name + "_addr").upper()
+                    name = block_instance.name + "_" + register.name + "_addr"
+                    reg_dict["name"] = name.upper()
                     reg_dict["offset"] = register.offset
                     instance_dict["registers"].append(reg_dict)
             elif isinstance(register, Array):
@@ -29,11 +30,13 @@ def get_instances(block_instances):
                     raise Exception(msg)
                 struct = register.content_type
                 reg_dict = {}
-                reg_dict["name"] = (block_instance.name + "_" + struct.name + "_BASE_ADDR").upper()
+                name = block_instance.name + "_" + struct.name + "_BASE_ADDR"
+                reg_dict["name"] = name.upper()
                 reg_dict["offset"] = register.start_address
                 instance_dict["registers"].append(reg_dict)
         result.append(instance_dict)
     return result
+
 
 def print_sv_defines(top_sys, out_path):
 

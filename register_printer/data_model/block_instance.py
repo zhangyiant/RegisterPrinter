@@ -2,6 +2,7 @@ import logging
 
 LOGGER = logging.getLogger(__name__)
 
+
 class BlockInstance:
 
     def __init__(self,

@@ -1,5 +1,6 @@
 import textwrap
 
+
 class DefaultOverwriteEntry:
     def __init__(self):
         self.index = None
@@ -15,6 +16,7 @@ class DefaultOverwriteEntry:
         result += "\n    field name: " + str(self.field_name)
         result += "\n    default: " + hex(self.default)
         return result
+
 
 class Array:
     def __init__(self, content_type, length, start_address):

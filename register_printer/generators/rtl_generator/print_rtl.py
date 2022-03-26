@@ -24,7 +24,21 @@ def get_register_dict_from_register(register):
     wo_flds = []
     wrc_flds = []
     wrs_flds = []
-    #rsc_flds = []
+    # rsc_flds = []
+    access_to_fields_mapping = {
+        "RW": rw_flds,
+        "RWP": rwp_flds,
+        "RC": rc_flds,
+        "RO": ro_flds,
+        "RS": rs_flds,
+        "W1C": w1c_flds,
+        "W0C": w0c_flds,
+        "WC": wc_flds,
+        "WO": wo_flds,
+        "WRC": wrc_flds,
+        "WRS": wrs_flds,
+        "-": ro_flds
+    }
     for fld in register.fields:
         field_dict = {}
         field_dict["name"] = fld.name
@@ -34,30 +48,7 @@ def get_register_dict_from_register(register):
         field_dict["access"] = fld.access
         field_dict["description"] = fld.description
         tmp_register["fields"].append(field_dict)
-        if fld.access == "RW":
-            rw_flds.append(field_dict)
-        elif fld.access == "RWP":
-            rwp_flds.append(field_dict)
-        elif fld.access == "RC":
-            rc_flds.append(field_dict)
-        elif fld.access == "RO":
-            ro_flds.append(field_dict)
-        elif fld.access == "RS":
-            rs_flds.append(field_dict)
-        elif fld.access == "W1C":
-            w1c_flds.append(field_dict)
-        elif fld.access == "W0C":
-            w0c_flds.append(field_dict)
-        elif fld.access == "WC":
-            wc_flds.append(field_dict)
-        elif fld.access == "WO":
-            wo_flds.append(field_dict)
-        elif fld.access == "WRC":
-            wrc_flds.append(field_dict)
-        elif fld.access == "WRS":
-            wrs_flds.append(field_dict)
-        elif fld.access == "-":
-            ro_flds.append(field_dict)
+        access_to_fields_mapping[fld.access].append(field_dict)
     tmp_register["rw_flds"] = rw_flds
     tmp_register["rwp_flds"] = rwp_flds
     tmp_register["ro_flds"] = ro_flds
@@ -82,6 +73,7 @@ def update_default(register_dict, index, overwrite_entries):
             if field["name"] == overwrite_entry.field_name:
                 field["default"] = overwrite_entry.default
     return
+
 
 def print_rtl_block(block, out_path):
     file_name = os.path.join(
@@ -108,20 +100,11 @@ def print_rtl_block(block, out_path):
                 msg = "Unsupported: Content type in Array is not Struct."
                 LOGGER.error(msg)
                 raise Exception(msg)
-            struct = reg.content_type
-            for idx in range(reg.length):
-                for struct_reg in struct.registers:
-                    if not struct_reg.is_reserved:
-                        tmp_register_dict = get_register_dict_from_register(
-                            struct_reg
-                        )
-                        # Update default before register/field name update.
-                        update_default(tmp_register_dict, idx, reg.default_overwrite_entries)
-                        tmp_register_dict["name"] = f"{struct_reg.name}_{idx}"
-                        tmp_register_dict["offset"] = reg.start_address + idx * reg.offset + struct_reg.offset
-                        for field_dict in tmp_register_dict["fields"]:
-                            field_dict["name"] = f'{struct_reg.name}_{idx}_{field_dict["name"]}'
-                        tmp_registers.append(tmp_register_dict)
+            tmp_register_dict_list = \
+                get_register_dict_list_from_array_register(
+                    reg
+                )
+            tmp_registers.extend(tmp_register_dict_list)
         else:
             LOGGER.warning("Unsupported register type!")
 
@@ -136,6 +119,33 @@ def print_rtl_block(block, out_path):
         bfh.write(content)
 
     return
+
+
+def get_register_dict_list_from_array_register(reg):
+    struct = reg.content_type
+    tmp_register_dict_list = []
+    for idx in range(reg.length):
+        for struct_reg in struct.registers:
+            if not struct_reg.is_reserved:
+                tmp_register_dict = get_register_dict_from_register(
+                    struct_reg
+                )
+                # Update default before register/field name update.
+                update_default(
+                    tmp_register_dict,
+                    idx,
+                    reg.default_overwrite_entries
+                )
+                tmp_register_dict["name"] = f"{struct_reg.name}_{idx}"
+                tmp_register_dict["offset"] = \
+                    reg.start_address \
+                    + idx * reg.offset \
+                    + struct_reg.offset
+                for field_dict in tmp_register_dict["fields"]:
+                    field_dict["name"] = \
+                        f'{struct_reg.name}_{idx}_{field_dict["name"]}'
+                tmp_register_dict_list.append(tmp_register_dict)
+    return tmp_register_dict_list
 
 
 def print_rtl(top_sys, output_path="."):
