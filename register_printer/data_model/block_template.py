@@ -32,9 +32,10 @@ def generate_block_template(block_template_dict):
             )
             register.add_field(field)
         block_template.add_register(register)
-    for array_dict in block_template_dict["arrays"]:
-        array = ArrayTemplate.from_dict(array_dict)
-        block_template.add_array(array)
+    if "arrays" in block_template_dict:
+        for array_dict in block_template_dict["arrays"]:
+            array = ArrayTemplate.from_dict(array_dict)
+            block_template.add_array(array)
     return block_template
 
 
