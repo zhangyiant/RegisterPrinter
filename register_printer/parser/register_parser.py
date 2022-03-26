@@ -72,6 +72,7 @@ def parse_register_row(row, register_table_column_mapping, previous_context):
 
     return result
 
+
 def validate_field(new_field, parsed_fields, previous_context):
     context = previous_context
 
@@ -105,21 +106,33 @@ def validate_field(new_field, parsed_fields, previous_context):
     return
 
 
-def parse_register(sheet, start_row, register_table_column_mapping, previous_context):
+def parse_register(
+        sheet,
+        start_row,
+        register_table_column_mapping,
+        previous_context):
     context = previous_context.copy()
     rowx = start_row
 
     row = sheet.row(rowx)
     context.row = rowx
 
-    register_dict = parse_register_row(row, register_table_column_mapping, context)
+    register_dict = parse_register_row(
+        row,
+        register_table_column_mapping,
+        context
+    )
 
     rowx = rowx + 1
     row = sheet.row(rowx)
     context.row = rowx
     field_dict_list = []
     while is_field_row(row):
-        field_dict = parse_field_row(row, register_table_column_mapping, context)
+        field_dict = parse_field_row(
+            row,
+            register_table_column_mapping,
+            context
+        )
 
         validate_field(field_dict, field_dict_list, context)
 

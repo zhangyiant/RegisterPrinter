@@ -246,7 +246,11 @@ def parse_array_table(sheet, start_rowx, previous_context):
         if is_empty_row(row):
             rowx += 1
         else:
-            array_dict = parse_array_row(row, array_table_column_mapping, context)
+            array_dict = parse_array_row(
+                row,
+                array_table_column_mapping,
+                context
+            )
             array_dict_list.append(array_dict)
             rowx += 1
     return array_dict_list
@@ -273,7 +277,12 @@ def parse_register_table(sheet, start_rowx, previous_context):
         if is_empty_row(row):
             rowx += 1
         elif is_register_row(row):
-            (register_dict, rowx) = parse_register(sheet, rowx, register_table_column_mapping, context)
+            (register_dict, rowx) = parse_register(
+                sheet,
+                rowx,
+                register_table_column_mapping,
+                context
+            )
             register_dict_list.append(register_dict)
             # Todo: Add offset, size validation
             # if register.offset > block.size:
@@ -335,7 +344,6 @@ def generate_block_template_from_sheet(sheet, previous_context):
         sheet.ncols)
 
     validate_sheet(sheet, context)
-
 
     block_template_dict = {
         "blockType": sheet.name,
