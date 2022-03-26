@@ -172,3 +172,41 @@ class TestRegisterPrinter(TestCase):
             # So here, we only make sure the file is generated.
 
         return
+
+    def test_json_generator(self):
+        with TemporaryDirectory() as tmp_dir:
+            output_path = tmp_dir
+            register_printer = RegisterPrinter(
+                config_file=self.config_file,
+                excel_path=self.excel_path,
+                output_path=output_path
+            )
+            register_printer.generate_json()
+
+            json_file_path = tmp_dir
+            baseline_json_file_path = os.path.join(
+                TestRegisterPrinter.DATASET_PATH,
+                "output"
+            )
+
+            json_filename = os.path.join(
+                json_file_path,
+                "register_printer.json"
+            )
+            baseline_json_filename = os.path.join(
+                baseline_json_file_path,
+                "register_printer.json"
+            )
+            self.assertTrue(
+                os.path.exists(json_filename),
+                "JSON file is not generated."
+            )
+            self.assertTrue(
+                filecmp.cmp(
+                    json_filename,
+                    baseline_json_filename
+                ),
+                "JSON file content is not correct"
+            )
+
+        return
