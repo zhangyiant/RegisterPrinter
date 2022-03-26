@@ -92,13 +92,14 @@ class RegisterTemplate:
         return result
 
     def to_dict(self):
-        result = {}
-        result["name"] = self.name
-        result["offset"] = self.offset
-        result["description"] = self.description
-        result["fields"] = []
+        result = {
+            "name": self.name,
+            "offset": self.offset,
+            "description": self.description,
+            "fieldTemplates": []
+        }
         for field in self.fields:
-            result["fields"].append(field.to_dict())
+            result["fieldTemplates"].append(field.to_dict())
         return result
 
     @staticmethod
