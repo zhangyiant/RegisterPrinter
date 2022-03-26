@@ -31,4 +31,3 @@ def parse_excels(work_path, block_types=None):
             block_template_dict_list.extend(temp_block_template_dict_list)
 
     return block_template_dict_list
-
