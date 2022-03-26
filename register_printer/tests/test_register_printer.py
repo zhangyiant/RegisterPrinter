@@ -14,20 +14,26 @@ class TestRegisterPrinter(TestCase):
 
     DATASET_PATH = os.path.join(DATASET_ROOT_PATH, "dataset1")
 
-    def test_c_generator(self):
-        config_file = os.path.join(
+    def setUp(self):
+        self.config_file = os.path.join(
             TestRegisterPrinter.DATASET_PATH,
             "abc.xlsx"
         )
-        excel_path = os.path.join(
+        self.excel_path = os.path.join(
             TestRegisterPrinter.DATASET_PATH,
             "excels"
         )
+        return
+
+    def test_uvm_generator(self):
+        pass
+
+    def test_c_generator(self):
         with TemporaryDirectory() as tmp_dir:
             output_path = tmp_dir
             register_printer = RegisterPrinter(
-                config_file=config_file,
-                excel_path=excel_path,
+                config_file=self.config_file,
+                excel_path=self.excel_path,
                 output_path=output_path
             )
             register_printer.generate_c_header()
