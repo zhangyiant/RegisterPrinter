@@ -210,3 +210,51 @@ class TestRegisterPrinter(TestCase):
             )
 
         return
+
+
+class TestRegisterPrinterJSON(TestCase):
+
+    DATASET_PATH = os.path.join(DATASET_ROOT_PATH, "dataset2")
+
+    def setUp(self):
+        self.json_file = os.path.join(
+            TestRegisterPrinterJSON.DATASET_PATH,
+            "register_printer.json"
+        )
+        return
+
+    def test_json_input_and_output(self):
+        with TemporaryDirectory() as tmp_dir:
+            output_path = tmp_dir
+            register_printer = RegisterPrinter(
+                json_file=self.json_file,
+                output_path=output_path
+            )
+            register_printer.generate_json()
+
+            json_file_path = tmp_dir
+            baseline_json_file_path = os.path.join(
+                TestRegisterPrinterJSON.DATASET_PATH,
+                "output"
+            )
+
+            json_filename = os.path.join(
+                json_file_path,
+                "register_printer.json"
+            )
+            baseline_json_filename = os.path.join(
+                baseline_json_file_path,
+                "register_printer.json"
+            )
+            self.assertTrue(
+                os.path.exists(json_filename),
+                "JSON file is not generated."
+            )
+            self.assertTrue(
+                filecmp.cmp(
+                    json_filename,
+                    baseline_json_filename
+                ),
+                "JSON file content is not correct"
+            )
+            return
