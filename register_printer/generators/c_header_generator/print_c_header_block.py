@@ -52,14 +52,9 @@ def generate_struct_fields(registers):
                     rsvd_idx = rsvd_idx + 1
                     # reset accumulated_number_rsvd_register
                     accumulated_number_rsvd_register = 0
-                if reg.size == 1:
-                    type_str = "volatile char"
-                elif reg.size == 2:
-                    type_str = "volatile short"
-                elif reg.size == 4:
-                    type_str = "volatile int"
+                type_str = get_c_type_by_size(reg.size)
                 struct_field = {
-                    "type": type_str,
+                    "type": f"volatile {type_str}",
                     "name": reg.name.upper()
                 }
                 struct_fields.append(struct_field)
@@ -99,6 +94,16 @@ def generate_struct_fields(registers):
         # reset accumulated_number_rsvd_register
         accumulated_number_rsvd_register = 0
     return struct_fields
+
+
+def get_c_type_by_size(size):
+    if size == 1:
+        type_str = "char"
+    elif size == 2:
+        type_str = "short"
+    elif size == 4:
+        type_str = "int"
+    return type_str
 
 
 def generate_pos_mask_macros_from_array(array):
