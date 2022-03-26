@@ -65,9 +65,11 @@ def generate_struct_fields(registers):
                 struct_fields.append(struct_field)
         elif isinstance(reg, Array):
             if accumulated_number_rsvd_register > 1:
+                name = "RSVD%d[%d]" % \
+                       (rsvd_idx, accumulated_number_rsvd_register)
                 struct_field = {
                     "type": "volatile const char",
-                    "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
+                    "name": name
                 }
                 struct_fields.append(struct_field)
                 rsvd_idx = rsvd_idx + 1
@@ -108,6 +110,7 @@ def generate_pos_mask_macros_from_array(array):
     registers = struct.registers
     pos_mask_macros = generate_pos_mask_macros(registers)
     return pos_mask_macros
+
 
 def generate_pos_mask_macros(registers):
     pos_mask_macros = []

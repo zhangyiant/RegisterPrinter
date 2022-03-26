@@ -24,7 +24,7 @@ def get_register_dict_from_register(register):
     wo_flds = []
     wrc_flds = []
     wrs_flds = []
-    #rsc_flds = []
+    # rsc_flds = []
     for fld in register.fields:
         field_dict = {}
         field_dict["name"] = fld.name
@@ -83,6 +83,7 @@ def update_default(register_dict, index, overwrite_entries):
                 field["default"] = overwrite_entry.default
     return
 
+
 def print_rtl_block(block, out_path):
     file_name = os.path.join(
         out_path,
@@ -116,11 +117,19 @@ def print_rtl_block(block, out_path):
                             struct_reg
                         )
                         # Update default before register/field name update.
-                        update_default(tmp_register_dict, idx, reg.default_overwrite_entries)
+                        update_default(
+                            tmp_register_dict,
+                            idx,
+                            reg.default_overwrite_entries
+                        )
                         tmp_register_dict["name"] = f"{struct_reg.name}_{idx}"
-                        tmp_register_dict["offset"] = reg.start_address + idx * reg.offset + struct_reg.offset
+                        tmp_register_dict["offset"] = \
+                            reg.start_address \
+                            + idx * reg.offset \
+                            + struct_reg.offset
                         for field_dict in tmp_register_dict["fields"]:
-                            field_dict["name"] = f'{struct_reg.name}_{idx}_{field_dict["name"]}'
+                            field_dict["name"] = \
+                                f'{struct_reg.name}_{idx}_{field_dict["name"]}'
                         tmp_registers.append(tmp_register_dict)
         else:
             LOGGER.warning("Unsupported register type!")
