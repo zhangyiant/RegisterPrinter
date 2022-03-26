@@ -1,5 +1,12 @@
 class ArrayTemplate:
-    def __init__(self, name, length, offset, start_address, end_address, description):
+    def __init__(
+            self,
+            name,
+            length,
+            offset,
+            start_address,
+            end_address,
+            description):
         self._name = name
         self._length = length
         self._offset = offset

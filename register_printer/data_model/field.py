@@ -1,6 +1,3 @@
-from register_printer.constants import RW_TYPES
-
-
 class Field:
     def __init__(self):
         self.name = ""

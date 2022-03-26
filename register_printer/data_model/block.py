@@ -1,6 +1,5 @@
 import textwrap
 import logging
-from .register_template import RegisterTemplate
 
 
 LOGGER = logging.getLogger(__name__)
@@ -85,7 +84,9 @@ class Block:
     @property
     def registers(self):
         if self._registers is None:
-            self._registers = self.block_template.generate_registers(self.data_width)
+            self._registers = self.block_template.generate_registers(
+                self.data_width
+            )
         return self._registers
 
     def __str__(self):

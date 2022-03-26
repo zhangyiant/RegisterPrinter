@@ -1,6 +1,5 @@
 import textwrap
 
-from register_printer.data_model.utility import msb_to_bytes
 from .field import Field
 from .utility import msb_to_bytes
 
