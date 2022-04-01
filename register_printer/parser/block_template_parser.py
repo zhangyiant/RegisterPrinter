@@ -1,5 +1,7 @@
 import re
 import logging
+
+import xlrd
 from xlrd import open_workbook
 
 
@@ -18,6 +20,8 @@ def is_empty_row(row):
 
 
 def is_register_table_flag_row(row):
+    if row[0].ctype != xlrd.XL_CELL_TEXT:
+        return False
     if row[0].value.strip().upper() == "register description".upper():
         return True
     return False
@@ -54,6 +58,8 @@ def parse_register_table_title(row):
 
 
 def is_array_table_flag_row(row):
+    if row[0].ctype != xlrd.XL_CELL_TEXT:
+        return False
     if row[0].value.strip().upper() == "register array".upper():
         return True
     return False
