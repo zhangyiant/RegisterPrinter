@@ -1,0 +1,255 @@
+{
+    "name": "Top_Module",
+    "addressWidth": 12,
+    "dataWidth": 32,
+    "version": "2.1.234",
+    "author": "Yi Zhang",
+    "blockInstances": [
+        {
+            "blockType": "Type2",
+            "name": "Instance2",
+            "baseAddress": 65536,
+            "blockSize": 16,
+            "addressWidth": 24,
+            "dataWidth": 64
+        },
+        {
+            "blockType": "Type1",
+            "name": "Instance3",
+            "baseAddress": 131072,
+            "blockSize": 65536,
+            "addressWidth": null,
+            "dataWidth": null
+        }
+    ],
+    "blockTemplates": [
+        {
+            "blockType": "Type2",
+            "arrayTemplates": [],
+            "registerTemplates": [
+                {
+                    "name": "reg1",
+                    "offset": 0,
+                    "description": "register 1",
+                    "fieldTemplates": [
+                        {
+                            "name": "Field1",
+                            "msb": 7,
+                            "lsb": 1,
+                            "defaultValue": 1,
+                            "access": "RW",
+                            "description": "Register1-Field1"
+                        },
+                        {
+                            "name": "Field2",
+                            "msb": 10,
+                            "lsb": 8,
+                            "defaultValue": 1,
+                            "access": "RW",
+                            "description": "Register1-Field2"
+                        }
+                    ]
+                },
+                {
+                    "name": "reg2",
+                    "offset": 8,
+                    "description": "register 2",
+                    "fieldTemplates": [
+                        {
+                            "name": "Field2",
+                            "msb": 7,
+                            "lsb": 1,
+                            "defaultValue": 1,
+                            "access": "RW",
+                            "description": "Register2-Field1"
+                        },
+                        {
+                            "name": "Field3",
+                            "msb": 12,
+                            "lsb": 9,
+                            "defaultValue": 1,
+                            "access": "RW",
+                            "description": "Register2-Field3"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "blockType": "Type1",
+            "arrayTemplates": [
+                {
+                    "name": "reg_array1",
+                    "length": 16,
+                    "offset": 4,
+                    "startAddress": 16,
+                    "endAddress": 16,
+                    "description": ""
+                },
+                {
+                    "name": "reg_array2",
+                    "length": 4,
+                    "offset": 32,
+                    "startAddress": 256,
+                    "endAddress": 284,
+                    "description": ""
+                }
+            ],
+            "registerTemplates": [
+                {
+                    "name": "reg1",
+                    "offset": 0,
+                    "description": "register 1",
+                    "fieldTemplates": [
+                        {
+                            "name": "Field1",
+                            "msb": 7,
+                            "lsb": 1,
+                            "defaultValue": 1,
+                            "access": "RW",
+                            "description": "Register1-Field1"
+                        },
+                        {
+                            "name": "Field2",
+                            "msb": 10,
+                            "lsb": 8,
+                            "defaultValue": 1,
+                            "access": "RW",
+                            "description": "Register1-Field2"
+                        }
+                    ]
+                },
+                {
+                    "name": "reg2",
+                    "offset": 4,
+                    "description": "register 2",
+                    "fieldTemplates": [
+                        {
+                            "name": "Field2",
+                            "msb": 7,
+                            "lsb": 1,
+                            "defaultValue": 1,
+                            "access": "RW",
+                            "description": "Register2-Field1"
+                        },
+                        {
+                            "name": "Field3",
+                            "msb": 12,
+                            "lsb": 9,
+                            "defaultValue": 1,
+                            "access": "RW",
+                            "description": "Register2-Field3"
+                        }
+                    ]
+                },
+                {
+                    "name": "reg_a1",
+                    "offset": 16,
+                    "description": "register aa",
+                    "fieldTemplates": [
+                        {
+                            "name": "Field4",
+                            "msb": 3,
+                            "lsb": 0,
+                            "defaultValue": 1,
+                            "access": "RO",
+                            "description": "registeraa_field4"
+                        },
+                        {
+                            "name": "Field5",
+                            "msb": 14,
+                            "lsb": 4,
+                            "defaultValue": 2,
+                            "access": "RW",
+                            "description": "registeraa_field5"
+                        }
+                    ]
+                },
+                {
+                    "name": "reg_a2",
+                    "offset": 256,
+                    "description": "register a2",
+                    "fieldTemplates": [
+                        {
+                            "name": "Field6",
+                            "msb": 10,
+                            "lsb": 0,
+                            "defaultValue": 4,
+                            "access": "RW",
+                            "description": "registera2_field6"
+                        },
+                        {
+                            "name": "Field7",
+                            "msb": 31,
+                            "lsb": 11,
+                            "defaultValue": 4,
+                            "access": "RW",
+                            "description": "registera2_field7"
+                        }
+                    ]
+                },
+                {
+                    "name": "reg_a3",
+                    "offset": 280,
+                    "description": "register a3",
+                    "fieldTemplates": [
+                        {
+                            "name": "Field8",
+                            "msb": 11,
+                            "lsb": 0,
+                            "defaultValue": 5,
+                            "access": "RW",
+                            "description": "registera3_field8"
+                        },
+                        {
+                            "name": "Field9",
+                            "msb": 15,
+                            "lsb": 12,
+                            "defaultValue": 7,
+                            "access": "RW",
+                            "description": "registera3_field9"
+                        }
+                    ]
+                },
+                {
+                    "name": "reg_a2",
+                    "offset": 288,
+                    "description": "register a2",
+                    "fieldTemplates": [
+                        {
+                            "name": "Field6",
+                            "msb": 10,
+                            "lsb": 0,
+                            "defaultValue": 5,
+                            "access": "RW",
+                            "description": "registera2_field6"
+                        },
+                        {
+                            "name": "Field7",
+                            "msb": 31,
+                            "lsb": 11,
+                            "defaultValue": 6,
+                            "access": "RW",
+                            "description": "registera2_field7"
+                        }
+                    ]
+                },
+                {
+                    "name": "regtt",
+                    "offset": 416,
+                    "description": "",
+                    "fieldTemplates": [
+                        {
+                            "name": "Field9",
+                            "msb": 10,
+                            "lsb": 0,
+                            "defaultValue": 5,
+                            "access": "RW",
+                            "description": "registera2_field6"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

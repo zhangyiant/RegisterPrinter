@@ -16,13 +16,13 @@ def generate_block_template(block_template_dict):
     block_template = BlockTemplate(
         block_template_dict["blockType"]
     )
-    for register_dict in block_template_dict["registers"]:
+    for register_dict in block_template_dict["registerTemplates"]:
         register = RegisterTemplate(
             register_dict["name"],
             register_dict["offset"],
             register_dict["description"]
         )
-        for field_dict in register_dict["fields"]:
+        for field_dict in register_dict["fieldTemplates"]:
             field = FieldTemplate(
                 field_dict["name"],
                 field_dict["msb"],
@@ -33,8 +33,8 @@ def generate_block_template(block_template_dict):
             )
             register.add_field(field)
         block_template.add_register(register)
-    if "arrays" in block_template_dict:
-        for array_dict in block_template_dict["arrays"]:
+    if "arrayTemplates" in block_template_dict:
+        for array_dict in block_template_dict["arrayTemplates"]:
             array = ArrayTemplate.from_dict(array_dict)
             block_template.add_array(array)
     return block_template
@@ -220,13 +220,13 @@ class BlockTemplate:
     def to_dict(self):
         result = {
             "blockType": self.block_type,
-            "arrays": [],
-            "registers": []
+            "arrayTemplates": [],
+            "registerTemplates": []
         }
         for array_template in self.array_templates:
             array_template_dict = array_template.to_dict()
-            result["arrays"].append(array_template_dict)
+            result["arrayTemplates"].append(array_template_dict)
         for register in self.register_templates:
             register_dict = register.to_dict()
-            result["registers"].append(register_dict)
+            result["registerTemplates"].append(register_dict)
         return result
