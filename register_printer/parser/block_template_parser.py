@@ -322,9 +322,9 @@ def validate_sheet(sheet, previous_context):
     context.column = 0
     if sheet.cell(0, 0).value.upper() != "Module description".upper():
         LOGGER.debug(
-            "sheet %s error: find no \"Module description:\" in cell(0,0)",
+            "sheet %s error: no \"Module description\" in cell(0,0)",
             sheet.name)
-        msg = "No \"Module description:\" in cell(0,0)."
+        msg = "No \"Module description\" in cell(0,0)."
         raise ExcelParseException(msg, context)
     return
 
