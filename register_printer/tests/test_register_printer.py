@@ -266,11 +266,11 @@ class TestRegisterPrinterWithExtraField(TestCase):
 
     def setUp(self):
         self.config_file = os.path.join(
-            TestRegisterPrinter.DATASET_PATH,
+            TestRegisterPrinterWithExtraField.DATASET_PATH,
             "abc.xlsx"
         )
         self.excel_path = os.path.join(
-            TestRegisterPrinter.DATASET_PATH,
+            TestRegisterPrinterWithExtraField.DATASET_PATH,
             "excels"
         )
         return
@@ -287,7 +287,7 @@ class TestRegisterPrinterWithExtraField(TestCase):
 
             json_file_path = tmp_dir
             baseline_json_file_path = os.path.join(
-                TestRegisterPrinter.DATASET_PATH,
+                TestRegisterPrinterWithExtraField.DATASET_PATH,
                 "output"
             )
 
