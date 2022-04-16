@@ -22,7 +22,10 @@ def is_field_row(row):
     return False
 
 
-def validate_register_row_empty_field(row, register_table_column_mapping, previous_context):
+def validate_register_row_empty_field(
+        row,
+        register_table_column_mapping,
+        previous_context):
     """
         row can be obtained by xlrd sheet.row() method.
         It's a sequence of cell objects.
@@ -49,7 +52,11 @@ def parse_register_row(row, register_table_column_mapping, previous_context):
                  a sequence of cells.
     """
     context = previous_context.copy()
-    validate_register_row_empty_field(row, register_table_column_mapping, context)
+    validate_register_row_empty_field(
+        row,
+        register_table_column_mapping,
+        context
+    )
 
     context.column = register_table_column_mapping["offset"]
     try:
