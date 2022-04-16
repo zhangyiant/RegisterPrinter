@@ -258,3 +258,57 @@ class TestRegisterPrinterJSON(TestCase):
                 "JSON file content is not correct"
             )
             return
+
+
+class TestRegisterPrinterWithExtraField(TestCase):
+
+    DATASET_PATH = os.path.join(DATASET_ROOT_PATH, "dataset3")
+
+    def setUp(self):
+        self.config_file = os.path.join(
+            TestRegisterPrinterWithExtraField.DATASET_PATH,
+            "abc.xlsx"
+        )
+        self.excel_path = os.path.join(
+            TestRegisterPrinterWithExtraField.DATASET_PATH,
+            "excels"
+        )
+        return
+
+    def test_extra_field_in_registers(self):
+        with TemporaryDirectory() as tmp_dir:
+            output_path = tmp_dir
+            register_printer = RegisterPrinter(
+                config_file=self.config_file,
+                excel_path=self.excel_path,
+                output_path=output_path
+            )
+            register_printer.generate_json()
+
+            json_file_path = tmp_dir
+            baseline_json_file_path = os.path.join(
+                TestRegisterPrinterWithExtraField.DATASET_PATH,
+                "output"
+            )
+
+            json_filename = os.path.join(
+                json_file_path,
+                "register_printer.json"
+            )
+            baseline_json_filename = os.path.join(
+                baseline_json_file_path,
+                "register_printer.json"
+            )
+            self.assertTrue(
+                os.path.exists(json_filename),
+                "JSON file is not generated."
+            )
+            self.assertTrue(
+                filecmp.cmp(
+                    json_filename,
+                    baseline_json_filename
+                ),
+                "JSON file content is not correct"
+            )
+
+        return

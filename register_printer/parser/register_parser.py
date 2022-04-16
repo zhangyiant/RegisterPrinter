@@ -22,23 +22,23 @@ def is_field_row(row):
     return False
 
 
-def validate_register_row_empty_field(row, previous_context):
+def validate_register_row_empty_field(row, register_table_column_mapping, previous_context):
     """
         row can be obtained by xlrd sheet.row() method.
         It's a sequence of cell objects.
     """
     context = previous_context.copy()
-    field_map = [
-        (2, "msb"),
-        (3, "lsb"),
-        (4, "field"),
-        (5, "access"),
-        (6, "default")
+    fields = [
+        "msb",
+        "lsb",
+        "field name",
+        "access",
+        "default"
     ]
-    for (col, field_name) in field_map:
-        context.column = col
-        if row[col].value != "":
-            msg = "Field '%s' must be emtpy." % field_name
+    for field in fields:
+        context.column = register_table_column_mapping[field]
+        if row[context.column].value != "":
+            msg = "Field '%s' must be emtpy." % field
             raise ExcelParseException(msg, context)
     return
 
@@ -49,7 +49,7 @@ def parse_register_row(row, register_table_column_mapping, previous_context):
                  a sequence of cells.
     """
     context = previous_context.copy()
-    validate_register_row_empty_field(row, context)
+    validate_register_row_empty_field(row, register_table_column_mapping, context)
 
     context.column = register_table_column_mapping["offset"]
     try:
