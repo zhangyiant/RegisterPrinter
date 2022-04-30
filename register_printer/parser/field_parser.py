@@ -35,7 +35,10 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
     context.column = register_table_column_mapping["access"]
     access = row[context.column].value.upper()
     if access not in RW_TYPES:
-        msg = "Invalid access type: {}.".format(access)
+        msg = "Invalid access type: {}, valid access types are {}.".format(
+            access,
+            RW_TYPES
+        )
         raise ExcelParseException(msg, context)
 
     context.column = register_table_column_mapping["default"]

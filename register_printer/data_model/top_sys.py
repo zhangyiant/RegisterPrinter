@@ -187,15 +187,26 @@ class TopSys:
         top_sys.author = top_sys_dict["author"]
         top_sys.version = top_sys_dict["version"]
         for block_inst_dict in top_sys_dict["blockInstances"]:
-
-            block = top_sys.find_block_by_type(
-                block_inst_dict["blockType"])
+            block_type = block_inst_dict["blockType"]
+            LOGGER.debug("Search block by block type(%s).", block_type)
+            block = top_sys.find_block_by_type(block_type)
             if block is None:
+                LOGGER.debug(
+                    "Block(type: %s) not found, try to search block template",
+                    block_type
+                )
                 block_template = find_block_template_by_block_type(
                     block_template_list,
-                    block_inst_dict["blockType"]
+                    block_type
                 )
-
+                if block_template is None:
+                    LOGGER.debug(
+                        "Block template(type: %s) not found.",
+                        block_type
+                    )
+                    raise Exception(
+                        "Block type(\"{}\") not found.".format(block_type)
+                    )
                 block = Block(
                     top_sys,
                     block_template,
@@ -203,6 +214,11 @@ class TopSys:
                     data_width=block_inst_dict["dataWidth"]
                 )
                 top_sys.add_block(block)
+            else:
+                LOGGER.debug(
+                    "Existing Block(type: %s) is found",
+                    block_type
+                )
 
             block_instance = BlockInstance(
                 top_sys,
