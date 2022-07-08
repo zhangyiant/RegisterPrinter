@@ -118,7 +118,7 @@ class REG_ARRAY1 extends uvm_reg_block;
 endclass: REG_ARRAY1
 
 function REG_ARRAY1::new(string name="REG_ARRAY1");
-  super.name(name);
+  super.new(name);
 endfunction: new
 
 function void REG_ARRAY1::build();
@@ -143,7 +143,7 @@ class REG_ARRAY2 extends uvm_reg_block;
 endclass: REG_ARRAY2
 
 function REG_ARRAY2::new(string name="REG_ARRAY2");
-  super.name(name);
+  super.new(name);
 endfunction: new
 
 function void REG_ARRAY2::build();

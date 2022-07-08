@@ -46,7 +46,7 @@ class {{ struct.name | upper }} extends uvm_reg_block;
 endclass: {{ struct.name | upper }}
 
 function {{ struct.name | upper }}::new(string name="{{ struct.name | upper }}");
-  super.name(name);
+  super.new(name);
 endfunction: new
 
 function void {{ struct.name | upper }}::build();
