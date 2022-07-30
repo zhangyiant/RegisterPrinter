@@ -25,7 +25,7 @@ def generate_array_structs(registers):
                 raise Exception(msg)
             struct = register.content_type
             c_struct = {}
-            c_struct["name"] = struct.name + "_NAME"
+            c_struct["name"] = struct.name.upper() + "_TypeDef";
             struct_fields = generate_struct_fields(struct.registers)
             c_struct["struct_fields"] = struct_fields
             c_structs.append(c_struct)
@@ -76,8 +76,8 @@ def generate_struct_fields(registers):
                 raise Exception(msg)
             struct = reg.content_type
             struct_field = {
-                "type": (struct.name + "_NAME").upper(),
-                "name": (struct.name).upper() + f"[{reg.length}]"
+                "type": struct.name.upper() + "_TypeDef",
+                "name": struct.name.upper() + f"[{reg.length}]"
             }
             struct_fields.append(struct_field)
         else:

@@ -9,7 +9,7 @@ typedef struct {
 {% for struct_field in c_struct.struct_fields %}
     {{ "%-24s\t%-24s\t;" | format(struct_field.type, struct_field.name) }}
 {% endfor %}
-} {{ c_struct.name | upper}};
+} {{ c_struct.name }};
 
 {% endfor %}
 typedef struct
