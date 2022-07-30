@@ -45,7 +45,7 @@ def generate_struct_fields(registers):
                     name = "RSVD%d[%d]" % \
                            (rsvd_idx, accumulated_number_rsvd_register)
                     struct_field = {
-                        "type": "volatile const char",
+                        "type": "const uint8_t",
                         "name": name
                     }
                     struct_fields.append(struct_field)
@@ -54,7 +54,7 @@ def generate_struct_fields(registers):
                     accumulated_number_rsvd_register = 0
                 type_str = get_c_type_by_size(reg.size)
                 struct_field = {
-                    "type": f"volatile {type_str}",
+                    "type": type_str,
                     "name": reg.name.upper()
                 }
                 struct_fields.append(struct_field)
@@ -63,7 +63,7 @@ def generate_struct_fields(registers):
                 name = "RSVD%d[%d]" % \
                        (rsvd_idx, accumulated_number_rsvd_register)
                 struct_field = {
-                    "type": "volatile const char",
+                    "type": "const uint8_t",
                     "name": name
                 }
                 struct_fields.append(struct_field)
@@ -86,7 +86,7 @@ def generate_struct_fields(registers):
     # write the last reserved register
     if accumulated_number_rsvd_register > 1:
         struct_field = {
-            "type": "volatile const char",
+            "type": "const uint8_t",
             "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
         }
         struct_fields.append(struct_field)
@@ -98,11 +98,11 @@ def generate_struct_fields(registers):
 
 def get_c_type_by_size(size):
     if size == 1:
-        type_str = "char"
+        type_str = "uint8_t"
     elif size == 2:
-        type_str = "short"
+        type_str = "uint16_t"
     elif size == 4:
-        type_str = "int"
+        type_str = "uint32_t"
     return type_str
 
 
