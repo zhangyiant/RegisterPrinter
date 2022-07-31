@@ -11,7 +11,7 @@ typedef struct
             uint32_t RSVD0:1;
             uint32_t FIELD1:7;
             uint32_t FIELD2:3;
-            uint32_t RSVD0:5;
+            uint32_t RSVD1:5;
         } REG1_B;
         uint16_t REG1;
     };

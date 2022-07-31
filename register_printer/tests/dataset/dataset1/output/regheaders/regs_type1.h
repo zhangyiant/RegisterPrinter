@@ -22,7 +22,7 @@ typedef struct {
             uint32_t FIELD6:11;
             uint32_t FIELD7:21;
         } REG_A2_B;
-        uint32_t REG_A1;
+        uint32_t REG_A2;
     };
     const uint8_t RSVD0[20];
     union {
