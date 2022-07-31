@@ -25,7 +25,7 @@ def generate_array_structs(registers):
                 raise Exception(msg)
             struct = register.content_type
             c_struct = {}
-            c_struct["name"] = struct.name.upper() + "_TypeDef";
+            c_struct["name"] = struct.name.upper() + "_TypeDef"
             struct_fields = generate_struct_fields(struct.registers)
             c_struct["struct_fields"] = struct_fields
             c_structs.append(c_struct)
@@ -107,7 +107,7 @@ def generate_struct_fields(registers):
                     # reset accumulated_number_rsvd_register
                     accumulated_number_rsvd_register = 0
                 type_str = get_c_type_by_size(reg.size)
-                fields = get_union_fields(reg);
+                fields = get_union_fields(reg)
                 struct_field = {
                     "category": "register",
                     "type": type_str,
