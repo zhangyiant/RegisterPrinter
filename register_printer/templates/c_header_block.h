@@ -26,7 +26,18 @@ typedef struct {
 typedef struct
 {
 {% for struct_field in struct_fields %}
-    {{ "%-24s\t%-24s\t;" | format(struct_field.type, struct_field.name) }}
+    {% if struct_field.category == "reserved" or struct_field.category == "array" %}
+    {{ "%s %s;" | format(struct_field.type, struct_field.name) }}
+    {% elif struct_field.category == "register" %}
+    union {
+        struct {
+            {% for field in struct_field.fields %}
+            {{ "%s %s:%d;" | format(field.type, field.name, field.length) }}
+            {% endfor %}
+        } {{ struct_field.name }}_B;
+        {{ "%s %s;" | format(struct_field.type, struct_field.name) }}
+    };
+    {% endif %}
 {% endfor %}
 } {{ block_type | upper }}_TypeDef;
 
