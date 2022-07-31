@@ -1,14 +1,35 @@
 #ifndef __REGS_TYPE2_H__
 #define __REGS_TYPE2_H__
 
+#include <stdint.h>
+#pragma pack(1)
+
 typedef struct
 {
-    volatile short          	REG1                    	;
-    volatile const char     	RSVD0[6]                	;
-    volatile short          	REG2                    	;
-    volatile const char     	RSVD1[6]                	;
+    union {
+        struct {
+            uint32_t RSVD0:1;
+            uint32_t FIELD1:7;
+            uint32_t FIELD2:3;
+            uint32_t RSVD1:5;
+        } REG1_B;
+        uint16_t REG1;
+    };
+    const uint8_t RSVD0[6];
+    union {
+        struct {
+            uint32_t RSVD0:1;
+            uint32_t FIELD2:7;
+            uint32_t RSVD1:1;
+            uint32_t FIELD3:4;
+            uint32_t RSVD2:3;
+        } REG2_B;
+        uint16_t REG2;
+    };
+    const uint8_t RSVD1[6];
 } TYPE2_TypeDef;
 
+#pragma pack()
 
 #define    REG1_FIELD1_Pos                                                  1
 #define    REG1_FIELD1_Msk                                                  (0x7fU << REG1_FIELD1_Pos)
