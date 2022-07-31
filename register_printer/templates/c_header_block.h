@@ -8,7 +8,7 @@
 typedef struct {
 {% for struct_field in c_struct.struct_fields %}
     {% if struct_field.category == "reserved" %}
-    {{ "%-24s\t%-24s\t;" | format(struct_field.type, struct_field.name) }}
+    {{ "%s %s;" | format(struct_field.type, struct_field.name) }}
     {% elif struct_field.category == "register" %}
     union {
         struct {
