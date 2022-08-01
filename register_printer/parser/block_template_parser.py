@@ -28,6 +28,8 @@ def is_register_table_flag_row(row):
 
 
 def is_register_table_title_row(row):
+    if row[0].ctype != xlrd.XL_CELL_TEXT:
+        return False
     if row[0].value.strip().upper() == "Offset".upper():
         return True
     return False
