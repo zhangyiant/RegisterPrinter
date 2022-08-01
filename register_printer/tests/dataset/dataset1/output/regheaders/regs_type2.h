@@ -9,9 +9,9 @@ typedef struct
     union {
         struct {
             uint32_t RSVD0:1;
-            uint32_t FIELD1:7;
+            uint32_t RSVD1:7;
             uint32_t FIELD2:3;
-            uint32_t RSVD1:5;
+            uint32_t RSVD2:5;
         } REG1_B;
         uint16_t REG1;
     };
@@ -30,9 +30,6 @@ typedef struct
 } TYPE2_TypeDef;
 
 #pragma pack()
-
-#define    REG1_FIELD1_Pos                                                  1
-#define    REG1_FIELD1_Msk                                                  (0x7fU << REG1_FIELD1_Pos)
 
 #define    REG1_FIELD2_Pos                                                  8
 #define    REG1_FIELD2_Msk                                                  (0x7U << REG1_FIELD2_Pos)

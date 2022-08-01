@@ -3,7 +3,6 @@
 
 class REG1 extends uvm_reg;
   `uvm_object_utils(REG1)
-  uvm_reg_field field1;
   uvm_reg_field field2;
 
   function new(string name = "REG1", int unsigned n_bits = 16);
@@ -11,8 +10,6 @@ class REG1 extends uvm_reg;
   endfunction: new
 
   virtual function void build();
-    field1 = uvm_reg_field::type_id::create("field1");
-    field1.configure(this, 7, 1, "RW", 0, 'h1, 1, 1, 1);
     field2 = uvm_reg_field::type_id::create("field2");
     field2.configure(this, 3, 8, "RW", 0, 'h1, 1, 1, 1);
   endfunction: build
