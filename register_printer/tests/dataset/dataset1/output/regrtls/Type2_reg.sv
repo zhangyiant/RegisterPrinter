@@ -6,7 +6,6 @@ module Type2_reg
     input     reg_clk                                                       ,
     input     reg_rstn                                                      ,
     input     wp_dis                                                        ,
-    output logic[ 6: 0]     Field1                                          ,
     output logic[ 2: 0]     Field2                                          ,
     output logic[ 6: 0]     Field2                                          ,
     output logic[ 3: 0]     Field3                                          ,
@@ -26,16 +25,14 @@ localparam int REG2_ADDR = 'h8;
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
-        reg1[ 7: 1] <= 'h1;
         reg1[10: 8] <= 'h1;
     end
     else begin
-        reg1[7:1] <= (reg_wr && reg_addr == REG1_ADDR && reg_we[0]) ? reg_wdat[7:1] : reg1[7:1];
         reg1[10:8] <= (reg_wr && reg_addr == REG1_ADDR && reg_we[1]) ? reg_wdat[10:8] : reg1[10:8];
     end
 end
-assign Field1 = reg1[7:1];
 assign Field2 = reg1[10:8];
+assign reg1[7:1] = 'h0;
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
