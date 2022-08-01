@@ -33,11 +33,11 @@
                     "description": "register 1",
                     "fieldTemplates": [
                         {
-                            "name": "Field1",
+                            "name": "-",
                             "msb": 7,
                             "lsb": 1,
                             "defaultValue": 1,
-                            "access": "RW",
+                            "access": "-",
                             "description": "Register1-Field1"
                         },
                         {
