@@ -52,7 +52,11 @@ def get_union_fields(register):
             current_bit = field.lsb
             reserve_index += 1
             field_type = "uint32_t"
-            field_name = field.name.upper()
+            if field.name == "-":
+                field_name = f"RSVD{reserve_index}"
+                reserve_index += 1
+            else:
+                field_name = field.name.upper()
             field_length = field.size
             fields_struct.append({
                 "type": field_type,
@@ -62,7 +66,11 @@ def get_union_fields(register):
             current_bit = field.msb + 1
         elif field.lsb == current_bit:
             field_type = "uint32_t"
-            field_name = field.name.upper()
+            if field.name == "-":
+                field_name = f"RSVD{reserve_index}"
+                reserve_index += 1
+            else:
+                field_name = field.name.upper()
             field_length = field.size
             fields_struct.append({
                 "type": field_type,
