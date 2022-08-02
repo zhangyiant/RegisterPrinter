@@ -33,8 +33,12 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
         "Access",
         "Default",
         "Description"]
+    row_count = 1
+    for field in reg.fields:
+        if field.name != "-":
+            row_count += 1
     tb = dh.add_table(
-        len(reg.fields) + 1,
+        row_count,
         len(headers),
         style="Light Grid")
     tb.autofit = 1
@@ -48,6 +52,8 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
 
     i = 1
     for field in reg.fields:
+        if field.name == "-":
+            continue
         tb.cell(i, 0).text = str(field.lsb)
         tb.cell(i, 1).text = str(field.msb)
         tb.cell(i, 2).text = str(field.name)
