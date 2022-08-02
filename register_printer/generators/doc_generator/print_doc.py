@@ -82,7 +82,11 @@ def calc_row_num(registers):
     for register in registers:
         if isinstance(register, Array):
             struct = register.content_type
-            num += len(struct.registers)
+            for struct_register in struct.registers:
+                if struct_register.is_reserved:
+                    continue
+                else:
+                    num += 1
         else:
             num += 1
     return num
@@ -123,7 +127,16 @@ def print_doc_block(doc, idx, block, instances):
             for struct_registers in struct.registers:
                 if struct_registers.is_reserved:
                     continue
-                tb.cell(i, 0).text = hex(struct_registers.offset)
+                offset_str = hex(
+                    struct_registers.offset + register.start_address)
+                offset_str += " + " + hex(register.offset) + " * n"
+                offset_str += " (n >= 0, n < " + str(register.length) + ")"
+                tb.cell(i, 0).text = offset_str
+                for k in range(len(instances)):
+                    tb.cell(i, k + 1).text = hex(
+                        instances[k].base_address + register.start_address +
+                        struct_registers.offset
+                    )
                 tb.cell(i, len(hdr) - 1).text = str(struct_registers.name)
                 i += 1
 
