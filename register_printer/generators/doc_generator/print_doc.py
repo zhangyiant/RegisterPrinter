@@ -9,16 +9,27 @@ from register_printer.data_model import Register, Array
 LOGGER = logging.getLogger(__name__)
 
 
-def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
+def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts, array=None):
     dh.add_page_break()
     dh.add_heading("  %d.%d  %s" % (blk_idx, reg_idx + 1, reg.name), level=2)
     p = dh.add_paragraph()
     p.add_run('    Offset : ').bold = True
-    p.add_run('%s\n' % (hex(reg.offset)))
+    if array is None:
+        p.add_run('%s\n' % (hex(reg.offset)))
+    else:
+        offset_str = hex(
+            reg.offset + array.start_address)
+        offset_str += " + " + hex(array.offset) + " * n"
+        offset_str += " (n >= 0, n < " + str(array.length) + ")"
+        p.add_run('%s\n' % offset_str)
 
     for blk_inst in blk_insts:
         p.add_run('    %s Address : ' % (blk_inst.name)).bold = True
-        p.add_run('%s\n' % (hex(blk_inst.base_address + reg.offset)))
+        if array is None:
+            p.add_run('%s\n' % (hex(blk_inst.base_address + reg.offset)))
+        else:
+            addr = blk_inst.base_address + array.start_address + reg.offset
+            p.add_run('%s\n' % hex(addr))
 
     p.add_run("    Reset Value : ").bold = True
     p.add_run("0x%x\n" % (reg.calculate_register_default()))
@@ -144,7 +155,21 @@ def print_doc_block(doc, idx, block, instances):
     for register in registers:
         if isinstance(register, Register):
             print_doc_reg(register, doc, reg_idx, idx, instances)
-        reg_idx = reg_idx + 1
+            reg_idx += 1
+        if isinstance(register, Array):
+            struct = register.content_type
+            for struct_reg in struct.registers:
+                if struct_reg.is_reserved:
+                    continue
+                print_doc_reg(
+                    struct_reg,
+                    doc,
+                    reg_idx,
+                    idx,
+                    instances,
+                    register
+                )
+                reg_idx += 1
     doc.add_page_break()
     return
 
