@@ -3,25 +3,65 @@ import os.path
 import logging
 from docx import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from register_printer.data_model import Register
-
+from register_printer.data_model import Register, Array, Field
 
 LOGGER = logging.getLogger(__name__)
 
 
-def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
+def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts, array=None):
     dh.add_page_break()
     dh.add_heading("  %d.%d  %s" % (blk_idx, reg_idx + 1, reg.name), level=2)
     p = dh.add_paragraph()
     p.add_run('    Offset : ').bold = True
-    p.add_run('%s\n' % (hex(reg.offset)))
+    if array is None:
+        p.add_run('%s\n' % (hex(reg.offset)))
+    else:
+        offset_str = hex(
+            reg.offset + array.start_address)
+        offset_str += " + " + hex(array.offset) + " * n"
+        offset_str += " (n >= 0, n < " + str(array.length) + ")"
+        p.add_run('%s\n' % offset_str)
 
     for blk_inst in blk_insts:
         p.add_run('    %s Address : ' % (blk_inst.name)).bold = True
-        p.add_run('%s\n' % (hex(blk_inst.base_address + reg.offset)))
+        if array is None:
+            p.add_run('%s\n' % (hex(blk_inst.base_address + reg.offset)))
+        else:
+            addr = blk_inst.base_address + array.start_address + reg.offset
+            p.add_run('%s\n' % hex(addr))
 
     p.add_run("    Reset Value : ").bold = True
     p.add_run("0x%x\n" % (reg.calculate_register_default()))
+    if array is not None:
+        for index in range(array.length):
+            offset = array.start_address + array.offset * index + reg.offset
+            temp_reg = Register(offset)
+            temp_reg.name = reg.name
+            for field in reg.fields:
+                temp_reg.fields.append(field)
+            found = False
+            for overwrite_entry in array.default_overwrite_entries:
+                if overwrite_entry.index == index and \
+                        overwrite_entry.register_name == temp_reg.name:
+                    found = True
+                    field_name = overwrite_entry.field_name
+                    for field in temp_reg.fields:
+                        if field.name == field_name:
+                            temp_reg.fields.remove(field)
+                            new_field = Field()
+                            new_field.name = field.name
+                            new_field.msb = field.msb
+                            new_field.lsb = field.lsb
+                            new_field.default = overwrite_entry.default
+                            new_field.access = field.access
+                            new_field.description = field.description
+                            temp_reg.fields.append(new_field)
+            if found:
+                p.add_run(
+                    "           " +
+                    hex(temp_reg.offset) + ":0x%x\n" %
+                    temp_reg.calculate_register_default()
+                )
 
     p.add_run("    Description : ").bold = True
     p.add_run("%s\n" % (reg.description))
@@ -33,8 +73,12 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
         "Access",
         "Default",
         "Description"]
+    row_count = 1
+    for field in reg.fields:
+        if field.name != "-":
+            row_count += 1
     tb = dh.add_table(
-        len(reg.fields) + 1,
+        row_count,
         len(headers),
         style="Light Grid")
     tb.autofit = 1
@@ -48,6 +92,8 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
 
     i = 1
     for field in reg.fields:
+        if field.name == "-":
+            continue
         tb.cell(i, 0).text = str(field.lsb)
         tb.cell(i, 1).text = str(field.msb)
         tb.cell(i, 2).text = str(field.name)
@@ -61,19 +107,36 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts):
 def get_unreserved_non_array_register(block):
     result = []
     for register in block.registers:
-        if not isinstance(register, Register):
-            continue
-        if register.is_reserved:
-            continue
-        result.append(register)
+        if isinstance(register, Array):
+            result.append(register)
+        elif isinstance(register, Register):
+            if register.is_reserved:
+                continue
+            else:
+                result.append(register)
     return result
+
+
+def calc_row_num(registers):
+    num = 0
+    for register in registers:
+        if isinstance(register, Array):
+            struct = register.content_type
+            for struct_register in struct.registers:
+                if struct_register.is_reserved:
+                    continue
+                else:
+                    num += 1
+        else:
+            num += 1
+    return num
 
 
 def print_doc_block(doc, idx, block, instances):
     block_type = block.block_type
 
     registers = get_unreserved_non_array_register(block)
-    num_register = len(registers)
+    num_register = calc_row_num(registers)
 
     doc.add_heading("%d %s Registers" % (idx, block_type), level=1)
     tb = doc.add_table(
@@ -92,17 +155,50 @@ def print_doc_block(doc, idx, block, instances):
 
     i = 1
     for register in registers:
-        tb.cell(i, 0).text = hex(register.offset)
-        for k in range(len(instances)):
-            tb.cell(i, k+1).text = hex(
-                instances[k].base_address + register.offset)
-        tb.cell(i, len(hdr) - 1).text = str(register.name)
-        i += 1
+        if isinstance(register, Register):
+            tb.cell(i, 0).text = hex(register.offset)
+            for k in range(len(instances)):
+                tb.cell(i, k + 1).text = hex(
+                    instances[k].base_address + register.offset)
+            tb.cell(i, len(hdr) - 1).text = str(register.name)
+            i += 1
+        elif isinstance(register, Array):
+            struct = register.content_type
+            for struct_registers in struct.registers:
+                if struct_registers.is_reserved:
+                    continue
+                offset_str = hex(
+                    struct_registers.offset + register.start_address)
+                offset_str += " + " + hex(register.offset) + " * n"
+                offset_str += " (n >= 0, n < " + str(register.length) + ")"
+                tb.cell(i, 0).text = offset_str
+                for k in range(len(instances)):
+                    tb.cell(i, k + 1).text = hex(
+                        instances[k].base_address + register.start_address +
+                        struct_registers.offset
+                    )
+                tb.cell(i, len(hdr) - 1).text = str(struct_registers.name)
+                i += 1
 
     reg_idx = 0
     for register in registers:
-        print_doc_reg(register, doc, reg_idx, idx, instances)
-        reg_idx = reg_idx + 1
+        if isinstance(register, Register):
+            print_doc_reg(register, doc, reg_idx, idx, instances)
+            reg_idx += 1
+        if isinstance(register, Array):
+            struct = register.content_type
+            for struct_reg in struct.registers:
+                if struct_reg.is_reserved:
+                    continue
+                print_doc_reg(
+                    struct_reg,
+                    doc,
+                    reg_idx,
+                    idx,
+                    instances,
+                    register
+                )
+                reg_idx += 1
     doc.add_page_break()
     return
 
