@@ -13,15 +13,8 @@ def print_doc_reg(doc, blk_idx, reg_idx, register, block_instances,
     doc.add_page_break()
     doc.add_heading("  %d.%d  %s" % (blk_idx, reg_idx + 1, register.name), level=2)
     p = doc.add_paragraph()
-    p.add_run('    Offset : ').bold = True
-    if array is None:
-        p.add_run('%s\n' % (hex(register.offset)))
-    else:
-        offset_str = hex(
-            register.offset + array.start_address)
-        offset_str += " + " + hex(array.offset) + " * n"
-        offset_str += " (n >= 0, n < " + str(array.length) + ")"
-        p.add_run('%s\n' % offset_str)
+
+    add_register_offset(p, register, array)
 
     for blk_inst in block_instances:
         p.add_run('    %s Address : ' % (blk_inst.name)).bold = True
@@ -103,6 +96,18 @@ def print_doc_reg(doc, blk_idx, reg_idx, register, block_instances,
         tb.cell(i, 5).text = "%s" % (field.description)
         i += 1
     return
+
+
+def add_register_offset(paragraph, register, array):
+    paragraph.add_run('    Offset : ').bold = True
+    if array is None:
+        paragraph.add_run('%s\n' % (hex(register.offset)))
+    else:
+        offset_str = hex(
+            register.offset + array.start_address)
+        offset_str += " + " + hex(array.offset) + " * n"
+        offset_str += " (n >= 0, n < " + str(array.length) + ")"
+        paragraph.add_run('%s\n' % offset_str)
 
 
 def get_registers(block):
