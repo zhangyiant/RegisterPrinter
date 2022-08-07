@@ -146,11 +146,10 @@ def print_doc_block(doc, idx, block, instances):
         row_count,
         column_count,
         style="Light Grid")
+
+    hdr = get_table_header(instances)
+
     hcells = tb.rows[0].cells
-    hdr = ["Offset"]
-    for instance in instances:
-        hdr.append("%s Addr" % instance.name)
-    hdr.append("Register")
     for i in range(column_count):
         p = hcells[i].paragraphs[0]
         p.add_run(hdr[i])
@@ -187,6 +186,14 @@ def print_doc_block(doc, idx, block, instances):
 
     doc.add_page_break()
     return
+
+
+def get_table_header(instances):
+    hdr = ["Offset"]
+    for instance in instances:
+        hdr.append("%s Addr" % instance.name)
+    hdr.append("Register")
+    return hdr
 
 
 def add_block_registers(doc, idx, registers,instances):
