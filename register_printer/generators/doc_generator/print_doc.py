@@ -104,7 +104,7 @@ def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts, array=None):
     return
 
 
-def get_unreserved_non_array_register(block):
+def get_registers(block):
     result = []
     for register in block.registers:
         if isinstance(register, Array):
@@ -135,7 +135,7 @@ def calc_row_num(registers):
 def print_doc_block(doc, idx, block, instances):
     block_type = block.block_type
 
-    registers = get_unreserved_non_array_register(block)
+    registers = get_registers(block)
     num_register = calc_row_num(registers)
 
     doc.add_heading("%d %s Registers" % (idx, block_type), level=1)
