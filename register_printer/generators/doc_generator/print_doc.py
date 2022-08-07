@@ -206,10 +206,7 @@ def print_doc_block(doc, idx, block, instances):
 def generate_doc(top_sys):
     doc = Document()
 
-    title = doc.add_heading(
-        top_sys.name + " Registers",
-        level=0)
-    title.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    add_header(doc, top_sys.name)
 
     p = doc.add_paragraph()
     p.add_run("Version : %s\n" % top_sys.version)
@@ -248,6 +245,14 @@ def generate_doc(top_sys):
         print_doc_block(doc, block_idx, block, blk_insts)
         block_idx = block_idx + 1
     return doc
+
+
+def add_header(doc, name):
+    title = doc.add_heading(
+        name + " Registers",
+        level=0)
+    title.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    return
 
 
 def print_doc(top_sys, output_path="."):
