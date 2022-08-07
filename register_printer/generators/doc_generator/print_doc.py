@@ -183,6 +183,13 @@ def print_doc_block(doc, idx, block, instances):
                 tb.cell(i, column_count - 1).text = str(struct_registers.name)
                 i += 1
 
+    add_block_registers(doc, idx, registers, instances)
+
+    doc.add_page_break()
+    return
+
+
+def add_block_registers(doc, idx, registers,instances):
     reg_idx = 0
     for register in registers:
         if isinstance(register, Register):
@@ -202,7 +209,6 @@ def print_doc_block(doc, idx, block, instances):
                     register
                 )
                 reg_idx += 1
-    doc.add_page_break()
     return
 
 
