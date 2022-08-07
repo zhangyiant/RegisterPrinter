@@ -21,39 +21,7 @@ def print_doc_reg(doc, blk_idx, reg_idx, register, block_instances,
 
     add_register_instances_address(p, block_instances, register, array)
 
-    p.add_run("    Reset Value : ").bold = True
-    p.add_run("0x%x\n" % (register.calculate_register_default()))
-    if array is not None:
-        for index in range(array.length):
-            offset = array.start_address + array.offset * index + \
-                     register.offset
-            temp_reg = Register(offset)
-            temp_reg.name = register.name
-            for field in register.fields:
-                temp_reg.fields.append(field)
-            found = False
-            for overwrite_entry in array.default_overwrite_entries:
-                if overwrite_entry.index == index and \
-                        overwrite_entry.register_name == temp_reg.name:
-                    found = True
-                    field_name = overwrite_entry.field_name
-                    for field in temp_reg.fields:
-                        if field.name == field_name:
-                            temp_reg.fields.remove(field)
-                            new_field = Field()
-                            new_field.name = field.name
-                            new_field.msb = field.msb
-                            new_field.lsb = field.lsb
-                            new_field.default = overwrite_entry.default
-                            new_field.access = field.access
-                            new_field.description = field.description
-                            temp_reg.fields.append(new_field)
-            if found:
-                p.add_run(
-                    "           " +
-                    hex(temp_reg.offset) + ":0x%x\n" %
-                    temp_reg.calculate_register_default()
-                )
+    add_register_reset_value(p, register, array)
 
     p.add_run("    Description : ").bold = True
     p.add_run("%s\n" % (register.description))
@@ -94,6 +62,42 @@ def print_doc_reg(doc, blk_idx, reg_idx, register, block_instances,
         tb.cell(i, 5).text = "%s" % (field.description)
         i += 1
     return
+
+
+def add_register_reset_value(paragraph, register, array):
+    paragraph.add_run("    Reset Value : ").bold = True
+    paragraph.add_run("0x%x\n" % (register.calculate_register_default()))
+    if array is not None:
+        for index in range(array.length):
+            offset = array.start_address + array.offset * index + \
+                     register.offset
+            temp_reg = Register(offset)
+            temp_reg.name = register.name
+            for field in register.fields:
+                temp_reg.fields.append(field)
+            found = False
+            for overwrite_entry in array.default_overwrite_entries:
+                if overwrite_entry.index == index and \
+                        overwrite_entry.register_name == temp_reg.name:
+                    found = True
+                    field_name = overwrite_entry.field_name
+                    for field in temp_reg.fields:
+                        if field.name == field_name:
+                            temp_reg.fields.remove(field)
+                            new_field = Field()
+                            new_field.name = field.name
+                            new_field.msb = field.msb
+                            new_field.lsb = field.lsb
+                            new_field.default = overwrite_entry.default
+                            new_field.access = field.access
+                            new_field.description = field.description
+                            temp_reg.fields.append(new_field)
+            if found:
+                paragraph.add_run(
+                    "           " +
+                    hex(temp_reg.offset) + ":0x%x\n" %
+                    temp_reg.calculate_register_default()
+                )
 
 
 def add_register_instances_address(paragraph, block_instances, register,
