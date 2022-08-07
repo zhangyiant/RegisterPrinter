@@ -208,10 +208,8 @@ def generate_doc(top_sys):
 
     add_header(doc, top_sys.name)
 
-    p = doc.add_paragraph()
-    p.add_run("Version : %s\n" % top_sys.version)
-    p.add_run("Author : %s" % top_sys.author)
-    p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    add_version_author(doc, top_sys.version, top_sys.author)
+
     doc.add_page_break()
 
     block_idx = 1
@@ -245,6 +243,13 @@ def generate_doc(top_sys):
         print_doc_block(doc, block_idx, block, blk_insts)
         block_idx = block_idx + 1
     return doc
+
+
+def add_version_author(doc, version, author):
+    p = doc.add_paragraph()
+    p.add_run("Version : %s\n" % version)
+    p.add_run("Author : %s" % author)
+    p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
 
 def add_header(doc, name):
