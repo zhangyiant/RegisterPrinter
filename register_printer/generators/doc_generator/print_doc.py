@@ -8,7 +8,7 @@ from register_printer.data_model import Register, Array, Field
 LOGGER = logging.getLogger(__name__)
 
 
-def print_doc_reg(reg, dh, reg_idx, blk_idx, blk_insts, array=None):
+def print_doc_reg(dh, reg_idx, blk_idx, reg, blk_insts, array=None):
     dh.add_page_break()
     dh.add_heading("  %d.%d  %s" % (blk_idx, reg_idx + 1, reg.name), level=2)
     p = dh.add_paragraph()
@@ -200,7 +200,7 @@ def add_block_registers(doc, idx, registers, instances):
     reg_idx = 0
     for register in registers:
         if isinstance(register, Register):
-            print_doc_reg(register, doc, reg_idx, idx, instances)
+            print_doc_reg(doc, reg_idx, idx, register, instances)
             reg_idx += 1
         if isinstance(register, Array):
             struct = register.content_type
@@ -208,10 +208,10 @@ def add_block_registers(doc, idx, registers, instances):
                 if struct_reg.is_reserved:
                     continue
                 print_doc_reg(
-                    struct_reg,
                     doc,
                     reg_idx,
                     idx,
+                    struct_reg,
                     instances,
                     register
                 )
