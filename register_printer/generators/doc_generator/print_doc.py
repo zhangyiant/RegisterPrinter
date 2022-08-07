@@ -213,23 +213,9 @@ def generate_doc(top_sys):
     doc.add_page_break()
 
     block_idx = 1
-    doc.add_heading("%d Address Map" % block_idx, level=1)
-    table = doc.add_table(
-        len(top_sys.block_instances) + 1,
-        3,
-        style="Light Grid")
-    hcell = table.rows[0].cells
-    headers = ["Block", "Start Address", "Size"]
-    for i in range(3):
-        p = hcell[i].paragraphs[0]
-        p.add_run(headers[i])
-        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    i = 1
-    for block_instance in top_sys.block_instances:
-        table.cell(i, 0).text = block_instance.name
-        table.cell(i, 1).text = hex(block_instance.base_address)
-        table.cell(i, 2).text = hex(block_instance.size)
-        i += 1
+    block_instances = top_sys.block_instances
+    add_address_map(doc, block_idx, block_instances)
+
     doc.add_page_break()
 
     block_idx += 1
@@ -243,6 +229,26 @@ def generate_doc(top_sys):
         print_doc_block(doc, block_idx, block, blk_insts)
         block_idx = block_idx + 1
     return doc
+
+
+def add_address_map(doc, block_idx, block_instances):
+    doc.add_heading("%d Address Map" % block_idx, level=1)
+    table = doc.add_table(
+        len(block_instances) + 1,
+        3,
+        style="Light Grid")
+    hcell = table.rows[0].cells
+    headers = ["Block", "Start Address", "Size"]
+    for i in range(3):
+        p = hcell[i].paragraphs[0]
+        p.add_run(headers[i])
+        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    i = 1
+    for block_instance in block_instances:
+        table.cell(i, 0).text = block_instance.name
+        table.cell(i, 1).text = hex(block_instance.base_address)
+        table.cell(i, 2).text = hex(block_instance.size)
+        i += 1
 
 
 def add_version_author(doc, version, author):
