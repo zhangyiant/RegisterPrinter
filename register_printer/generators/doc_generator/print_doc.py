@@ -19,14 +19,7 @@ def print_doc_reg(doc, blk_idx, reg_idx, register, block_instances,
 
     add_register_offset(p, register, array)
 
-    for blk_inst in block_instances:
-        p.add_run('    %s Address : ' % (blk_inst.name)).bold = True
-        if array is None:
-            p.add_run('%s\n' % (hex(blk_inst.base_address + register.offset)))
-        else:
-            addr = blk_inst.base_address + array.start_address + \
-                   register.offset
-            p.add_run('%s\n' % hex(addr))
+    add_register_instances_address(p, block_instances, register, array)
 
     p.add_run("    Reset Value : ").bold = True
     p.add_run("0x%x\n" % (register.calculate_register_default()))
@@ -101,6 +94,20 @@ def print_doc_reg(doc, blk_idx, reg_idx, register, block_instances,
         tb.cell(i, 5).text = "%s" % (field.description)
         i += 1
     return
+
+
+def add_register_instances_address(paragraph, block_instances, register,
+                                   array):
+    for blk_inst in block_instances:
+        paragraph.add_run('    %s Address : ' % (blk_inst.name)).bold = True
+        if array is None:
+            paragraph.add_run(
+                '%s\n' % (hex(blk_inst.base_address + register.offset))
+            )
+        else:
+            addr = blk_inst.base_address + array.start_address + \
+                   register.offset
+            paragraph.add_run('%s\n' % hex(addr))
 
 
 def add_register_offset(paragraph, register, array):
