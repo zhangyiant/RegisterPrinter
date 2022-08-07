@@ -8,36 +8,37 @@ from register_printer.data_model import Register, Array, Field
 LOGGER = logging.getLogger(__name__)
 
 
-def print_doc_reg(dh, blk_idx, reg_idx, reg, blk_insts, array=None):
-    dh.add_page_break()
-    dh.add_heading("  %d.%d  %s" % (blk_idx, reg_idx + 1, reg.name), level=2)
-    p = dh.add_paragraph()
+def print_doc_reg(doc, blk_idx, reg_idx, register, block_instances,
+                  array=None):
+    doc.add_page_break()
+    doc.add_heading("  %d.%d  %s" % (blk_idx, reg_idx + 1, register.name), level=2)
+    p = doc.add_paragraph()
     p.add_run('    Offset : ').bold = True
     if array is None:
-        p.add_run('%s\n' % (hex(reg.offset)))
+        p.add_run('%s\n' % (hex(register.offset)))
     else:
         offset_str = hex(
-            reg.offset + array.start_address)
+            register.offset + array.start_address)
         offset_str += " + " + hex(array.offset) + " * n"
         offset_str += " (n >= 0, n < " + str(array.length) + ")"
         p.add_run('%s\n' % offset_str)
 
-    for blk_inst in blk_insts:
+    for blk_inst in block_instances:
         p.add_run('    %s Address : ' % (blk_inst.name)).bold = True
         if array is None:
-            p.add_run('%s\n' % (hex(blk_inst.base_address + reg.offset)))
+            p.add_run('%s\n' % (hex(blk_inst.base_address + register.offset)))
         else:
-            addr = blk_inst.base_address + array.start_address + reg.offset
+            addr = blk_inst.base_address + array.start_address + register.offset
             p.add_run('%s\n' % hex(addr))
 
     p.add_run("    Reset Value : ").bold = True
-    p.add_run("0x%x\n" % (reg.calculate_register_default()))
+    p.add_run("0x%x\n" % (register.calculate_register_default()))
     if array is not None:
         for index in range(array.length):
-            offset = array.start_address + array.offset * index + reg.offset
+            offset = array.start_address + array.offset * index + register.offset
             temp_reg = Register(offset)
-            temp_reg.name = reg.name
-            for field in reg.fields:
+            temp_reg.name = register.name
+            for field in register.fields:
                 temp_reg.fields.append(field)
             found = False
             for overwrite_entry in array.default_overwrite_entries:
@@ -64,7 +65,7 @@ def print_doc_reg(dh, blk_idx, reg_idx, reg, blk_insts, array=None):
                 )
 
     p.add_run("    Description : ").bold = True
-    p.add_run("%s\n" % (reg.description))
+    p.add_run("%s\n" % (register.description))
 
     headers = [
         "LSB",
@@ -74,10 +75,10 @@ def print_doc_reg(dh, blk_idx, reg_idx, reg, blk_insts, array=None):
         "Default",
         "Description"]
     row_count = 1
-    for field in reg.fields:
+    for field in register.fields:
         if field.name != "-":
             row_count += 1
-    tb = dh.add_table(
+    tb = doc.add_table(
         row_count,
         len(headers),
         style="Light Grid")
@@ -91,7 +92,7 @@ def print_doc_reg(dh, blk_idx, reg_idx, reg, blk_insts, array=None):
         i += 1
 
     i = 1
-    for field in reg.fields:
+    for field in register.fields:
         if field.name == "-":
             continue
         tb.cell(i, 0).text = str(field.lsb)
@@ -207,14 +208,8 @@ def add_block_registers(doc, idx, registers, instances):
             for struct_reg in struct.registers:
                 if struct_reg.is_reserved:
                     continue
-                print_doc_reg(
-                    doc,
-                    idx,
-                    reg_idx,
-                    struct_reg,
-                    instances,
-                    register
-                )
+                print_doc_reg(doc, idx, reg_idx, struct_reg, instances,
+                              register)
                 reg_idx += 1
     return
 
