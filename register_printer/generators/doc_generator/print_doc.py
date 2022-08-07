@@ -11,7 +11,10 @@ LOGGER = logging.getLogger(__name__)
 def print_doc_reg(doc, blk_idx, reg_idx, register, block_instances,
                   array=None):
     doc.add_page_break()
-    doc.add_heading("  %d.%d  %s" % (blk_idx, reg_idx + 1, register.name), level=2)
+    doc.add_heading(
+        "  %d.%d  %s" % (blk_idx, reg_idx + 1, register.name),
+        level=2
+    )
     p = doc.add_paragraph()
 
     add_register_offset(p, register, array)
@@ -21,14 +24,16 @@ def print_doc_reg(doc, blk_idx, reg_idx, register, block_instances,
         if array is None:
             p.add_run('%s\n' % (hex(blk_inst.base_address + register.offset)))
         else:
-            addr = blk_inst.base_address + array.start_address + register.offset
+            addr = blk_inst.base_address + array.start_address + \
+                   register.offset
             p.add_run('%s\n' % hex(addr))
 
     p.add_run("    Reset Value : ").bold = True
     p.add_run("0x%x\n" % (register.calculate_register_default()))
     if array is not None:
         for index in range(array.length):
-            offset = array.start_address + array.offset * index + register.offset
+            offset = array.start_address + array.offset * index + \
+                     register.offset
             temp_reg = Register(offset)
             temp_reg.name = register.name
             for field in register.fields:
