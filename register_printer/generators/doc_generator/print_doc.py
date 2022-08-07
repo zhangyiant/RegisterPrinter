@@ -136,19 +136,22 @@ def print_doc_block(doc, idx, block, instances):
     block_type = block.block_type
 
     registers = get_registers(block)
-    num_register = calc_row_num(registers)
 
     doc.add_heading("%d %s Registers" % (idx, block_type), level=1)
+
+    num_register = calc_row_num(registers)
+    row_count = num_register + 1
+    column_count = 2 + len(instances)
     tb = doc.add_table(
-        num_register + 1,
-        2 + len(instances),
+        row_count,
+        column_count,
         style="Light Grid")
     hcells = tb.rows[0].cells
     hdr = ["Offset"]
     for instance in instances:
         hdr.append("%s Addr" % instance.name)
     hdr.append("Register")
-    for i in range(len(hdr)):
+    for i in range(column_count):
         p = hcells[i].paragraphs[0]
         p.add_run(hdr[i])
         p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
@@ -160,7 +163,7 @@ def print_doc_block(doc, idx, block, instances):
             for k in range(len(instances)):
                 tb.cell(i, k + 1).text = hex(
                     instances[k].base_address + register.offset)
-            tb.cell(i, len(hdr) - 1).text = str(register.name)
+            tb.cell(i, column_count - 1).text = str(register.name)
             i += 1
         elif isinstance(register, Array):
             struct = register.content_type
@@ -177,7 +180,7 @@ def print_doc_block(doc, idx, block, instances):
                         instances[k].base_address + register.start_address +
                         struct_registers.offset
                     )
-                tb.cell(i, len(hdr) - 1).text = str(struct_registers.name)
+                tb.cell(i, column_count - 1).text = str(struct_registers.name)
                 i += 1
 
     reg_idx = 0
