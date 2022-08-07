@@ -196,7 +196,7 @@ def get_table_header(instances):
     return hdr
 
 
-def add_block_registers(doc, idx, registers,instances):
+def add_block_registers(doc, idx, registers, instances):
     reg_idx = 0
     for register in registers:
         if isinstance(register, Register):
