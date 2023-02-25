@@ -2,7 +2,6 @@
 #define __REGS_{{ block_type | upper }}_H__
 
 #include <stdint.h>
-#pragma pack(1)
 
 {% for c_struct in c_structs %}
 typedef struct {
@@ -41,7 +40,6 @@ typedef struct
 {% endfor %}
 } {{ block_type | upper }}_TypeDef;
 
-#pragma pack()
 
 {% for pos_mask_macro in pos_mask_macros %}
 #define    {{ "%-64s" | format(pos_mask_macro.prefix + "_Pos") }} {{ pos_mask_macro.pos_value }}

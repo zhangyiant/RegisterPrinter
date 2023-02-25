@@ -2,7 +2,6 @@
 #define __REGS_TYPE2_H__
 
 #include <stdint.h>
-#pragma pack(1)
 
 typedef struct
 {
@@ -29,7 +28,6 @@ typedef struct
     const uint8_t RSVD1[6];
 } TYPE2_TypeDef;
 
-#pragma pack()
 
 #define    REG1_FIELD2_Pos                                                  8
 #define    REG1_FIELD2_Msk                                                  (0x7U << REG1_FIELD2_Pos)
