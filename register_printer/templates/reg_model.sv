@@ -37,7 +37,7 @@ class {{ struct.name | upper }} extends uvm_reg_block;
   `uvm_object_utils({{ struct.name | upper }})
 
   {% for reg in struct.registers %}
-  {{ reg.name | upper }} {{ reg.name }};
+  {{ reg.name | upper }} {{ reg.name | lower }};
   {% endfor %}
 
   extern function new(string name="{{ struct.name | upper }}");
@@ -53,10 +53,10 @@ function void {{ struct.name | upper }}::build();
   default_map = create_map("default_map", 0, {{ data_width // 8 }}, UVM_BIG_ENDIAN, 0);
 
   {% for reg in struct.registers %}
-  {{ reg.name }} = {{ reg.name | upper }}::type_id::create("{{ reg.name }}");
-  {{ reg.name }}.configure(this, , "");
-  {{ reg.name }}.build();
-  default_map.add_reg({{ reg.name }}, {{ address_width }}'h{{ '%x' | format(reg.offset) }});
+  {{ reg.name | lower }} = {{ reg.name | upper }}::type_id::create("{{ reg.name | lower }}");
+  {{ reg.name | lower }}.configure(this, , "");
+  {{ reg.name | lower }}.build();
+  default_map.add_reg({{ reg.name | lower }}, {{ address_width }}'h{{ '%x' | format(reg.offset) }});
 
   {% endfor %}
 endfunction: build
