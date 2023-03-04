@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef struct
+typedef volatile struct
 {
     union {
         struct {

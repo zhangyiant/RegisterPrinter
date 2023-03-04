@@ -22,7 +22,7 @@ typedef struct {
 } {{ c_struct.name }};
 
 {% endfor %}
-typedef struct
+typedef volatile struct
 {
 {% for struct_field in struct_fields %}
     {% if struct_field.category == "reserved" or struct_field.category == "array" %}

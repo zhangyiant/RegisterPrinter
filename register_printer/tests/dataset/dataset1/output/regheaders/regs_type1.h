@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef struct {
+typedef volatile struct {
     union {
         struct {
             uint32_t FIELD4:4;
@@ -15,7 +15,7 @@ typedef struct {
     const uint8_t RSVD0[2];
 } REG_ARRAY1_TypeDef;
 
-typedef struct {
+typedef volatile struct {
     union {
         struct {
             uint32_t FIELD6:11;
@@ -34,7 +34,7 @@ typedef struct {
     const uint8_t RSVD1[6];
 } REG_ARRAY2_TypeDef;
 
-typedef struct
+typedef volatile struct
 {
     union {
         struct {
