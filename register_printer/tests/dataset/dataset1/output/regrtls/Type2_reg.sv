@@ -32,7 +32,7 @@ always @(posedge reg_clk or negedge reg_rstn) begin
     end
 end
 assign Field2 = reg1[10:8];
-assign reg1[7:1] = 'h0;
+assign reg1[7:1] = 'h1;
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin

@@ -193,7 +193,7 @@ assign {{ field.name }} = {{ register.name }}[{{ field.msb }}:{{ field.lsb }}];
   {% if field.name != "-" %}
 assign {{ register.name }}[{{ field.msb }}:{{ field.lsb }}] = {{ field.name }};
   {% else %}
-assign {{ register.name }}[{{ field.msb }}:{{ field.lsb }}] = 'h0;
+assign {{ register.name }}[{{ field.msb }}:{{ field.lsb }}] = 'h{{ "%x" | format(field.default)}};
   {% endif %}
 {% endfor %}
 
