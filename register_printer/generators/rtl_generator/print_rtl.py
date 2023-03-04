@@ -142,8 +142,9 @@ def get_register_dict_list_from_array_register(reg):
                     + idx * reg.offset \
                     + struct_reg.offset
                 for field_dict in tmp_register_dict["fields"]:
-                    field_dict["name"] = \
-                        f'{struct_reg.name}_{idx}_{field_dict["name"]}'
+                    if field_dict["name"] != "-":
+                        field_dict["name"] = \
+                            f'{struct_reg.name}_{idx}_{field_dict["name"]}'
                 tmp_register_dict_list.append(tmp_register_dict)
     return tmp_register_dict_list
 

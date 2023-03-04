@@ -194,11 +194,11 @@
                     "description": "register a3",
                     "fieldTemplates": [
                         {
-                            "name": "Field8",
+                            "name": "-",
                             "msb": 11,
                             "lsb": 0,
                             "defaultValue": 5,
-                            "access": "RW",
+                            "access": "-",
                             "description": "registera3_field8"
                         },
                         {

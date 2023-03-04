@@ -75,7 +75,6 @@ endclass: REG_A2
 
 class REG_A3 extends uvm_reg;
   `uvm_object_utils(REG_A3)
-  uvm_reg_field field8;
   uvm_reg_field field9;
 
   function new(string name = "REG_A3", int unsigned n_bits = 16);
@@ -83,8 +82,6 @@ class REG_A3 extends uvm_reg;
   endfunction: new
 
   virtual function void build();
-    field8 = uvm_reg_field::type_id::create("field8");
-    field8.configure(this, 12, 0, "RW", 0, 'h5, 1, 1, 1);
     field9 = uvm_reg_field::type_id::create("field9");
     field9.configure(this, 4, 12, "RW", 0, 'h7, 1, 1, 1);
   endfunction: build

@@ -44,19 +44,15 @@ module Type1_reg
     output logic[10: 0]     REG_A1_15_Field5                                ,
     output logic[10: 0]     REG_A2_0_Field6                                 ,
     output logic[20: 0]     REG_A2_0_Field7                                 ,
-    output logic[11: 0]     reg_a3_0_Field8                                 ,
     output logic[ 3: 0]     reg_a3_0_Field9                                 ,
     output logic[10: 0]     REG_A2_1_Field6                                 ,
     output logic[20: 0]     REG_A2_1_Field7                                 ,
-    output logic[11: 0]     reg_a3_1_Field8                                 ,
     output logic[ 3: 0]     reg_a3_1_Field9                                 ,
     output logic[10: 0]     REG_A2_2_Field6                                 ,
     output logic[20: 0]     REG_A2_2_Field7                                 ,
-    output logic[11: 0]     reg_a3_2_Field8                                 ,
     output logic[ 3: 0]     reg_a3_2_Field9                                 ,
     output logic[10: 0]     REG_A2_3_Field6                                 ,
     output logic[20: 0]     REG_A2_3_Field7                                 ,
-    output logic[11: 0]     reg_a3_3_Field8                                 ,
     output logic[ 3: 0]     reg_a3_3_Field9                                 ,
     output logic[10: 0]     Field9                                          ,
     input                   reg_wr                                          ,
@@ -359,17 +355,14 @@ assign REG_A2_0_Field7 = REG_A2_0[31:11];
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
-        reg_a3_0[11: 0] <= 'h5;
         reg_a3_0[15:12] <= 'h7;
     end
     else begin
-        reg_a3_0[11:8] <= (reg_wr && reg_addr == REG_A3_0_ADDR && reg_we[1]) ? reg_wdat[11:8] : reg_a3_0[11:8];
-        reg_a3_0[7:0] <= (reg_wr && reg_addr == REG_A3_0_ADDR && reg_we[0]) ? reg_wdat[7:0] : reg_a3_0[7:0];
         reg_a3_0[15:12] <= (reg_wr && reg_addr == REG_A3_0_ADDR && reg_we[1]) ? reg_wdat[15:12] : reg_a3_0[15:12];
     end
 end
-assign reg_a3_0_Field8 = reg_a3_0[11:0];
 assign reg_a3_0_Field9 = reg_a3_0[15:12];
+assign reg_a3_0[11:0] = 'h5;
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
@@ -389,17 +382,14 @@ assign REG_A2_1_Field7 = REG_A2_1[31:11];
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
-        reg_a3_1[11: 0] <= 'h5;
         reg_a3_1[15:12] <= 'h7;
     end
     else begin
-        reg_a3_1[11:8] <= (reg_wr && reg_addr == REG_A3_1_ADDR && reg_we[1]) ? reg_wdat[11:8] : reg_a3_1[11:8];
-        reg_a3_1[7:0] <= (reg_wr && reg_addr == REG_A3_1_ADDR && reg_we[0]) ? reg_wdat[7:0] : reg_a3_1[7:0];
         reg_a3_1[15:12] <= (reg_wr && reg_addr == REG_A3_1_ADDR && reg_we[1]) ? reg_wdat[15:12] : reg_a3_1[15:12];
     end
 end
-assign reg_a3_1_Field8 = reg_a3_1[11:0];
 assign reg_a3_1_Field9 = reg_a3_1[15:12];
+assign reg_a3_1[11:0] = 'h5;
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
@@ -419,17 +409,14 @@ assign REG_A2_2_Field7 = REG_A2_2[31:11];
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
-        reg_a3_2[11: 0] <= 'h5;
         reg_a3_2[15:12] <= 'h7;
     end
     else begin
-        reg_a3_2[11:8] <= (reg_wr && reg_addr == REG_A3_2_ADDR && reg_we[1]) ? reg_wdat[11:8] : reg_a3_2[11:8];
-        reg_a3_2[7:0] <= (reg_wr && reg_addr == REG_A3_2_ADDR && reg_we[0]) ? reg_wdat[7:0] : reg_a3_2[7:0];
         reg_a3_2[15:12] <= (reg_wr && reg_addr == REG_A3_2_ADDR && reg_we[1]) ? reg_wdat[15:12] : reg_a3_2[15:12];
     end
 end
-assign reg_a3_2_Field8 = reg_a3_2[11:0];
 assign reg_a3_2_Field9 = reg_a3_2[15:12];
+assign reg_a3_2[11:0] = 'h5;
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
@@ -449,17 +436,14 @@ assign REG_A2_3_Field7 = REG_A2_3[31:11];
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin
-        reg_a3_3[11: 0] <= 'h5;
         reg_a3_3[15:12] <= 'h7;
     end
     else begin
-        reg_a3_3[11:8] <= (reg_wr && reg_addr == REG_A3_3_ADDR && reg_we[1]) ? reg_wdat[11:8] : reg_a3_3[11:8];
-        reg_a3_3[7:0] <= (reg_wr && reg_addr == REG_A3_3_ADDR && reg_we[0]) ? reg_wdat[7:0] : reg_a3_3[7:0];
         reg_a3_3[15:12] <= (reg_wr && reg_addr == REG_A3_3_ADDR && reg_we[1]) ? reg_wdat[15:12] : reg_a3_3[15:12];
     end
 end
-assign reg_a3_3_Field8 = reg_a3_3[11:0];
 assign reg_a3_3_Field9 = reg_a3_3[15:12];
+assign reg_a3_3[11:0] = 'h5;
 
 always @(posedge reg_clk or negedge reg_rstn) begin
     if(~reg_rstn) begin

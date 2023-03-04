@@ -5,10 +5,10 @@
 #include "regs_type1.h"
 
 #define  INSTANCE2_BASE		0x10000
-#define  INSTANCE2		((volatile TYPE2_TypeDef  *)		INSTANCE2_BASE)
+#define  INSTANCE2		((TYPE2_TypeDef  *)		INSTANCE2_BASE)
 
 #define  INSTANCE3_BASE		0x20000
-#define  INSTANCE3		((volatile TYPE1_TypeDef  *)		INSTANCE3_BASE)
+#define  INSTANCE3		((TYPE1_TypeDef  *)		INSTANCE3_BASE)
 
 
 #endif

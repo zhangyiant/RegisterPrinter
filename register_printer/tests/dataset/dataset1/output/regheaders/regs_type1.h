@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef struct {
+typedef volatile struct {
     union {
         struct {
             uint32_t FIELD4:4;
@@ -15,7 +15,7 @@ typedef struct {
     const uint8_t RSVD0[2];
 } REG_ARRAY1_TypeDef;
 
-typedef struct {
+typedef volatile struct {
     union {
         struct {
             uint32_t FIELD6:11;
@@ -26,7 +26,7 @@ typedef struct {
     const uint8_t RSVD0[20];
     union {
         struct {
-            uint32_t FIELD8:12;
+            uint32_t RSVD0:12;
             uint32_t FIELD9:4;
         } REG_A3_B;
         uint16_t REG_A3;
@@ -34,7 +34,7 @@ typedef struct {
     const uint8_t RSVD1[6];
 } REG_ARRAY2_TypeDef;
 
-typedef struct
+typedef volatile struct
 {
     union {
         struct {
@@ -95,9 +95,6 @@ typedef struct
 
 #define    REG_A2_FIELD7_Pos                                                11
 #define    REG_A2_FIELD7_Msk                                                (0x1fffffU << REG_A2_FIELD7_Pos)
-
-#define    REG_A3_FIELD8_Pos                                                0
-#define    REG_A3_FIELD8_Msk                                                (0xfffU << REG_A3_FIELD8_Pos)
 
 #define    REG_A3_FIELD9_Pos                                                12
 #define    REG_A3_FIELD9_Msk                                                (0xfU << REG_A3_FIELD9_Pos)
