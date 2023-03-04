@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 {% for c_struct in c_structs %}
-typedef struct {
+typedef volatile struct {
 {% for struct_field in c_struct.struct_fields %}
     {% if struct_field.category == "reserved" %}
     {{ "%s %s;" | format(struct_field.type, struct_field.name) }}
