@@ -79,6 +79,7 @@ def get_union_fields(register):
             })
             current_bit = field.msb + 1
         else:
+            print(f"{register.name} error @{field.lsb}. current_bit @{current_bit}")
             raise Exception("Error field lsb.")
     if current_bit < register_bits:
         reserve_bits = register_bits - current_bit

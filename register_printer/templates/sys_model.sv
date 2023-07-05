@@ -10,7 +10,7 @@ class {{ uvm_sys_name }} extends uvm_reg_block;
   `uvm_object_utils({{ uvm_sys_name }})
 
   {% for block_instance in top_sys.block_instances %}
-  {{ block_instance.block_type | lower }}_reg_model    {{ block_instance.name }};
+  rand {{ block_instance.block_type | lower }}_reg_model    {{ block_instance.name }};
   {% endfor %}
 
   function new(string name = "{{ uvm_sys_name }}");

@@ -37,7 +37,7 @@ class {{ struct.name | upper }} extends uvm_reg_block;
   `uvm_object_utils({{ struct.name | upper }})
 
   {% for reg in struct.registers %}
-  {{ reg.name | upper }} {{ reg.name | lower }};
+  rand {{ reg.name | upper }} {{ reg.name | lower }};
   {% endfor %}
 
   extern function new(string name="{{ struct.name | upper }}");
