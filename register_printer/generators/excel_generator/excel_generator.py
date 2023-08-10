@@ -1,7 +1,7 @@
 import logging
 import os.path
-import pkgutil
-from openpyxl import Workbook
+import pkg_resources
+from openpyxl import Workbook, load_workbook
 
 
 LOGGER = logging.getLogger(__name__)
@@ -14,8 +14,8 @@ class ExcelGenerator:
         self.output_path = output_path
         return
 
-    def _get_excel_path(name):
-        return pkgutil.get_data("register_printer","excels/"+name).decode('UTF-8')
+    def _get_excel_path(self,name):
+        return pkg_resources.resource_string("register_printer","excels/"+name)
 
     def generate(self):
         LOGGER.debug("Generating Excel files...")
@@ -128,21 +128,26 @@ class ExcelGenerator:
         LOGGER.debug(
             "Generating Top excel to %s",
             filename)
+        rows_temp = load_workbook(self._get_excel_path('top.xlsx')).active[1:8]
+
 
         wb = Workbook()
         ws = wb.active
         ws.title = "Top"
 
-        ws["A1"] = "Top"
-        ws["B1"] = "Top_Module"
-        ws["A2"] = "AddrWidth"
-        ws["B2"] = self.top_sys.addr_width
-        ws["A3"] = "DataWidth"
-        ws["B3"] = self.top_sys.data_width
-        ws["A4"] = "Author"
-        ws["B4"] = self.top_sys.author
-        ws["A5"] = "Version"
-        ws["B5"] = self.top_sys.version
+        for row in rows_temp:
+            ws.append([cell.value for cell in row])
+
+#        ws["A1"] = "Top"
+#        ws["B1"] = "Top_Module"
+#        ws["A2"] = "AddrWidth"
+#        ws["B2"] = self.top_sys.addr_width
+#        ws["A3"] = "DataWidth"
+#        ws["B3"] = self.top_sys.data_width
+#        ws["A4"] = "Author"
+#        ws["B4"] = self.top_sys.author
+#        ws["A5"] = "Version"
+#        ws["B5"] = self.top_sys.version
 
         # starting from row 8
         row = 8
