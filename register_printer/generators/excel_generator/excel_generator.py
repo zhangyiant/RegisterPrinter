@@ -1,6 +1,6 @@
 import logging
 import os.path
-
+import pkgutil
 from openpyxl import Workbook
 
 
@@ -13,6 +13,9 @@ class ExcelGenerator:
         self.top_sys = top_sys
         self.output_path = output_path
         return
+
+    def _get_excel_path(name):
+        return pkgutil.get_data("register_printer","excels/"+name).decode('UTF-8')
 
     def generate(self):
         LOGGER.debug("Generating Excel files...")
