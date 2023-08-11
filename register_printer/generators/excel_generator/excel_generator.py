@@ -1,6 +1,7 @@
 import logging
 import os.path
-import pkg_resources
+import sys
+from copy import copy
 from openpyxl import Workbook, load_workbook
 
 
@@ -15,7 +16,21 @@ class ExcelGenerator:
         return
 
     def _get_excel_path(self,name):
-        return pkg_resources.resource_string("register_printer","excels/"+name)
+        if hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS,"register_printer/excels/" + name)
+        return os.path.join(os.path.abspath("."),"register_printer/excels/" + name) 
+
+    def _copy_cell_style(self,src_cell,tar_cell):
+        tar_cell.value = src_cell.value
+        if src_cell.has_style:
+            tar_cell._style = copy(src_cell._style)
+            tar_cell.font = copy(src_cell.font)
+            tar_cell.border = copy(src_cell.border)
+            tar_cell.fill= copy(src_cell.fill)
+            tar_cell.number_format = copy(src_cell.number_format)
+            tar_cell.protection = copy(src_cell.protection)
+            tar_cell.alignment = copy(src_cell.alignment)
+
 
     def generate(self):
         LOGGER.debug("Generating Excel files...")
@@ -128,45 +143,52 @@ class ExcelGenerator:
         LOGGER.debug(
             "Generating Top excel to %s",
             filename)
-        rows_temp = load_workbook(self._get_excel_path('top.xlsx')).active[1:8]
 
+        rb = load_workbook(self._get_excel_path('top.xlsx'))
+        rs = rb.active
 
         wb = Workbook()
         ws = wb.active
         ws.title = "Top"
 
-        for row in rows_temp:
-            ws.append([cell.value for cell in row])
+        ws.page_setup = rs.page_setup
 
-#        ws["A1"] = "Top"
-#        ws["B1"] = "Top_Module"
-#        ws["A2"] = "AddrWidth"
-#        ws["B2"] = self.top_sys.addr_width
-#        ws["A3"] = "DataWidth"
-#        ws["B3"] = self.top_sys.data_width
-#        ws["A4"] = "Author"
-#        ws["B4"] = self.top_sys.author
-#        ws["A5"] = "Version"
-#        ws["B5"] = self.top_sys.version
+        for row in range(1,8):
+            for col, value in enumerate(rs[row]):
+                src_cell = rs.cell(row,col+1)
+                tar_cell = ws.cell(row,col+1)
+                self._copy_cell_style(src_cell,tar_cell)
+
+        ws["B1"] = "Top_Module"
+        ws["B2"] = self.top_sys.addr_width
+        ws["B3"] = self.top_sys.data_width
+        ws["B4"] = self.top_sys.author
+        ws["B5"] = self.top_sys.version
 
         # starting from row 8
         row = 8
         for block_instance in self.top_sys.block_instances:
             name_cell = ws.cell(row, 1)
+            self._copy_cell_style(rs.cell(8+row%2,1),name_cell)
             name_cell.value = block_instance.name
             type_cell = ws.cell(row, 2)
+            self._copy_cell_style(rs.cell(8+row%2,1),type_cell)
             type_cell.value = block_instance.block.block_type
             base_address_cell = ws.cell(row, 3)
+            self._copy_cell_style(rs.cell(8,1),base_address_cell)
             base_address_cell.value = hex(block_instance.base_address)
             size_cell = ws.cell(row, 4)
+            self._copy_cell_style(rs.cell(8,1),size_cell)
             size_cell.value = hex(block_instance.size)
             addr_width_cell = ws.cell(row, 5)
+            self._copy_cell_style(rs.cell(8,1),addr_width_cell)
             raw_addr_width = block_instance.block.raw_addr_width
             if raw_addr_width is None:
                 addr_width_cell.value = ""
             else:
                 addr_width_cell.value = raw_addr_width
             data_width_cell = ws.cell(row, 6)
+            self._copy_cell_style(rs.cell(8,1),data_width_cell)
             raw_data_width = block_instance.block.raw_data_width
             if raw_data_width is None:
                 data_width_cell.value = ""
