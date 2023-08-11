@@ -29,7 +29,9 @@ def generate_block_template(block_template_dict):
                 field_dict["lsb"],
                 field_dict["defaultValue"],
                 field_dict["access"],
-                field_dict["description"]
+                field_dict["description"],
+                field_dict["user_visible"],
+                field_dict["description_chinese"]
             )
             register.add_field(field)
         block_template.add_register(register)

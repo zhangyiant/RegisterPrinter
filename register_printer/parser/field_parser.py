@@ -58,13 +58,29 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
     context.column = register_table_column_mapping["description"]
     description = "%s" % row[context.column].value
 
+    context.column = register_table_column_mapping["user visible"]
+    user_visible = row[context.column].value.upper()
+    if user_visible == "" :
+        user_visible = "N"
+    if user_visible not in ["Y", "N"]:
+        msg = "Invalid user visible type: {}, valid user visible types are {}.".format(
+            user_visible,
+            ["Y", "N"]
+        )
+        raise ExcelParseException(msg, context)
+
+    context.column = register_table_column_mapping["full description (chinese)"]
+    description_chinese = "%s" % row[context.column].value
+
     field_dict = {
         "name": field_name,
         "msb": msb,
         "lsb": lsb,
         "defaultValue": default,
         "access": access,
-        "description": description
+        "description": description,
+        "user_visible": user_visible,
+        "description_chinese": description_chinese
     }
     return field_dict
 

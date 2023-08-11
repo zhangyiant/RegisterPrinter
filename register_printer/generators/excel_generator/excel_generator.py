@@ -30,9 +30,6 @@ class ExcelGenerator:
         self.output_path = output_path
         return
 
-
-
-
     def generate(self):
         LOGGER.debug("Generating Excel files...")
 
@@ -107,6 +104,7 @@ class ExcelGenerator:
         for register in block_template.register_templates:
             for col, vaule in enumerate(rs[8]):
                 copy_cell_style(rs.cell(9,col+1),ws.cell(current_row,col+1))
+                ws.cell(current_row,col+1).value = ''
             offset_cell = ws.cell(current_row, 1)
             offset_cell.value = hex(register.offset)
             name_cell = ws.cell(current_row, 2)
@@ -117,6 +115,7 @@ class ExcelGenerator:
             for field in register.fields:
                 for col, vaule in enumerate(rs[8]):
                     copy_cell_style(rs.cell(10,col+1),ws.cell(current_row,col+1))
+                    ws.cell(current_row,col+1).value = ''
                 msb_cell = ws.cell(current_row, 3)
                 msb_cell.value = field.msb
                 lsb_cell = ws.cell(current_row, 4)
@@ -129,10 +128,12 @@ class ExcelGenerator:
                 default_value_cell.value = hex(field.default)
                 field_description_cell = ws.cell(current_row, 8)
                 field_description_cell.value = field.description
+                user_visible_cell = ws.cell(current_row, 9)
+                user_visible_cell.value = field.user_visible
                 current_row += 1
             # Add an empty line
             for col, vaule in enumerate(rs[8]):
-                copy_cell_style(rs.cell(11,col+1),ws.cell(current_row,col+1))
+                copy_cell_style(rs.cell(14,col+1),ws.cell(current_row,col+1))
             current_row += 1
         wb.save(filename=filename)
 
