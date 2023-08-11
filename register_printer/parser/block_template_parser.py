@@ -55,6 +55,10 @@ def parse_register_table_title(row):
             result["default"] = i
         elif row[i].value.strip().upper() == "description".upper():
             result["description"] = i
+        elif row[i].value.strip().upper() == "user visible".upper():
+            result["user_visible"] = i
+        elif row[i].value.strip().upper() == "full description (chinese)".upper():
+            result["description_chinese"] = i
     LOGGER.debug("Register table column mapping: %s", result)
     return result
 

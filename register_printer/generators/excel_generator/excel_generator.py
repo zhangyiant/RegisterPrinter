@@ -114,7 +114,16 @@ class ExcelGenerator:
             current_row += 1
             for field in register.fields:
                 for col, vaule in enumerate(rs[8]):
-                    copy_cell_style(rs.cell(10,col+1),ws.cell(current_row,col+1))
+                    if field.user_visible == "N":
+                        if field.default != 0:
+                            copy_cell_style(rs.cell(11,col+1),ws.cell(current_row,col+1))
+                        else:
+                            copy_cell_style(rs.cell(10,col+1),ws.cell(current_row,col+1))
+                    else:
+                        if field.default != 0:
+                            copy_cell_style(rs.cell(13,col+1),ws.cell(current_row,col+1))
+                        else:
+                            copy_cell_style(rs.cell(12,col+1),ws.cell(current_row,col+1))
                     ws.cell(current_row,col+1).value = ''
                 msb_cell = ws.cell(current_row, 3)
                 msb_cell.value = field.msb
@@ -173,27 +182,23 @@ class ExcelGenerator:
         # starting from row 8
         row = 8
         for block_instance in self.top_sys.block_instances:
+            for col, value in enumerate(rs[8]):
+                copy_cell_style(rs.cell(8+row%2,col+1),ws.cell(row,col+1))
             name_cell = ws.cell(row, 1)
-            copy_cell_style(rs.cell(8+row%2,1),name_cell)
             name_cell.value = block_instance.name
             type_cell = ws.cell(row, 2)
-            copy_cell_style(rs.cell(8+row%2,1),type_cell)
             type_cell.value = block_instance.block.block_type
             base_address_cell = ws.cell(row, 3)
-            copy_cell_style(rs.cell(8,1),base_address_cell)
             base_address_cell.value = hex(block_instance.base_address)
             size_cell = ws.cell(row, 4)
-            copy_cell_style(rs.cell(8,1),size_cell)
             size_cell.value = hex(block_instance.size)
             addr_width_cell = ws.cell(row, 5)
-            copy_cell_style(rs.cell(8,1),addr_width_cell)
             raw_addr_width = block_instance.block.raw_addr_width
             if raw_addr_width is None:
                 addr_width_cell.value = ""
             else:
                 addr_width_cell.value = raw_addr_width
             data_width_cell = ws.cell(row, 6)
-            copy_cell_style(rs.cell(8,1),data_width_cell)
             raw_data_width = block_instance.block.raw_data_width
             if raw_data_width is None:
                 data_width_cell.value = ""

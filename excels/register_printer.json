@@ -1,0 +1,88 @@
+{
+    "name": "Top_Module",
+    "addressWidth": 32,
+    "dataWidth": 32,
+    "version": "1.0.0",
+    "author": "xinr",
+    "blockInstances": [
+        {
+            "blockType": "block0",
+            "name": "NewBlockInstance",
+            "baseAddress": 0,
+            "blockSize": 0,
+            "addressWidth": 32,
+            "dataWidth": 32
+        }
+    ],
+    "blockTemplates": [
+        {
+            "blockType": "block0",
+            "arrayTemplates": [
+                {
+                    "name": "reg0_array",
+                    "length": 4,
+                    "offset": 4,
+                    "startAddress": 4,
+                    "endAddress": 4,
+                    "description": ""
+                }
+            ],
+            "registerTemplates": [
+                {
+                    "name": "reg0",
+                    "offset": 0,
+                    "description": "",
+                    "fieldTemplates": [
+                        {
+                            "name": "filed0",
+                            "msb": 0,
+                            "lsb": 0,
+                            "defaultValue": 0,
+                            "access": "RW",
+                            "description": "",
+                            "user_visible": "N",
+                            "description_chinese": ""
+                        },
+                        {
+                            "name": "filed1",
+                            "msb": 7,
+                            "lsb": 1,
+                            "defaultValue": 1,
+                            "access": "RW",
+                            "description": "",
+                            "user_visible": "N",
+                            "description_chinese": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "reg1",
+                    "offset": 4,
+                    "description": "",
+                    "fieldTemplates": [
+                        {
+                            "name": "filed0",
+                            "msb": 6,
+                            "lsb": 0,
+                            "defaultValue": 1,
+                            "access": "RW",
+                            "description": "",
+                            "user_visible": "Y",
+                            "description_chinese": ""
+                        },
+                        {
+                            "name": "-",
+                            "msb": 7,
+                            "lsb": 7,
+                            "defaultValue": 0,
+                            "access": "-",
+                            "description": "",
+                            "user_visible": "N",
+                            "description_chinese": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

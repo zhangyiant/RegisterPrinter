@@ -58,7 +58,7 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
     context.column = register_table_column_mapping["description"]
     description = "%s" % row[context.column].value
 
-    context.column = register_table_column_mapping["user visible"]
+    context.column = register_table_column_mapping["user_visible"]
     user_visible = row[context.column].value.upper()
     if user_visible == "" :
         user_visible = "N"
@@ -69,7 +69,7 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
         )
         raise ExcelParseException(msg, context)
 
-    context.column = register_table_column_mapping["full description (chinese)"]
+    context.column = register_table_column_mapping["description_chinese"]
     description_chinese = "%s" % row[context.column].value
 
     field_dict = {
