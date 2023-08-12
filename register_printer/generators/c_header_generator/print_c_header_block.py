@@ -33,7 +33,7 @@ def generate_array_structs(registers):
 
 
 def get_union_fields(register):
-    fields = register.fields
+    fields = sorted(register.fields, key=lambda field: field.msb)
     fields_struct = []
     current_bit = 0
     register_bits = register.size * 8
