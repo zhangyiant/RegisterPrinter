@@ -1,9 +1,11 @@
 import logging
 import os.path
 import json
+import re
 
 from register_printer.parser import (
     parse_top_sys,
+    parse_block_template_file,
     parse_top_sys_from_json)
 
 from .generators import (
@@ -103,6 +105,29 @@ class RegisterPrinter:
         LOGGER.debug("Generate excel files to %s", self.output_path)
         excel_generator = ExcelGenerator(self.top_sys, self.output_path)
         excel_generator.generate()
+        return
+
+    def add_excel(self,excel_path):
+        if re.search(".xlsx", excel_path) is not None:
+            temp_block_template_dict_list = parse_block_template_file(
+                excel_path,
+                None)
+        with open(self.json_file, "r", encoding="utf-8") as json_file_handler:
+            rp_dict = json.load(json_file_handler)
+        for block_template in temp_block_template_dict_list:
+            if block_template["blockType"] not in [item["blockType"] for item in rp_dict["blockTemplates"]] :
+                rp_dict["blockTemplates"].append(block_template)
+        json_doc = json.dumps(
+            rp_dict,
+            indent=4,
+            ensure_ascii=False
+        )
+        filename = os.path.join(
+            self.output_path,
+            "register_printer.json")
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(json_doc)
+        os.remove(self.json_file)
         return
 
     @staticmethod
