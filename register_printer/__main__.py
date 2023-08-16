@@ -89,7 +89,7 @@ def get_argument_parser():
     )
     parser.add_argument(
         "-ax", "--add_excel", dest="add_excel",
-        default=".",
+        default="",
         help="add block excel to json",
         metavar="BLOCK_EXCEL_PATH"
     )
@@ -131,7 +131,7 @@ def generate(
         LOGGER.info("Generating Excel files...")
         register_printer.generate_excel()
 
-    if add_excel != "":
+    if add_excel :
         register_printer.add_excel(add_excel)
 
     return
