@@ -98,7 +98,8 @@ class ExcelGenerator:
             ws.cell(current_row, 5).value = hex(array_template.end_address)
             ws.cell(current_row, 6).value = str(array_template.description)
             current_row += 1
-
+        
+        ws.merge_cells(f"F{current_row}:H{current_row}")
         current_row += 2
         copy_cell_style(rs.cell(7,1),ws.cell(current_row,1))
         ws.merge_cells(f"A{current_row}:B{current_row}")
