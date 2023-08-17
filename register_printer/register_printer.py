@@ -5,7 +5,7 @@ import re
 
 from register_printer.parser import (
     parse_top_sys,
-    parse_block_template_file,
+    parse_block_template_file_from_first_sheet,
     parse_top_sys_from_json)
 
 from .generators import (
@@ -109,9 +109,8 @@ class RegisterPrinter:
 
     def add_excel(self,excel_path):
         if re.search(".xlsx", excel_path) is not None:
-            temp_block_template_dict_list = parse_block_template_file(
-                excel_path,
-                None)
+            temp_block_template_dict_list = parse_block_template_file_from_first_sheet(
+                excel_path)
         with open(self.json_file, "r", encoding="utf-8") as json_file_handler:
             rp_dict = json.load(json_file_handler)
         for block_template in temp_block_template_dict_list:

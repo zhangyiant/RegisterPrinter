@@ -440,3 +440,17 @@ def parse_block_template_file(filename, block_types=None):
         block_template_dict_list.append(block_template_dict)
 
     return block_template_dict_list
+
+def parse_block_template_file_from_first_sheet(filename):
+    context = ExcelParseContext(filename=filename)
+    workbook = open_workbook(filename)
+
+    sheet_list = get_sheet_list(workbook, None)
+
+    block_template_dict_list = []
+    block_template_dict = generate_block_template_from_sheet(
+        sheet_list[0],
+        context
+    )
+    block_template_dict_list.append(block_template_dict)
+    return block_template_dict_list

@@ -3,6 +3,9 @@ import os.path
 import sys
 from copy import copy
 from openpyxl import Workbook, load_workbook
+from openpyxl.worksheet.datavalidation import DataValidation
+from register_printer.constants import RW_TYPES, USER_VISIBLE_TYPES
+
 
 
 LOGGER = logging.getLogger(__name__)
@@ -44,7 +47,7 @@ class ExcelGenerator:
         for block_template in block_templates:
             filename = os.path.join(
                 blocks_path,
-                '{0}.xlsx'.format(
+                '{0}_registers.xlsx'.format(
                     block_template.block_type
                 )
             )
@@ -106,6 +109,21 @@ class ExcelGenerator:
         for col, value in enumerate(rs[8]):
             copy_cell_style(rs.cell(8,col+1),ws.cell(current_row,col+1))
         current_row += 1
+
+        valid_user_visible = DataValidation(
+            type = 'list',
+            formula1= f'\"{",".join(USER_VISIBLE_TYPES)}\"'
+        )
+        #valid_user_visible.promptTitle = 'user_visible'
+        #valid_user_visible.prompt = 'please select Y,N, ,'
+        #valid_user_visible.errorTitle = 'invalid user_visible'
+        #valid_user_visible.error = 'Your user visible is not in the list'
+        valid_access = DataValidation(
+            type = 'list',
+            formula1= f'\"{",".join(RW_TYPES)}\"'
+        )
+        ws.add_data_validation(valid_user_visible)
+        ws.add_data_validation(valid_access)
         for register in block_template.register_templates:
             for col, vaule in enumerate(rs[8]):
                 copy_cell_style(rs.cell(9,col+1),ws.cell(current_row,col+1))
@@ -117,9 +135,10 @@ class ExcelGenerator:
             description_cell = ws.cell(current_row, 8)
             description_cell.value = register.description
             current_row += 1
+            hide_start = current_row
             for field in register.fields:
                 for col, vaule in enumerate(rs[8]):
-                    if field.user_visible == "N":
+                    if field.user_visible == "Y":
                         if field.default != 0:
                             copy_cell_style(rs.cell(11,col+1),ws.cell(current_row,col+1))
                         else:
@@ -137,12 +156,14 @@ class ExcelGenerator:
                 field_name_cell = ws.cell(current_row, 5)
                 field_name_cell.value = field.name
                 access_cell = ws.cell(current_row, 6)
+                valid_access.add(f"F{current_row}")
                 access_cell.value = field.access
                 default_value_cell = ws.cell(current_row, 7)
                 default_value_cell.value = hex(field.default)
                 field_description_cell = ws.cell(current_row, 8)
                 field_description_cell.value = field.description
                 user_visible_cell = ws.cell(current_row, 9)
+                valid_user_visible.add(f"I{current_row}")
                 user_visible_cell.value = field.user_visible
                 description_chinese_cell = ws.cell(current_row, 10)
                 description_chinese_cell.value = field.description_chinese
@@ -151,6 +172,9 @@ class ExcelGenerator:
             for col, vaule in enumerate(rs[8]):
                 copy_cell_style(rs.cell(14,col+1),ws.cell(current_row,col+1))
             current_row += 1
+            ws.sheet_properties.outlinePr.summaryBelow = False
+            ws.row_dimensions.group(hide_start,current_row-2)
+            hide_start = current_row + 1
         wb.save(filename=filename)
 
         return

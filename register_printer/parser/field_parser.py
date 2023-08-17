@@ -61,7 +61,7 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
     context.column = register_table_column_mapping["user_visible"]
     user_visible = row[context.column].value.upper()
     if user_visible == "" :
-        user_visible = "N"
+        user_visible = "Y"
     if user_visible not in ["Y", "N"]:
         msg = "Invalid user visible type: {}, valid user visible types are {}.".format(
             user_visible,
