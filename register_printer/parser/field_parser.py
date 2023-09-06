@@ -2,6 +2,7 @@ import re
 import logging
 from .parse_exception import ExcelParseException
 from register_printer.constants import RW_TYPES
+from register_printer.constants import USER_VISIBLE_TYPES
 
 
 LOGGER = logging.getLogger(__name__)
@@ -62,10 +63,10 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
     user_visible = row[context.column].value.upper()
     if user_visible == "" :
         user_visible = "Y"
-    if user_visible not in ["Y", "N"]:
+    if user_visible not in USER_VISIBLE_TYPES:
         msg = "Invalid user visible type: {}, valid user visible types are {}.".format(
             user_visible,
-            ["Y", "N"]
+            USER_VISIBLE_TYPES
         )
         raise ExcelParseException(msg, context)
 

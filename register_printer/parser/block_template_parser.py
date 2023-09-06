@@ -53,7 +53,7 @@ def parse_register_table_title(row):
             result["access"] = i
         elif row[i].value.strip().upper() == "default".upper():
             result["default"] = i
-        elif row[i].value.strip().upper() == "description".upper():
+        elif row[i].value.strip().upper() in ["description".upper(),"description(English)".upper(),"description (english)".upper()]:
             result["description"] = i
         elif row[i].value.strip().upper() == "user visible".upper():
             result["user_visible"] = i
