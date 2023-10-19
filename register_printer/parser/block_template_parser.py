@@ -91,8 +91,10 @@ def parse_array_table_title(row):
             result["start_addr"] = i
         elif row[i].value.strip().upper() == "end_addr".upper():
             result["end_addr"] = i
+        elif row[i].value.strip().upper() == "description".upper():
+            result["description"] = i
     LOGGER.debug("Array table column mapping: %s", result)
-    return result
+    return result 
 
 
 def is_table_title_row(row):
@@ -227,13 +229,16 @@ def parse_array_row(row, array_table_column_mapping, previous_context):
         msg = "Parse end address error: {}.".format(exc)
         raise ExcelParseException(msg, context)
 
+    context.column = array_table_column_mapping["description"]
+    description = row[context.column].value
+
     result = {
         "name": array_name,
         "length": array_length,
         "offset": array_offset,
         "startAddress": start_address,
         "endAddress": end_address,
-        "description": ""
+        "description": description
     }
     return result
 

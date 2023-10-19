@@ -19,7 +19,7 @@ def get_register_dict_from_register(register):
         tmp_register[type.lower()+"_flds"] = []
     for fld in register.fields:
         field_dict = {}
-        field_dict["name"] = register.name.lower()+"_"+fld.name.lower()
+        field_dict["name"] = fld.name.lower()
         field_dict["msb"] = fld.msb
         field_dict["lsb"] = fld.lsb
         field_dict["default"] = fld.default

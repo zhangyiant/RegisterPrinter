@@ -89,7 +89,6 @@ begin
                             "((reg_wdata[{}:{}])&{}[{}:{}])".format(msb,lsb,register.name,msb,lsb) if field.access == "W0C" else
                             "((~reg_wdata[{}:{}])|{}[{}:{}])".format(msb,lsb,register.name,msb,lsb) if field.access == "W0S" else
                             "((~reg_wdata[{}:{}])^{}[{}:{}])".format(msb,lsb,register.name,msb,lsb) if field.access == "W0T" else
-                            "{"+"{}".format(msb-lsb+1)+"{1'd1}}" if field.access == "WO" else
                             "reg_wdata[{}:{}]".format(msb,lsb)
                     %}
                     {% if field.access == "RWP" %}
@@ -116,11 +115,14 @@ begin
             {% endfor %}
     end
         {% endif %}
-        {% if (register.hw_update_flds | length ) > 0 %}
+        {% if ((register.hw_update_flds | length ) + (register.wo_flds | length)) > 0 %}
     else
     begin
         {% for field in register.hw_update_flds %}
             {{ register.name }}[{{ field.msb  }}:{{ field.lsb }}] <= hw_{{field.name}};
+        {% endfor %}
+        {% for field in register.wo_flds %}
+            {{ register.name }}[{{ field.msb  }}:{{ field.lsb }}] <= {{field.msb-field.lsb+1}}'d0;
         {% endfor %}
     end
         {% endif %}
