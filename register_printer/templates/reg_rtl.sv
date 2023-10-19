@@ -143,7 +143,7 @@ assign {{register.name}}[{{field.msb}}:{{field.lsb}}] = {{field.msb-field.lsb+1}
 
 {% endfor %}
 
-alwyas @(posedge reg_clk or negedge reg_rstn)
+always @(posedge reg_clk or negedge reg_rstn)
 begin
     if(~reg_rstn)
     begin
