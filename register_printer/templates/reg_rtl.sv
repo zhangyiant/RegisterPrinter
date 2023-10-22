@@ -61,14 +61,15 @@ end
 {% endfor %}
 
 {% for register in registers %}
-    {% set rw_update_flds = register.write_update_flds + register.read_update_flds %}
-    {% if (rw_update_flds | length) > 0 %}
+    {% if (register.fields | length) > 0 %}
 always @(posedge reg_clk or negedge reg_rstn) 
 begin
     if(~reg_rstn) 
     begin
-        {% for field in rw_update_flds %}
+        {% for field in register.fileds %}
+            {% if field.access != "-" %}
         {{ register.name }}[{{ field.msb }}:{{ field.lsb}}] <= {{ field.msb - field.lsb + 1}}'h{{ "%x" | format(field.default)}};
+            {% endif %}
         {% endfor %}
     end
         {% if (register.write_update_flds | length ) > 0 %}
