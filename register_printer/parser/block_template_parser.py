@@ -300,7 +300,6 @@ def parse_register_table(sheet, start_rowx, previous_context):
                 register_table_column_mapping,
                 context
             )
-            register_dict_list.append(register_dict)
             # Todo: Add offset, size validation
             # if register.offset > block.size:
             #     LOGGER.error(
@@ -310,6 +309,14 @@ def parse_register_table(sheet, start_rowx, previous_context):
             #         register.offset,
             #         block.size)
             #     raise Exception("offset > block size")
+            if register_dict["offset"] in [register["offset"] for register in register_dict_list] :
+                LOGGER.error(
+                    "sheet %s, %s offset eq error: offset %x ",
+                    sheet.name,
+                    register_dict["name"],
+                    register_dict["offset"])
+                raise Exception("offset eq")
+            register_dict_list.append(register_dict)
         else:
             LOGGER.error(
                 "sheet %s row %d error: unknown row.",

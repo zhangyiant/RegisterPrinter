@@ -66,7 +66,7 @@ always @(posedge reg_clk or negedge reg_rstn)
 begin
     if(~reg_rstn) 
     begin
-        {% for field in register.fileds %}
+        {% for field in register.fields %}
             {% if field.access != "-" %}
         {{ register.name }}[{{ field.msb }}:{{ field.lsb}}] <= {{ field.msb - field.lsb + 1}}'h{{ "%x" | format(field.default)}};
             {% endif %}
@@ -120,10 +120,10 @@ begin
     else
     begin
         {% for field in register.hw_update_flds %}
-            {{ register.name }}[{{ field.msb  }}:{{ field.lsb }}] <= hw_{{field.name}};
+        {{ register.name }}[{{ field.msb  }}:{{ field.lsb }}] <= hw_{{field.name}};
         {% endfor %}
         {% for field in register.wo_flds %}
-            {{ register.name }}[{{ field.msb  }}:{{ field.lsb }}] <= {{field.msb-field.lsb+1}}'d0;
+        {{ register.name }}[{{ field.msb  }}:{{ field.lsb }}] <= {{field.msb-field.lsb+1}}'d0;
         {% endfor %}
     end
         {% endif %}
