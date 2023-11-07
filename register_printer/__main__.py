@@ -107,32 +107,32 @@ def generate(
         add_excel=""
         ):
 
-    if gen_uvm:
-        LOGGER.info("Generate UVM models...")
-        register_printer.generate_uvm()
-
-    if gen_rtl:
-        LOGGER.info("Generating RTL modules...")
-        register_printer.generate_rtl()
-
-    if gen_doc:
-        LOGGER.info("Generating documentations...")
-        register_printer.generate_document()
-
-    if gen_c_header:
-        LOGGER.info("Generating C headers...")
-        register_printer.generate_c_header()
-
-    if gen_json:
-        LOGGER.info("Generating JSON documents...")
-        register_printer.generate_json()
-
     if gen_excel:
         LOGGER.info("Generating Excel files...")
         register_printer.generate_excel()
 
     if add_excel :
         register_printer.add_excel(add_excel)
+
+    if gen_json:
+        LOGGER.info("Generating JSON documents...")
+        register_printer.generate_json()
+
+    if gen_doc:
+        LOGGER.info("Generating documentations...")
+        register_printer.generate_document()
+
+    if gen_rtl:
+        LOGGER.info("Generating RTL modules...")
+        register_printer.generate_rtl()
+
+    if gen_uvm:
+        LOGGER.info("Generate UVM models...")
+        register_printer.generate_uvm()
+
+    if gen_c_header:
+        LOGGER.info("Generating C headers...")
+        register_printer.generate_c_header()
 
     return
 
