@@ -2,6 +2,9 @@ import logging
 import os.path
 import json
 import re
+from register_printer.data_model import (
+    TopSys
+)
 
 from register_printer.parser import (
     parse_top_sys,
@@ -28,7 +31,9 @@ class RegisterPrinter:
             config_file=None,
             excel_path=None,
             output_path=".",
-            json_file=None):
+            json_file=None,
+            top_sys = None
+        ):
         self.config_file = config_file
         self.excel_path = excel_path
         self.output_path = output_path
@@ -38,6 +43,8 @@ class RegisterPrinter:
         elif self.json_file is not None:
             self.top_sys = parse_top_sys_from_json(
                 self.json_file)
+        elif top_sys != None:
+            self.top_sys = TopSys.from_dict(top_sys)
         else:
             raise Exception("Config file or JSON file must be provided")
         return
