@@ -2,6 +2,9 @@ import logging
 import os.path
 import json
 import re
+from register_printer.data_model import (
+    TopSys
+)
 
 from register_printer.parser import (
     parse_top_sys,
