@@ -40,3 +40,10 @@ optional arguments:
 
 ## How to upload to pypi
 `python -m twine upload dist/*`
+
+# Front end application
+
+GUI application is available for this command line tool.
+
+1. Electron based application. https://github.com/zhangyiant/register-printer-frontend
+
