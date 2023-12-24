@@ -41,7 +41,7 @@ def get_union_fields(register):
     for field in fields:
         if field.lsb > current_bit:
             reserve_bits = field.lsb - current_bit
-            field_type = "uint32_t"
+            field_type = get_c_type_by_size(register)
             field_name = f"RSVD{reserve_index}"
             field_length = reserve_bits
             fields_struct.append({
@@ -51,7 +51,7 @@ def get_union_fields(register):
             })
             current_bit = field.lsb
             reserve_index += 1
-            field_type = "uint32_t"
+            field_type = get_c_type_by_size(register)
             if field.name == "-":
                 field_name = f"RSVD{reserve_index}"
                 reserve_index += 1
@@ -65,7 +65,7 @@ def get_union_fields(register):
             })
             current_bit = field.msb + 1
         elif field.lsb == current_bit:
-            field_type = "uint32_t"
+            field_type = get_c_type_by_size(register)
             if field.name == "-":
                 field_name = f"RSVD{reserve_index}"
                 reserve_index += 1
@@ -83,7 +83,7 @@ def get_union_fields(register):
             raise Exception("Error field lsb.")
     if current_bit < register_bits:
         reserve_bits = register_bits - current_bit
-        field_type = "uint32_t"
+        field_type = get_c_type_by_size(register)
         field_name = f"RSVD{reserve_index}"
         field_length = reserve_bits
         fields_struct.append({
@@ -103,7 +103,7 @@ def generate_struct_fields(registers):
             if reg.is_reserved:
                 accumulated_number_rsvd_register += 1
             else:
-                if accumulated_number_rsvd_register > 1:
+                if accumulated_number_rsvd_register >= 1:
                     name = "RSVD%d[%d]" % \
                            (rsvd_idx, accumulated_number_rsvd_register)
                     struct_field = {
