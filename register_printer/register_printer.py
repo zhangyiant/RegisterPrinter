@@ -1,9 +1,14 @@
 import logging
 import os.path
 import json
+import re
+from register_printer.data_model import (
+    TopSys
+)
 
 from register_printer.parser import (
     parse_top_sys,
+    parse_block_template_file_from_first_sheet,
     parse_top_sys_from_json)
 
 from .generators import (
@@ -12,6 +17,9 @@ from .generators import (
     DocGenerator,
     RtlGenerator,
     UvmGenerator
+)
+from register_printer.data_model import (
+    TopSys
 )
 
 from .get_version import get_version
@@ -26,7 +34,9 @@ class RegisterPrinter:
             config_file=None,
             excel_path=None,
             output_path=".",
-            json_file=None):
+            json_file=None,
+            top_sys=None,
+            ):
         self.config_file = config_file
         self.excel_path = excel_path
         self.output_path = output_path
@@ -36,6 +46,8 @@ class RegisterPrinter:
         elif self.json_file is not None:
             self.top_sys = parse_top_sys_from_json(
                 self.json_file)
+        elif top_sys is not None:
+            self.top_sys = TopSys.from_dict(top_sys)
         else:
             raise Exception("Config file or JSON file must be provided")
         return
@@ -103,6 +115,28 @@ class RegisterPrinter:
         LOGGER.debug("Generate excel files to %s", self.output_path)
         excel_generator = ExcelGenerator(self.top_sys, self.output_path)
         excel_generator.generate()
+        return
+
+    def add_excel(self,excel_path):
+        if re.search(".xlsx", excel_path) is not None:
+            temp_block_template_dict_list = parse_block_template_file_from_first_sheet(
+                excel_path)
+        with open(self.json_file, "r", encoding="utf-8") as json_file_handler:
+            rp_dict = json.load(json_file_handler)
+        for block_template in temp_block_template_dict_list:
+            if block_template["blockType"] not in [item["blockType"] for item in rp_dict["blockTemplates"]] :
+                rp_dict["blockTemplates"].append(block_template)
+        json_doc = json.dumps(
+            rp_dict,
+            indent=4,
+            ensure_ascii=False
+        )
+        filename = os.path.join(
+            self.output_path,
+            "register_printer.json")
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(json_doc)
+        os.remove(self.json_file)
         return
 
     @staticmethod

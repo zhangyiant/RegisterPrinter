@@ -19,6 +19,12 @@ RW_TYPES = [
     '-'
 ]
 
+USER_VISIBLE_TYPES = [
+    'Y',
+    'N',
+]
+
 __all__ = [
-    RW_TYPES
+    RW_TYPES,
+    USER_VISIBLE_TYPES
 ]

@@ -2,6 +2,7 @@ import re
 import logging
 from .parse_exception import ExcelParseException
 from register_printer.constants import RW_TYPES
+from register_printer.constants import USER_VISIBLE_TYPES
 
 
 LOGGER = logging.getLogger(__name__)
@@ -58,13 +59,31 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
     context.column = register_table_column_mapping["description"]
     description = "%s" % row[context.column].value
 
+    context.column = register_table_column_mapping["user_visible"]
+    user_visible = row[context.column].value.upper()
+    if user_visible == "" :
+        user_visible = "Y"
+    if user_visible not in USER_VISIBLE_TYPES:
+        msg = "Invalid user visible type: {}, valid user visible types are {}.".format(
+            user_visible,
+            USER_VISIBLE_TYPES
+        )
+        raise ExcelParseException(msg, context)
+    try:
+        context.column = register_table_column_mapping["description_chinese"]
+        description_chinese = "%s" % row[context.column].value
+    except:
+        description_chinese = ""
+
     field_dict = {
         "name": field_name,
         "msb": msb,
         "lsb": lsb,
         "defaultValue": default,
         "access": access,
-        "description": description
+        "description": description,
+        "user_visible": user_visible,
+        "description_chinese": description_chinese
     }
     return field_dict
 

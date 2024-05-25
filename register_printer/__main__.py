@@ -87,6 +87,12 @@ def get_argument_parser():
         action="store_true",
         help="Generate all files, same as -d -c -u -r"
     )
+    parser.add_argument(
+        "-ax", "--add_excel", dest="add_excel",
+        default="",
+        help="add block excel to json",
+        metavar="BLOCK_EXCEL_PATH"
+    )
     return parser
 
 
@@ -97,31 +103,36 @@ def generate(
         gen_doc=False,
         gen_c_header=False,
         gen_json=False,
-        gen_excel=False):
+        gen_excel=False,
+        add_excel=""
+        ):
 
-    if gen_uvm:
-        LOGGER.info("Generate UVM models...")
-        register_printer.generate_uvm()
+    if gen_excel:
+        LOGGER.info("Generating Excel files...")
+        register_printer.generate_excel()
 
-    if gen_rtl:
-        LOGGER.info("Generating RTL modules...")
-        register_printer.generate_rtl()
-
-    if gen_doc:
-        LOGGER.info("Generating documentations...")
-        register_printer.generate_document()
-
-    if gen_c_header:
-        LOGGER.info("Generating C headers...")
-        register_printer.generate_c_header()
+    if add_excel :
+        register_printer.add_excel(add_excel)
 
     if gen_json:
         LOGGER.info("Generating JSON documents...")
         register_printer.generate_json()
 
-    if gen_excel:
-        LOGGER.info("Generating Excel files...")
-        register_printer.generate_excel()
+    if gen_doc:
+        LOGGER.info("Generating documentations...")
+        register_printer.generate_document()
+
+    if gen_rtl:
+        LOGGER.info("Generating RTL modules...")
+        register_printer.generate_rtl()
+
+    if gen_uvm:
+        LOGGER.info("Generate UVM models...")
+        register_printer.generate_uvm()
+
+    if gen_c_header:
+        LOGGER.info("Generating C headers...")
+        register_printer.generate_c_header()
 
     return
 
@@ -186,7 +197,8 @@ def main():
             gen_doc=opts.gen_doc,
             gen_c_header=opts.gen_c_header,
             gen_json=opts.gen_json,
-            gen_excel=opts.gen_excel
+            gen_excel=opts.gen_excel,
+            add_excel=opts.add_excel
         )
     except Exception as exc:
         traceback.print_exc()

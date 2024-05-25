@@ -53,8 +53,12 @@ def parse_register_table_title(row):
             result["access"] = i
         elif row[i].value.strip().upper() == "default".upper():
             result["default"] = i
-        elif row[i].value.strip().upper() == "description".upper():
+        elif row[i].value.strip().upper() in ["description".upper(),"description(English)".upper(),"description (english)".upper()]:
             result["description"] = i
+        elif row[i].value.strip().upper() == "user visible".upper():
+            result["user_visible"] = i
+        elif row[i].value.strip().upper() == "full description (chinese)".upper():
+            result["description_chinese"] = i
     LOGGER.debug("Register table column mapping: %s", result)
     return result
 
@@ -87,8 +91,10 @@ def parse_array_table_title(row):
             result["start_addr"] = i
         elif row[i].value.strip().upper() == "end_addr".upper():
             result["end_addr"] = i
+        elif row[i].value.strip().upper() == "description".upper():
+            result["description"] = i
     LOGGER.debug("Array table column mapping: %s", result)
-    return result
+    return result 
 
 
 def is_table_title_row(row):
@@ -223,13 +229,16 @@ def parse_array_row(row, array_table_column_mapping, previous_context):
         msg = "Parse end address error: {}.".format(exc)
         raise ExcelParseException(msg, context)
 
+    context.column = array_table_column_mapping["description"]
+    description = row[context.column].value
+
     result = {
         "name": array_name,
         "length": array_length,
         "offset": array_offset,
         "startAddress": start_address,
         "endAddress": end_address,
-        "description": ""
+        "description": description
     }
     return result
 
@@ -291,7 +300,6 @@ def parse_register_table(sheet, start_rowx, previous_context):
                 register_table_column_mapping,
                 context
             )
-            register_dict_list.append(register_dict)
             # Todo: Add offset, size validation
             # if register.offset > block.size:
             #     LOGGER.error(
@@ -301,6 +309,14 @@ def parse_register_table(sheet, start_rowx, previous_context):
             #         register.offset,
             #         block.size)
             #     raise Exception("offset > block size")
+            if register_dict["offset"] in [register["offset"] for register in register_dict_list] :
+                LOGGER.error(
+                    "sheet %s, %s offset eq error: offset %x ",
+                    sheet.name,
+                    register_dict["name"],
+                    register_dict["offset"])
+                raise Exception("offset eq")
+            register_dict_list.append(register_dict)
         else:
             LOGGER.error(
                 "sheet %s row %d error: unknown row.",
@@ -435,4 +451,18 @@ def parse_block_template_file(filename, block_types=None):
         )
         block_template_dict_list.append(block_template_dict)
 
+    return block_template_dict_list
+
+def parse_block_template_file_from_first_sheet(filename):
+    context = ExcelParseContext(filename=filename)
+    workbook = open_workbook(filename)
+
+    sheet_list = get_sheet_list(workbook, None)
+
+    block_template_dict_list = []
+    block_template_dict = generate_block_template_from_sheet(
+        sheet_list[0],
+        context
+    )
+    block_template_dict_list.append(block_template_dict)
     return block_template_dict_list

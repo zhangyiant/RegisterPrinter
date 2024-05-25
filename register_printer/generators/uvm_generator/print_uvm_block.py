@@ -3,6 +3,7 @@ import os.path
 import logging
 from register_printer.template_loader import get_template
 from register_printer.data_model import Register, Array, Struct
+import re
 
 
 LOGGER = logging.getLogger(__name__)
@@ -104,6 +105,9 @@ def print_uvm_block(block, out_path):
     template = get_template("reg_model.sv")
 
     registers = get_full_registers(block.registers)
+    for register in registers:
+        if not re.match("^"+block.block_type+"_",register.name,re.IGNORECASE):
+            register.name = block.block_type+"_"+register.name
 
     structs = get_struct_list(block.registers)
 

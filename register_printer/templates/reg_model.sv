@@ -21,6 +21,8 @@ class {{ uvm_reg_type }} extends uvm_reg;
     {{ field.name | lower }} = uvm_reg_field::type_id::create("{{ field.name | lower }}");
     {% if field.access == "RWP" %}
     {{ field.name | lower }}.configure(this, {{ field.size }}, {{ field.lsb }}, "RW", 0, {{ field_size }}'h{{ '%x' | format(field.default) }}, 1, 1, 1);
+    {% elif field.access == "WO" %}
+    {{ field.name | lower }}.configure(this, {{ field.size }}, {{ field.lsb }}, "W1C", 0, {{ field_size }}'h{{ '%x' | format(field.default) }}, 1, 1, 1);
     {% else %}
     {{ field.name | lower }}.configure(this, {{ field.size }}, {{ field.lsb }}, "{{ field.access }}", 0, {{ field_size }}'h{{ '%x' | format(field.default) }}, 1, 1, 1);
     {% endif %}
@@ -37,7 +39,7 @@ class {{ struct.name | upper }} extends uvm_reg_block;
   `uvm_object_utils({{ struct.name | upper }})
 
   {% for reg in struct.registers %}
-  {{ reg.name | upper }} {{ reg.name | lower }};
+  rand {{ reg.name | upper }} {{ reg.name | lower }};
   {% endfor %}
 
   extern function new(string name="{{ struct.name | upper }}");
