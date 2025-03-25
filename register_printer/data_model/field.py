@@ -5,6 +5,8 @@ class Field:
         self.lsb = 0
         self.default = 0
         self.access = None
+        self.user_visible = "Y"
+        self.decsription_chinese = ""
         self.description = ""
         return
 
@@ -32,4 +34,6 @@ class Field:
         field.default = field_template.default
         field.access = field_template.access
         field.description = field_template.description
+        field.user_visible = field_template.user_visible
+        field.description_chinese = field_template.description_chinese
         return field
