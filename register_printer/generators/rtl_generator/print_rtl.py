@@ -3,6 +3,8 @@ import os.path
 import logging
 from register_printer.template_loader import get_template
 from register_printer.data_model import Register, Array, Struct
+from register_printer.constants import RW_TYPES
+
 
 
 LOGGER = logging.getLogger(__name__)
@@ -10,56 +12,21 @@ LOGGER = logging.getLogger(__name__)
 
 def get_register_dict_from_register(register):
     tmp_register = {}
-    tmp_register["name"] = register.name
+    tmp_register["name"] = register.name.lower()
     tmp_register["fields"] = []
     tmp_register["offset"] = register.offset
-    rw_flds = []
-    rwp_flds = []
-    ro_flds = []
-    rc_flds = []
-    rs_flds = []
-    w1c_flds = []
-    w0c_flds = []
-    wc_flds = []
-    wo_flds = []
-    wrc_flds = []
-    wrs_flds = []
-    # rsc_flds = []
-    access_to_fields_mapping = {
-        "RW": rw_flds,
-        "RWP": rwp_flds,
-        "RC": rc_flds,
-        "RO": ro_flds,
-        "RS": rs_flds,
-        "W1C": w1c_flds,
-        "W0C": w0c_flds,
-        "WC": wc_flds,
-        "WO": wo_flds,
-        "WRC": wrc_flds,
-        "WRS": wrs_flds,
-        "-": ro_flds
-    }
+    for type in RW_TYPES:
+        tmp_register[type.lower()+"_flds"] = []
     for fld in register.fields:
         field_dict = {}
-        field_dict["name"] = fld.name
+        field_dict["name"] = fld.name.lower()
         field_dict["msb"] = fld.msb
         field_dict["lsb"] = fld.lsb
         field_dict["default"] = fld.default
         field_dict["access"] = fld.access
         field_dict["description"] = fld.description
         tmp_register["fields"].append(field_dict)
-        access_to_fields_mapping[fld.access].append(field_dict)
-    tmp_register["rw_flds"] = rw_flds
-    tmp_register["rwp_flds"] = rwp_flds
-    tmp_register["ro_flds"] = ro_flds
-    tmp_register["rc_flds"] = rc_flds
-    tmp_register["rs_flds"] = rs_flds
-    tmp_register["w1c_flds"] = w1c_flds
-    tmp_register["w0c_flds"] = w0c_flds
-    tmp_register["wc_flds"] = wc_flds
-    tmp_register["wo_flds"] = wo_flds
-    tmp_register["wrc_flds"] = wrc_flds
-    tmp_register["wrs_flds"] = wrs_flds
+        tmp_register[fld.access.lower() + "_flds"].append(field_dict)
     return tmp_register
 
 
@@ -107,7 +74,9 @@ def print_rtl_block(block, out_path):
             tmp_registers.extend(tmp_register_dict_list)
         else:
             LOGGER.warning("Unsupported register type!")
-
+    for register in tmp_registers:
+        for field in register["fields"]:
+            field["name"] = "rg_"+register["name"]+"_"+field["name"]
     content = template.render(
         {
             "block": block,
@@ -136,7 +105,7 @@ def get_register_dict_list_from_array_register(reg):
                     idx,
                     reg.default_overwrite_entries
                 )
-                tmp_register_dict["name"] = f"{struct_reg.name}_{idx}"
+                tmp_register_dict["name"] = f"{struct_reg.name}_{idx}".lower()
                 tmp_register_dict["offset"] = \
                     reg.start_address \
                     + idx * reg.offset \
@@ -144,7 +113,7 @@ def get_register_dict_list_from_array_register(reg):
                 for field_dict in tmp_register_dict["fields"]:
                     if field_dict["name"] != "-":
                         field_dict["name"] = \
-                            f'{struct_reg.name}_{idx}_{field_dict["name"]}'
+                            f'{struct_reg.name}_{idx}_{field_dict["name"]}'.lower()
                 tmp_register_dict_list.append(tmp_register_dict)
     return tmp_register_dict_list
 

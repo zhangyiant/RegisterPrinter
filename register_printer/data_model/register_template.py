@@ -52,9 +52,10 @@ class RegisterTemplate:
                 error_msg = "Fields overlap: \n{0}\n{1}".format(
                     field, new_field)
                 raise Exception(error_msg)
-        if not inserted:
-            fields.append(new_field)
-        self.fields = fields
+#        if not inserted:
+#            fields.append(new_field)
+#        self.fields = fields
+        self.fields.append(new_field)
         return
 
     @property

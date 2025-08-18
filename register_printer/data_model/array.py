@@ -28,7 +28,12 @@ class Array:
 
     @property
     def offset(self):
-        return self.content_type.size()
+#        return self.content_type.size()
+        return self._offset
+
+    @offset.setter
+    def offset(self, value):
+        self._offset = value
 
     def __str__(self):
         result = "Array of " + self.content_type.name

@@ -10,6 +10,7 @@ class Register:
         self.name = ""
         self.description = ""
         self.is_reserved = False
+        self.rsv_size = 1
         self.fields = []
         return
 
@@ -24,7 +25,7 @@ class Register:
     @property
     def size(self):
         if self.is_reserved:
-            return 1
+            return self.rsv_size
         biggest_msb = 0
         for field in self.fields:
             msb = field.msb

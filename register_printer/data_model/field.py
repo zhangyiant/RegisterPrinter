@@ -6,6 +6,8 @@ class Field:
         self.default = 0
         self.access = None
         self.description = ""
+        self.user_visible = "Y"
+        self.description_chinese = ""
         return
 
     def __str__(self):
@@ -32,4 +34,6 @@ class Field:
         field.default = field_template.default
         field.access = field_template.access
         field.description = field_template.description
+        field.user_visible = field_template.user_visible
+        field.description_chinese = field_template.description_chinese
         return field

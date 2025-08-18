@@ -21,6 +21,10 @@ a = Analysis(['main.py'],
                      "register_printer/templates"
                  ),
                  (
+                     "register_printer/excels/*",
+                     "register_printer/excels"
+                 ),
+                 (
                      "register_printer/VERSION",
                      "register_printer"
                  )
