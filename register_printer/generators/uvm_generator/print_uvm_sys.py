@@ -35,7 +35,7 @@ def print_uvm_sys_hdl(top_sys, out_path):
     hdl_dir = os.path.join(
         out_path,
         "hdl")
-    os.system(f"mkdir -p {hdl_dir}")
+    os.makedirs(hdl_dir, exist_ok=True)
     file_name = os.path.join(
         hdl_dir,
         uvm_sys_name + ".svh")

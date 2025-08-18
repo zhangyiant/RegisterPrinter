@@ -115,7 +115,7 @@ def print_uvm_block(block, out_path):
     hdl_dir = os.path.join(
         out_path,
         "hdl")
-    os.system(f"mkdir -p {hdl_dir}")
+    os.makedirs(hdl_dir, exist_ok=True)
     uvm_block_name = block.block_type.lower() + "_hdl"
     file_name = os.path.join(
         hdl_dir,
@@ -240,7 +240,7 @@ def gen_field_cfg_seq(name, block, out_path):
     seq_dir = os.path.join(
         out_path,
         "cfg_seq")
-    os.system(f"mkdir -p {seq_dir}")
+    os.makedirs(seq_dir, exist_ok=True)
     template = get_template("field_cfg_base_seq.sv")
     for item in block["registers"]:
         for register in item["registers"]:
