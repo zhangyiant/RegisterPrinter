@@ -107,20 +107,20 @@ def generate(
         add_excel=""
         ):
 
+    if gen_doc:
+        LOGGER.info("Generating documentations...")
+        register_printer.generate_document()
+
     if gen_excel:
         LOGGER.info("Generating Excel files...")
         register_printer.generate_excel()
-
-    if add_excel :
-        register_printer.add_excel(add_excel)
 
     if gen_json:
         LOGGER.info("Generating JSON documents...")
         register_printer.generate_json()
 
-    if gen_doc:
-        LOGGER.info("Generating documentations...")
-        register_printer.generate_document()
+    if add_excel :
+        register_printer.add_excel(add_excel)
 
     if gen_rtl:
         LOGGER.info("Generating RTL modules...")

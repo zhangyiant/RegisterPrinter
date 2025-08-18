@@ -17,6 +17,7 @@ def get_filename(out_path, block):
 
 def generate_array_structs(registers):
     c_structs = []
+    accumulated_number_rsvd_register = 0
     for register in registers:
         if isinstance(register, Array):
             if not isinstance(register.content_type, Struct):
@@ -27,6 +28,18 @@ def generate_array_structs(registers):
             c_struct = {}
             c_struct["name"] = struct.name.upper() + "_TypeDef"
             struct_fields = generate_struct_fields(struct.registers)
+            if register.offset > (struct.registers[-1].offset+struct.registers[-1].size):
+                accumulated_number_rsvd_register = register.offset - (struct.registers[-1].offset+struct.registers[-1].size)
+            if accumulated_number_rsvd_register >= 1:
+                name = "__RSVD_ARRAY[%d]" % \
+                       (accumulated_number_rsvd_register)
+                struct_field = {
+                    "category": "reserved",
+                    "type": "const uint8_t",
+                    "name": name
+                }
+                struct_fields.append(struct_field)
+                accumulated_number_rsvd_register = 0
             c_struct["struct_fields"] = struct_fields
             c_structs.append(c_struct)
     return c_structs
@@ -41,8 +54,8 @@ def get_union_fields(register):
     for field in fields:
         if field.lsb > current_bit:
             reserve_bits = field.lsb - current_bit
-            field_type = get_c_type_by_size(register.size)
-            field_name = f"RSVD{reserve_index}"
+            field_type = "uint32_t"
+            field_name = f"__RSVD{reserve_index}"
             field_length = reserve_bits
             fields_struct.append({
                 "type": field_type,
@@ -51,9 +64,9 @@ def get_union_fields(register):
             })
             current_bit = field.lsb
             reserve_index += 1
-            field_type = get_c_type_by_size(register.size)
+            field_type = "uint32_t"
             if field.name == "-":
-                field_name = f"RSVD{reserve_index}"
+                field_name = f"__RSVD{reserve_index}"
                 reserve_index += 1
             else:
                 field_name = field.name.upper()
@@ -65,9 +78,9 @@ def get_union_fields(register):
             })
             current_bit = field.msb + 1
         elif field.lsb == current_bit:
-            field_type = get_c_type_by_size(register.size)
+            field_type = "uint32_t"
             if field.name == "-":
-                field_name = f"RSVD{reserve_index}"
+                field_name = f"__RSVD{reserve_index}"
                 reserve_index += 1
             else:
                 field_name = field.name.upper()
@@ -83,8 +96,8 @@ def get_union_fields(register):
             raise Exception("Error field lsb.")
     if current_bit < register_bits:
         reserve_bits = register_bits - current_bit
-        field_type = get_c_type_by_size(register.size)
-        field_name = f"RSVD{reserve_index}"
+        field_type = "uint32_t"
+        field_name = f"__RSVD{reserve_index}"
         field_length = reserve_bits
         fields_struct.append({
             "type": field_type,
@@ -101,10 +114,10 @@ def generate_struct_fields(registers):
     for reg in registers:
         if isinstance(reg, Register):
             if reg.is_reserved:
-                accumulated_number_rsvd_register += 1
+                accumulated_number_rsvd_register += reg.size
             else:
                 if accumulated_number_rsvd_register >= 1:
-                    name = "RSVD%d[%d]" % \
+                    name = "__RSVD%d[%d]" % \
                            (rsvd_idx, accumulated_number_rsvd_register)
                     struct_field = {
                         "category": "reserved",
@@ -125,8 +138,8 @@ def generate_struct_fields(registers):
                 }
                 struct_fields.append(struct_field)
         elif isinstance(reg, Array):
-            if accumulated_number_rsvd_register > 1:
-                name = "RSVD%d[%d]" % \
+            if accumulated_number_rsvd_register >= 1:
+                name = "__RSVD%d[%d]" % \
                        (rsvd_idx, accumulated_number_rsvd_register)
                 struct_field = {
                     "category": "reserved",
@@ -152,11 +165,11 @@ def generate_struct_fields(registers):
             LOGGER.warning("Unsupported register type.")
 
     # write the last reserved register
-    if accumulated_number_rsvd_register > 1:
+    if accumulated_number_rsvd_register >= 1:
         struct_field = {
             "category": "reserved",
             "type": "const uint8_t",
-            "name": "RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
+            "name": "__RSVD%d[%d]" % (rsvd_idx, accumulated_number_rsvd_register)
         }
         struct_fields.append(struct_field)
         rsvd_idx = rsvd_idx + 1

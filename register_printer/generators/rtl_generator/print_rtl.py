@@ -27,31 +27,6 @@ def get_register_dict_from_register(register):
         field_dict["description"] = fld.description
         tmp_register["fields"].append(field_dict)
         tmp_register[fld.access.lower() + "_flds"].append(field_dict)
-    tmp_register["write_update_flds"] = \
-        tmp_register["rw_flds"] + tmp_register["wo_flds"] + \
-        tmp_register["w1c_flds"] + tmp_register["w1s_flds"] + tmp_register["w1t_flds"] + \
-        tmp_register["w0c_flds"] + tmp_register["w0s_flds"] + tmp_register["w0t_flds"] + \
-        tmp_register["wc_flds"] + tmp_register["ws_flds"] + \
-        tmp_register["wrc_flds"] + tmp_register["wrs_flds"] + \
-        tmp_register["rwp_flds"] + tmp_register["w1_flds"];
-    tmp_register["read_update_flds"] = \
-        tmp_register["rs_flds"] + tmp_register["rc_flds"] + \
-        tmp_register["wrc_flds"] + tmp_register["wrs_flds"];
-    tmp_register["hw_update_flds"] = \
-        tmp_register["ro_flds"] + \
-        tmp_register["w1c_flds"] + tmp_register["w1s_flds"] + tmp_register["w1t_flds"] + \
-        tmp_register["w0c_flds"] + tmp_register["w0s_flds"] + tmp_register["w0t_flds"] + \
-        tmp_register["rs_flds"] + tmp_register["rc_flds"] + \
-        tmp_register["wc_flds"] + tmp_register["ws_flds"] + \
-        tmp_register["wrc_flds"] + tmp_register["wrs_flds"];
-    tmp_register["output_flds"] = \
-        tmp_register["rw_flds"] + tmp_register["wo_flds"] + \
-        tmp_register["w1c_flds"] + tmp_register["w1s_flds"] + tmp_register["w1t_flds"] + \
-        tmp_register["w0c_flds"] + tmp_register["w0s_flds"] + tmp_register["w0t_flds"] + \
-        tmp_register["rs_flds"] + tmp_register["rc_flds"] + \
-        tmp_register["wc_flds"] + tmp_register["ws_flds"] + \
-        tmp_register["wrc_flds"] + tmp_register["wrs_flds"] + \
-        tmp_register["rwp_flds"] + tmp_register["w1_flds"];
     return tmp_register
 
 
@@ -99,7 +74,9 @@ def print_rtl_block(block, out_path):
             tmp_registers.extend(tmp_register_dict_list)
         else:
             LOGGER.warning("Unsupported register type!")
-
+    for register in tmp_registers:
+        for field in register["fields"]:
+            field["name"] = "rg_"+register["name"]+"_"+field["name"]
     content = template.render(
         {
             "block": block,
@@ -128,7 +105,7 @@ def get_register_dict_list_from_array_register(reg):
                     idx,
                     reg.default_overwrite_entries
                 )
-                tmp_register_dict["name"] = f"{struct_reg.name}_{idx}"
+                tmp_register_dict["name"] = f"{struct_reg.name}_{idx}".lower()
                 tmp_register_dict["offset"] = \
                     reg.start_address \
                     + idx * reg.offset \
@@ -136,7 +113,7 @@ def get_register_dict_list_from_array_register(reg):
                 for field_dict in tmp_register_dict["fields"]:
                     if field_dict["name"] != "-":
                         field_dict["name"] = \
-                            f'{struct_reg.name}_{idx}_{field_dict["name"]}'
+                            f'{struct_reg.name}_{idx}_{field_dict["name"]}'.lower()
                 tmp_register_dict_list.append(tmp_register_dict)
     return tmp_register_dict_list
 

@@ -7,7 +7,7 @@ class {{ uvm_reg_type }} extends uvm_reg;
   `uvm_object_utils({{ uvm_reg_type }})
   {% for field in register.fields %}
     {% if field.name != "-" %}
-  uvm_reg_field {{ field.name | lower }};
+  rand uvm_reg_field {{ field.name | lower }};
     {% endif %}
   {% endfor %}
 
@@ -21,7 +21,7 @@ class {{ uvm_reg_type }} extends uvm_reg;
     {{ field.name | lower }} = uvm_reg_field::type_id::create("{{ field.name | lower }}");
     {% if field.access == "RWP" %}
     {{ field.name | lower }}.configure(this, {{ field.size }}, {{ field.lsb }}, "RW", 0, {{ field_size }}'h{{ '%x' | format(field.default) }}, 1, 1, 1);
-    {% elif field.access == "WO" %}
+    {% elif field.access == "WO"%}
     {{ field.name | lower }}.configure(this, {{ field.size }}, {{ field.lsb }}, "W1C", 0, {{ field_size }}'h{{ '%x' | format(field.default) }}, 1, 1, 1);
     {% else %}
     {{ field.name | lower }}.configure(this, {{ field.size }}, {{ field.lsb }}, "{{ field.access }}", 0, {{ field_size }}'h{{ '%x' | format(field.default) }}, 1, 1, 1);
@@ -69,15 +69,19 @@ class {{ uvm_block.name }} extends uvm_reg_block;
   `uvm_object_utils({{ uvm_block.name }})
   {% for register in uvm_block.registers %}
   {% if register.is_struct %}
-  {{ register.name | upper }}    {{ register.name | lower }}[{{ register.length }}];
+  rand {{ register.name | upper }}    {{ register.name | lower }}[{{ register.length }}];
   {% else %}
-  {{ register.name | upper }}    {{ register.name | lower }};
+  rand {{ register.name | upper }}    {{ register.name | lower }};
   {% endif %}
   {% endfor %}
 
   function new(string name = "{{ uvm_block.name }}");
     super.new(name);
   endfunction: new
+
+  `ifdef ENABLE_REG_HDL
+      `include "hdl/{{block_type | lower}}_hdl.svh"
+  `endif
 
   virtual function void build();
     default_map = create_map("default_map", 0, {{ (data_width // 8) | int }}, UVM_BIG_ENDIAN, 0);
@@ -104,6 +108,9 @@ class {{ uvm_block.name }} extends uvm_reg_block;
     {% endif %}
 
     {% endfor %}
+    `ifdef ENABLE_REG_HDL
+        this.build_hdl();
+    `endif
   endfunction: build
 endclass: {{ uvm_block.name }}
 `endif

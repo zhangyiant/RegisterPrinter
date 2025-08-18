@@ -17,6 +17,10 @@ class {{ uvm_sys_name }} extends uvm_reg_block;
     super.new(name);
   endfunction: new
 
+  `ifdef ENABLE_REG_HDL
+      `include "hdl/{{top_sys.name | lower}}_hdl.svh"
+  `endif
+
 virtual function void build();
   default_map = create_map("default_map", 0, {{ (top_sys.data_width // 8) | int }}, UVM_BIG_ENDIAN, 0);
 
@@ -30,6 +34,11 @@ virtual function void build();
   default_map.add_submap({{ block_instance_name }}.default_map, {{ top_sys.addr_width }}'h{{ "%x" | format(base_address) }});
 
   {% endfor %}
+  `ifdef ENABLE_REG_HDL
+      this.build_hdl();
+  `endif
 endfunction: build
+
+
 endclass: {{ uvm_sys_name }}
 `endif

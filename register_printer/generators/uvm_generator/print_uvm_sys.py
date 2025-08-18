@@ -26,4 +26,33 @@ def print_uvm_sys(top_sys, out_path):
     with open(file_name, "w") as bfh:
         bfh.write(content)
 
+    print_uvm_sys_hdl(top_sys, out_path)
+
+    return
+
+def print_uvm_sys_hdl(top_sys, out_path):
+    uvm_sys_name = top_sys.name.lower() + "_hdl"
+    hdl_dir = os.path.join(
+        out_path,
+        "hdl")
+    os.system(f"mkdir -p {hdl_dir}")
+    file_name = os.path.join(
+        hdl_dir,
+        uvm_sys_name + ".svh")
+
+    if os.path.exists(file_name):
+        os.remove(file_name)
+
+    template = get_template("sys_model_hdl.svh")
+
+    content = template.render(
+        {
+            "top_sys": top_sys
+        }
+    )
+
+    with open(file_name, "w") as bfh:
+        bfh.write(content)
+
+
     return

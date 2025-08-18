@@ -51,6 +51,12 @@ class ArrayTemplate:
     def description(self):
         return self._description
 
+    def is_in(self,offset):
+        for num in range(self._length):
+            if offset >= self.start_address+num*self.offset and offset <= self.end_address+num*self.offset:
+                return True
+        return False
+
     def __str__(self):
         result = "Array Template: " + str(self.name) + "\n"
         result += "    length        : " + str(self.length) + "\n"

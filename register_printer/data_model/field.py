@@ -5,9 +5,9 @@ class Field:
         self.lsb = 0
         self.default = 0
         self.access = None
-        self.user_visible = "Y"
-        self.decsription_chinese = ""
         self.description = ""
+        self.user_visible = "Y"
+        self.description_chinese = ""
         return
 
     def __str__(self):

@@ -72,9 +72,7 @@ class BlockTemplate:
     def get_array_template_by_offset(self, offset):
         result = None
         for array_template in self.array_templates:
-            start_address = array_template.array_start_address
-            stop_address = array_template.array_stop_address
-            if offset >= start_address and offset < stop_address:
+            if array_template.is_in(offset):
                 result = array_template
         return result
 
@@ -104,7 +102,7 @@ class BlockTemplate:
                 result = register.offset
         return result
 
-    def _get_register_by_offset(self, offset):
+    def _get_register_by_offset(self, offset, data_width):
         # offset must not in range of an array
         register = None
         register_template = self.find_register_template_by_offset(
@@ -117,18 +115,20 @@ class BlockTemplate:
             )
         else:
             register = Register.create_reserved_register(offset)
+            register.rsv_size = round(data_width/8)
         return register
 
-    def _get_array_by_array_template(self, array_template):
+    def _get_array_by_array_template(self, array_template, data_width):
         start_address = array_template.start_address
         offset = start_address
         struct = Struct(array_template.name)
-        while offset < start_address + array_template.offset:
+        while offset <= array_template.end_address :
             register_template = self.find_register_template_by_offset(offset)
             if register_template is None:
                 register = Register.create_reserved_register(
                     offset - start_address,
                 )
+                register.rsv_size = round(data_width/8)
             else:
                 register = Register.from_register_template(
                     offset - start_address,
@@ -141,43 +141,56 @@ class BlockTemplate:
             array_template.length,
             array_template.start_address
         )
+        array.offset = array_template.offset
         while offset < array_template.array_stop_address:
             register_template = self.find_register_template_by_offset(offset)
             if register_template is None:
                 offset += 1
                 continue
-            offset_difference = register_template.offset - start_address
-            index = offset_difference // array_template.offset
-            register_name = register_template.name
-            for field_template in register_template.fields:
-                field_name = field_template.name
-                default = field_template.default
-                default_overwrite_entry = DefaultOverwriteEntry()
-                default_overwrite_entry.index = index
-                default_overwrite_entry.register_name = register_name
-                default_overwrite_entry.field_name = field_name
-                default_overwrite_entry.default = default
-                array.default_overwrite_entries.append(default_overwrite_entry)
-            offset += register_template.num_of_bytes
+            if array_template.is_in(offset):
+                offset_difference = register_template.offset - start_address
+                index = offset_difference // array_template.offset
+                register_name = register_template.name
+                for field_template in register_template.fields:
+                    field_name = field_template.name
+                    default = field_template.default
+                    default_overwrite_entry = DefaultOverwriteEntry()
+                    default_overwrite_entry.index = index
+                    default_overwrite_entry.register_name = register_name
+                    default_overwrite_entry.field_name = field_name
+                    default_overwrite_entry.default = default
+                    array.default_overwrite_entries.append(default_overwrite_entry)
+                offset += register_template.num_of_bytes
+            offset += 1
         return array
+
+    def offset_in_array_templates(self,offset,array_templates):
+        for array_template in array_templates:
+            if array_template.is_in(offset):
+                return True
+        return False
 
     def generate_registers(self, data_width):
         registers = []
+        array_templates = []
         block_size = self.get_minimum_block_size(data_width)
         LOGGER.debug("Blocksize %s", block_size)
         offset = 0
         while offset < block_size:
-            array_template = self.get_array_template_by_offset(offset)
-            if array_template is not None:
-                array = self._get_array_by_array_template(array_template)
-                registers.append(array)
-                offset += array_template.size
-                continue
+            if not self.offset_in_array_templates(offset,array_templates):
+                array_template = self.get_array_template_by_offset(offset)
+                if array_template is not None:
+                    array_templates.append(array_template)
+                    array = self._get_array_by_array_template(array_template, data_width)
+                    registers.append(array)
+                    # modify by xinr offset += array_template.end_address - array_template.start_address + round(data_width/8)
+                    offset += array_template.offset*array_template.length
+                    continue
 
-            register = self._get_register_by_offset(offset)
-            registers.append(register)
+                register = self._get_register_by_offset(offset, data_width)
+                registers.append(register)
 
-            offset += register.size
+            offset += round(data_width/8)
         return registers
 
     def generate_register_by_offset(self, offset):

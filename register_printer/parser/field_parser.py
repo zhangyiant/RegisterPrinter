@@ -69,6 +69,7 @@ def parse_field_row(row, register_table_column_mapping, previous_context):
             USER_VISIBLE_TYPES
         )
         raise ExcelParseException(msg, context)
+    
     try:
         context.column = register_table_column_mapping["description_chinese"]
         description_chinese = "%s" % row[context.column].value

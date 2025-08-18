@@ -40,12 +40,32 @@ def print_c_test(top_sys, out_path):
 
     file_name = os.path.join(
         out_path,
-        "test.c")
+        "register_sanity_scan.c")
 
     if os.path.exists(file_name):
         os.remove(file_name)
 
     template = get_template("c_test.c")
+
+    fields = []
+    for blockinst in top_sys.block_instances:
+        block = blockinst.block
+        for register in block.registers:
+            try:
+                for field in register.fields:
+                    if field.access.upper() == "RW":
+                        test_field = {}
+                        test_field["name"] = f"{blockinst.name}.{register.name}.{field.name}"
+                        test_field["addr"] = "0x%x"%(register.offset) + " + " + blockinst.name.upper() + "_BASE"
+                        test_field["default"] = "0x%x" % (field.default << field.lsb)
+                        test_field["mask"] = "0x%x"%((1<<(field.msb+1)) - (1<<(field.lsb)))
+                        fields.append(test_field)
+                        break
+                else:
+                    continue
+            except:
+                continue
+            break
 
     test_parameters_list = []
     for block_instance in top_sys.block_instances:
@@ -54,7 +74,7 @@ def print_c_test(top_sys, out_path):
 
     content = template.render(
         {
-            "test_parameters_list": test_parameters_list
+            "fields": fields
         }
     )
 
